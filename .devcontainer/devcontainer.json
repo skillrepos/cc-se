@@ -1,0 +1,64 @@
+{
+  "name": "Claude Code Workshop",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  // Host machine requirements
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb",
+    "storage": "32gb"
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "anthropic.claude-code",
+        "Anthropic.claude-code"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "workbench.startupEditor": "readme",
+        // Open root Markdown files in preview and lab-created subdirectory Markdown files as text.
+        "workbench.editorAssociations": {
+          "**/.claude/skills/api-checker/*.md": "default",
+          "**/.claude/agents/*.md": "default",
+          "**/.claude/commands/*.md": "default",
+          "*.md": "vscode.markdown.preview.editor"
+        }
+      }
+    }
+  },
+
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && cd task-api && npm install",
+
+  "postAttachCommand": "cp extra/.claude.json ~/ && echo alias claude-yolo=\\\"claude --dangerously-skip-permissions\\\" >> ~/.bash_aliases",
+
+  "forwardPorts": [3000],
+
+  "portsAttributes": {
+    "3000": {
+      "label": "Task API Server",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "remoteUser": "node",
+
+  "mounts": [
+    "source=${localEnv:HOME}/.anthropic,target=/home/node/.anthropic,type=bind,consistency=cached"
+  ]
+}
