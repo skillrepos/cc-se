@@ -24,7 +24,8 @@ These instructions will guide you through configuring a Claude Code environment 
 
 You **must** have a paid Claude account to use Claude Code.
 
-![Claude signup](./images/ccode76.png?raw=true "Claude signup")
+![Claude signup](./images/cc-se1.png?raw=true "Claude signup")
+![Claude signup](./images/cc-se2.png?raw=true "Claude signup")
 
 <br><br>
 
