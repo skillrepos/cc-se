@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 6.0 - 06/11/26
+## Revision 6.5 - 06/22/26
 
 <br><br>
 
@@ -548,7 +548,7 @@ Let Claude complete each task to build up context.
 /context
 ```
 
-You'll see information about current token usage and remaining capacity.
+Scroll back up to the start of the output. You'll see information about current token usage and remaining capacity.
 
 
 ![context command](./images/ccode224.png?raw=true "context command")
@@ -578,19 +578,19 @@ Claude will summarize earlier parts while keeping specified information.
 **Why:** Rewind lets you undo mistakes or explore different approaches.
 
 **Action:** 
-1. Ask Claude: `Delete the test file we created`
-2. After deletion, press `Esc` twice or type `/rewind`
-3. Select the point before deletion (the *compact*) to restore by using the up and down arrow to navigate between the checkpoints listed. (Notice the rewind list also offers a *Summarize up to here* option — a newer way to condense everything before a checkpoint instead of restoring to it.)
+a. Ask Claude: `Delete the test file we created`
+b. After deletion, press `Esc` twice or type `/rewind`
+c. Select the point before deletion (the *compact*) to restore **by using the up and down arrow to navigate between the checkpoints** listed and then press `Enter`.
 
 
 ![rewind](./images/ccode34.png?raw=true "rewind")
 
-4. Respond to the clarification question to restore both the code and the conversation.
+d. Respond to the clarification question to restore both the code and the conversation.
 
 
 ![rewind](./images/ccode35.png?raw=true "rewind")
 
-5. You should see the file and the conversation restored. You can just clear out any commands showing up in Claude.
+e. You should see the file and the conversation restored. You can use backspace or hit `Esc` twice to clear out any commands showing up in Claude.
 
 ---
 <br><br>
