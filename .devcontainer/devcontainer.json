@@ -4,7 +4,7 @@
 
   // Host machine requirements
   "hostRequirements": {
-    "cpus": 4,
+    "cpus": 2,
     "memory": "16gb",
     "storage": "32gb"
   },
