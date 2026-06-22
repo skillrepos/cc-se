@@ -926,10 +926,12 @@ What you should see after this runs is a failing email test added to user.test.j
 
 ![Using the test-runner subagent](./images/ccode233.png?raw=true "Using the testrunner subagent")
 
+You can choose to accept the fix (make the edit) or not.
+
 ---
 <br><br>
 
-## 10: Exit
+## 10: Exit Claude Code
 **Action:**
 ```
 exit
