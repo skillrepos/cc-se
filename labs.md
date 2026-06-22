@@ -1072,7 +1072,7 @@ Hit *Esc" to get out of that output. Then run:
 /agents
 ```
 
-Confirm the `reviewer`, `planner`, and `test-runner` agents are shown.
+ Switch to the `Library` tab. Confirm the `reviewer`, `planner`, and `test-runner` agents are shown.
 
 ![Agents are present](./images/ccode235.png?raw=true "Agents are present")
 
@@ -1083,7 +1083,7 @@ Hit *Esc" to get out of that output. Then run:
 /skills
 ```
 
-Confirm the `api-checker` skill is shown in the `Project Skills` section.
+Confirm the `api-checker` skill is shown.
 
 ![Skill is  present](./images/ccode236.png?raw=true "Skill is present")
 
@@ -1132,7 +1132,7 @@ You'll see output of the main agent interpreting the subagent output. If you wan
 
 > **What's happening here:** Claude delegates to the reviewer subagent, which runs with its own instructions and tool restrictions in a separate context. It returns structured output to the main conversation. You then decide which suggestions to act on.
 
-You can choose to proceed with all or some of the suggested changes.
+You can choose to proceed with all or some of the suggested changes by responding in the Claude Code input.
  
 ---
 <br><br>
@@ -1209,7 +1209,7 @@ You've learned:
 
 # Lab 6: Hooks: Enforcing Policy at the Tool Boundary
 ## Lab Purpose
-Learn how hooks let you enforce rules that Claude *cannot* talk its way around. You'll create a PreToolUse hook that blocks edits to a protected file and a PostToolUse hook that logs every bash command Claude runs — then watch both fire live. Estimated time: 10-12 minutes.
+Learn how hooks let you enforce rules that Claude *cannot* talk its way around. You'll create a PreToolUse hook that blocks edits to a protected file and a PostToolUse hook that logs every bash command Claude runs — then watch both fire live. 
 
 ---
 <br><br>
@@ -1240,7 +1240,7 @@ mkdir -p .claude/hooks
 **What we're doing:** Writing the small shell script that decides whether an edit is allowed.
 **Why:** When a PreToolUse hook fires, Claude Code sends the tool call details as JSON on the script's *stdin*. The script inspects it and answers with an exit code: **exit 0** means "no objection," **exit 2** means "block it" — and whatever the script prints to *stderr* is fed back to Claude as the reason.
 
-**Action:** Make a new file `.claude/hooks/protect-config.sh` (remember you can use the `code` command).
+**Action:** Make a new file `.claude/hooks/protect-config.sh` (remember you can use the `code` command if working in the codespace).
 
 **Action:** Copy/paste the following contents into the file and save it.
 
@@ -1259,7 +1259,7 @@ exit 0
 
 The `jq -r '.tool_input.file_path'` line pulls the target file path out of the JSON that arrives on stdin.
 
-![Creating the guard script](./images/ccode301.png?raw=true "Creating the guard script")
+![Creating the guard script](./images/cc-se4.png?raw=true "Creating the guard script")
 
 ---
 <br><br>
@@ -1318,7 +1318,7 @@ Two things to notice:
 - The matcher `Edit|Write` means "fire on either the Edit or the Write tool." `Bash` matches only the Bash tool.
 - The guard hook uses the newer *exec form* (`args: []`), which runs the script directly with no shell in between — recommended whenever you use a path placeholder like `${CLAUDE_PROJECT_DIR}`. The logger omits `args`, so it runs in *shell form*, which we need for the `>>` redirect.
 
-![The hooks settings file](./images/ccode302.png?raw=true "The hooks settings file")
+![The hooks settings file](./images/cc-se5.png?raw=true "The hooks settings file")
 
 ---
 <br><br>
@@ -1327,9 +1327,13 @@ Two things to notice:
 **What we're doing:** Starting Claude with permissions bypassed — on purpose.
 **Why:** This is the punchline of the lab: hooks fire at the *tool boundary*, outside of the permission system. Even with all permission prompts turned off, the hook still gets a veto.
 
-**Action:** In a terminal other than your original one, start Claude with the alias (accept the bypass warning if prompted — it's expected):
+**Action:** In a terminal other than your original one, start Claude with the option or alias (if working in the codespace):
 ```
-claude-yolo
+claude --dangerously-skip-permissions
+
+  or
+
+claude-yolo (if running in the codespace)
 ```
 
 ---
@@ -1344,9 +1348,23 @@ claude-yolo
 /hooks
 ```
 
-You should see **PreToolUse** and **PostToolUse** each showing one configured hook, labeled with a `[command]` type and a `Project` source (meaning it came from `.claude/settings.json`). Arrow into one to see its full command. Hit *Esc* to exit when done.
+You should see **PreToolUse** and **PostToolUse** each showing one configured hook, labeled with a `[command]` type and a `Project` source (meaning it came from `.claude/settings.json`). 
 
-![The /hooks menu](./images/ccode303.png?raw=true "The /hooks menu")
+![The /hooks menu](./images/cc-se6.png?raw=true "The /hooks menu")
+
+Pick one and select it to see general details about how the hook works.
+
+![How the hook works](./images/cc-se7.png?raw=true "How the hook works")
+
+Then select the listed hook and you should see the configured command for it.
+
+![How the hook works](./images/cc-se8.png?raw=true "How the hook works")
+
+You can select it again to go one level deeper and see the `Hook details`.
+
+![Hook details](./images/cc-se9.png?raw=true "Hook details")
+
+Hit `Esc` several times to get back to the main Claude Code prompt.
 
 ---
 <br><br>
@@ -1362,7 +1380,7 @@ Add a connection_timeout setting to config.json using the Edit tool.
 
 Watch what happens: Claude attempts the edit, and the tool call is **blocked** before it touches the file. You'll see the hook's stderr message surfaced in the conversation — Claude reads it too.
 
-![Edit blocked by hook](./images/ccode304.png?raw=true "Edit blocked by hook")
+![Edit blocked by hook](./images/cc-se10.png?raw=true "Edit blocked by hook")
 
 ---
 <br><br>
@@ -1408,13 +1426,13 @@ Let Claude run its commands.
 
 You should see each command Claude ran, with its description. (You may even see your own `!` commands show up — they go through the Bash tool too.)
 
-![The bash command log](./images/ccode305.png?raw=true "The bash command log")
+![The bash command log](./images/cc-se11.png?raw=true "The bash command log")
 
 ---
 <br><br>
 
 ## 11: Prompt vs. Tool vs. Hook Constraints
-**What we're doing:** Placing hooks in the constraint toolbox you've been building all day.
+**What we're doing:** Showing how we can leverage hooks in the constraint toolbox you've been building all day. (Reading only)
 **Why:** You now have three ways to say "don't do that" — and they are not equally strong.
 
 Recall Lab 5: the planner agent had a *prompt constraint* ("Do not write or modify files" — advisory, the model can drift), and the reviewer agent had a *tool constraint* (`disallowedTools: Write, Edit` — structural, but scoped to that one agent). Hooks are the third tier:
