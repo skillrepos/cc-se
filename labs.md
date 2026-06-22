@@ -341,7 +341,7 @@ Claude will start creating a detailed plan before starting implementation.
 **Why:** You can review plans before execution to ensure desired outcomes.
 
 **Action:** After Claude presents the plan, you could modify it if you wanted by selecting `ctrl+g`. 
-1. Go ahead and select that key sequence to bring the plan up in the editor.
+1. Go ahead and select that key sequence (ctrl+g) to bring the plan up in the editor.
 2. (Optional) To see the markdown version of the plan (if you're in VS Code, you can right-click and select *Reopen Editor with ... Text Editor*).
 3. After you're done reviewing it, you can close the file (close the original file if you also opened a preview version).
 4. Then **select option 1** to proceed and auto-accept edits. 
@@ -350,7 +350,7 @@ Claude will start creating a detailed plan before starting implementation.
 
 ![Approving plan](./images/ccode219.png?raw=true "Approving plan")
 
-**Note that you are now in *accept edits on* mode, but the original task will still run under *plan* mode.**
+**Note that you are now in a different mode, but the original task will still run under *plan* mode.**
 
 ---
 <br><br>
@@ -359,7 +359,7 @@ Claude will start creating a detailed plan before starting implementation.
 **What we're doing:** Monitoring the progress through the to-do list.  
 **Why:** Helps you understand what is done and what is left to be done.
 
-**Action:** While Claude Code is doing the implementation, hit `ctrl+t` to see the current state of the to-do list.
+**Action:** While Claude Code is doing the implementation, hit `ctrl+t` to see the current state of the to-do list. (If the implementation is already done, you can just skip this step and try it on a future implementation.)
 
 ```
 ctrl+t
@@ -394,7 +394,7 @@ Your conversation history is now cleared, giving you a clean slate.
 **What we're doing:** Looking at the newer *Auto* permission mode.  
 **Why:** Auto mode replaces many manual permission prompts with a background classifier that approves routine, safe actions and stops for risky ones. It sits between supervised editing and bypass permissions, and is what unattended/agentic workflows (Day 2) build on.
 
-**Action:** Press `Shift+Tab` repeatedly and watch the mode indicator cycle. Along with the modes we've used, you should see **auto mode**. The official mode set is now: *supervised editing* (default) → *accept edits* → *plan* → *auto* → *bypass permissions*. Stop cycling when you get back to your previous mode — we'll use bypass next.
+**Action:** If not already on *auto mode*, press `Shift+Tab` repeatedly and watch the mode indicator cycle. Along with the modes we've used, you should see **auto mode**. The official mode set is now: *supervised editing* (default) → *accept edits* → *plan* → *auto* → *bypass permissions*. Stop cycling when you get back to your previous mode — we'll use bypass next.
 
 ---
 <br><br>
