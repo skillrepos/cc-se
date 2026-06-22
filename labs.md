@@ -127,8 +127,10 @@ You'll see the output: "Hello from Claude Code!"
 **Action:** 
 1. Type `exit` to exit Claude
 2. Restart with: `claude --resume`
-3. You'll see a list with your session. Just hit *Enter* to resume.
+3. You'll see a list with your session at the top. Just hit *Enter* to resume.
 4. Claude will restore your previous session context
+
+![Resume session](./images/cc-se3.png?raw=true "Resume session")
 
 ---
 <br><br>
@@ -200,7 +202,7 @@ Claude will save this to a MEMORY.md file as a persistent memory.
 
 Now try the ! shortcut to run a bash command directly to look at the memory file that just got created:
 ```
-! cat ~/.claude/projects/-workspaces-ccode/memory/MEMORY.md
+! cat ~/.claude/projects/-workspaces-cc-se/memory/MEMORY.md
 ```
 
 This runs the shell command and shows output without a separate terminal.
