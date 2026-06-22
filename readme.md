@@ -84,7 +84,7 @@ Increase the default timeout value to 90 minutes and then select the *Save* butt
 ## 7. Create your own codespace to run the labs by clicking on the button below.
 <br/><br/>
 
-Click here ------> [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/skillrepos/ccode?quickstart=1)
+Click here ------> [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/skillrepos/cc-se?quickstart=1)
 
 <br/><br/>
 
