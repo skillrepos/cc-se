@@ -1488,7 +1488,7 @@ claude mcp add everything -- npx -y @modelcontextprotocol/server-everything
 
 The `--` (double dash) separates Claude's own options from the command that runs the server — everything after it is the server's own command line. Local stdio is the default transport; remote servers use `--transport http <url>` instead.
 
-![Adding the MCP server](./images/ccode306.png?raw=true "Adding the MCP server")
+![Adding the MCP server](./images/cc-se12.png?raw=true "Adding the MCP server")
 
 ---
 <br><br>
@@ -1504,7 +1504,7 @@ claude mcp list
 
 The first run downloads the package via npx, so give it a few seconds (any npm notices are harmless). You should see the server with a **✓ Connected** status.
 
-![MCP server connected](./images/ccode307.png?raw=true "MCP server connected")
+![MCP server connected](./images/cc-se13.png?raw=true "MCP server connected")
 
 ---
 <br><br>
@@ -1518,7 +1518,9 @@ The first run downloads the package via npx, so give it a few seconds (any npm n
 claude mcp get everything
 ```
 
-Note the output: type *stdio*, the command line it runs, and **Scope: Local**. Notice there's no new file in your project — local-scope config lives in `~/.claude.json`, keyed to this project directory.
+Note the output include the type *stdio*, the command line it runs, and **Scope: Local**. Notice there's no new file in your project — local-scope config lives in `~/.claude.json`, keyed to this project directory.
+
+![MCP server connected](./images/cc-se14.png?raw=true "MCP server connected")
 
 ---
 <br><br>
@@ -1537,6 +1539,8 @@ claude mcp add everything --scope project -- npx -y @modelcontextprotocol/server
 
 There's also `--scope user` for "available to me in every project."
 
+![Add MCP server at different scope](./images/cc-se15.png?raw=true "Add MCP server at different scope")
+
 ---
 <br><br>
 
@@ -1553,7 +1557,7 @@ You'll see the server entry with its `command` and `args`.
 
 > **Naming note:** the server name `workspace` is reserved for internal use — if a config defines a server with that name, Claude Code skips it at load time with a warning. Pick anything else.
 
-![The .mcp.json file](./images/ccode308.png?raw=true "The .mcp.json file")
+![The .mcp.json file](./images/cc-se16.png?raw=true "The .mcp.json file")
 
 ---
 <br><br>
@@ -1562,12 +1566,14 @@ You'll see the server entry with its `command` and `args`.
 **What we're doing:** Starting a session that loads the project-scoped server.
 **Why:** Because `.mcp.json` can arrive in a repo from *anyone*, Claude Code asks you to approve project-scoped servers before it will run them — a safety gate teammates will see the first time they open your repo.
 
-**Action:** Start Claude (the yolo alias is fine here):
+**Action:** Start Claude (*don't use* `--dangerously-skip-permissions` or `claude-yolo`:
 ```
-claude-yolo
+claude
 ```
 
-If you're prompted to approve the MCP server(s) from `.mcp.json`, approve them.
+When prompted to use/approve the MCP server(s) from `.mcp.json`, approve them.
+
+![Approving the MCP server](./images/cc-se17.png?raw=true "Approving the MCP server")
 
 ---
 <br><br>
@@ -1581,11 +1587,25 @@ If you're prompted to approve the MCP server(s) from `.mcp.json`, approve them.
 /mcp
 ```
 
-You should see the **everything** server listed as connected with a tool count next to it. Select it to browse the tools it exposes (echo, get-sum, and a menagerie of MCP demo features), then hit *Esc* to back out.
+When you type this, you'll see a list. Don't change it - just hit `Enter` after typing `/mcp`.
 
-You may also notice a **claude.ai** section in this panel — connectors you've added to your claude.ai account now surface right inside Claude Code sessions when you're signed in with your subscription. Hold that thought for Day 3.
+You should see the **everything** server listed as connected with a tool count next to it under `Project MCPs`. 
 
-![The /mcp panel](./images/ccode309.png?raw=true "The /mcp panel")
+![The /mcp panel](./images/cc-se18.png?raw=true "The /mcp panel")
+
+Select it to browse the tools it exposes (echo, get-sum, and a menagerie of MCP demo features).
+
+![Listing tools](./images/cc-se19.png?raw=true "Listing tools")
+
+Select one of the tools.
+
+![Selecting tool](./images/cc-se20.png?raw=true "Selecting tool")
+
+Note the details.
+
+![Tool details](./images/cc-se21.png?raw=true "Tool details")
+
+Use `Esc` to get back to the main prompt.
 
 ---
 <br><br>
@@ -1599,9 +1619,13 @@ You may also notice a **claude.ai** section in this panel — connectors you've 
 Use the everything server's echo tool to send the message "Hello from MCP!"
 ```
 
+Approve the tool use.
+
+![Tool use](./images/cc-se22.png?raw=true "Tool use")
+
 Claude calls the tool and shows the round-trip result. Notice the tool's full name in the output: MCP tools are named `mcp__<server>__<tool>` — here, `mcp__everything__echo`. (That's also the pattern you'd use to match MCP tools in a hook, tying back to Lab 6.)
 
-![Calling the echo tool](./images/ccode310.png?raw=true "Calling the echo tool")
+![Calling the echo tool](./images/cc-se23.png?raw=true "Calling the echo tool")
 
 ---
 <br><br>
@@ -1615,9 +1639,11 @@ Claude calls the tool and shows the round-trip result. Notice the tool's full na
 Use the everything server to add 25 and 17.
 ```
 
+Approve as needed.
+
 Claude should call the server's `get-sum` tool with `a: 25, b: 17` and report 42.
 
-![Calling the get-sum tool](./images/ccode311.png?raw=true "Calling the get-sum tool")
+![Calling the get-sum tool](./images/cc-se24.png?raw=true "Calling the get-sum tool")
 
 ---
 <br><br>
@@ -1645,7 +1671,7 @@ claude mcp list
 
 The everything server should be gone (and the entry removed from `.mcp.json`).
 
-![Server removed](./images/ccode312.png?raw=true "Server removed")
+![Server removed](./images/cc-se25.png?raw=true "Server removed")
 
 ---
 <br><br>
