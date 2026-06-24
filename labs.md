@@ -1752,7 +1752,7 @@ claude --model sonnet --effort medium
 
 Notice the system prompt, CLAUDE.md, skills, and agents all consuming context before you've typed a single prompt.
 
-![context loadout](./images/ccode320.png?raw=true "context loadout")
+![context loadout](./images/cc-se26.png?raw=true "context loadout")
 
 ---
 <br><br>
@@ -1768,6 +1768,8 @@ What are our project rules and what test command should I run after code edits?
 
 Claude should answer from the CLAUDE.md file created with `/init` on Day 1.
 
+![project memory](./images/cc-se27.png?raw=true "project memory")
+
 ---
 <br><br>
 
@@ -1782,7 +1784,7 @@ Please validate https://jsonplaceholder.typicode.com/posts/1 and summarize what 
 
 You should see the skill load and the `check.py` script run, just like yesterday.
 
-![skill recap](./images/ccode321.png?raw=true "skill recap")
+![skill recap](./images/cc-se28.png?raw=true "skill recap")
 
 ---
 <br><br>
@@ -1807,7 +1809,7 @@ Confirm `planner`, `test-runner`, and `reviewer` are listed. Hit *Esc* to exit t
 **What we're doing:** Setting the Day 2 mindset and exiting.  
 **Why:** Everything yesterday was *you prompting, Claude responding, you approving*. Everything today removes one of those three from the loop.
 
-**Action:** Read this, then exit:
+**Action:** Here's what we'll be doing today. (You can read this, then exit out of Claude.):
 
 - **Labs 9-10:** remove *you prompting each step* (headless pipelines, `/goal` loops)
 - **Lab 11:** remove *the terminal entirely* (Agent SDK programs — read-only and unattended)
@@ -1853,7 +1855,7 @@ cat user.js | claude -p "Summarize what this code does in two sentences"
 
 You get just the answer — no session UI, no prompts.
 
-![pipe input](./images/ccode323.png?raw=true "pipe input")
+![pipe input](./images/cc-se29.png?raw=true "pipe input")
 
 ---
 <br><br>
@@ -1866,6 +1868,8 @@ You get just the answer — no session UI, no prompts.
 ```bash
 claude -p "What does goodbye.py print? Answer in one line."
 ```
+
+![pipe input](./images/cc-se30.png?raw=true "pipe input")
 
 ---
 <br><br>
@@ -1881,7 +1885,7 @@ claude -p "Summarize this project in one sentence" --output-format json
 
 Look at the raw JSON. Find the `result`, `session_id`, `total_cost_usd`, and `num_turns` fields.
 
-![json output](./images/ccode324.png?raw=true "json output")
+![json output](./images/cc-se31.png?raw=true "json output")
 
 ---
 <br><br>
@@ -1898,7 +1902,7 @@ claude -p "Summarize this project in one sentence" --output-format json | jq -r 
 claude -p "How many .js files are in this directory?" --output-format json | jq '{result: .result, cost: .total_cost_usd, turns: .num_turns}'
 ```
 
-![jq extraction](./images/ccode325.png?raw=true "jq extraction")
+![jq extraction](./images/cc-se32.png?raw=true "jq extraction")
 
 **Note:** `--output-format json` also supports `--json-schema` to force output matching a schema you define — the structured result lands in a `structured_output` field.
 
@@ -1916,39 +1920,47 @@ claude -p "Write a 4-line poem about loops" --output-format stream-json --verbos
 
 Each line of the raw stream is a JSON event; the jq filter selects only text deltas so you see the poem stream in live.
 
+![stream output](./images/cc-se33.png?raw=true "stream output")
+
 ---
 <br><br>
 
 ## 6: Chain Two Headless Calls
 **What we're doing:** Feeding the output of one `claude -p` into another.  
 **Why:** Composability — each call does one focused job, and the shell wires them together.
-
-**Action:** Run:
+ 
+**Action:** Run these two lines — capture the first call's output, then feed it to the second:
 ```bash
-claude -p "List the .js files in this directory, one filename per line, output nothing else" | claude -p "For each filename on stdin, rate from 1-5 how descriptive the name is. One line per file."
+claude -p "List the .js files in this directory, one filename per line, output nothing else" > files.txt
+cat files.txt | claude -p "For each filename on stdin, rate from 1-5 how descriptive the name is. One line per file."
 ```
-
-Two separate Claude runs, connected by a pipe — your first multi-step pipeline.
-
-![chained calls](./images/ccode326.png?raw=true "chained calls")
-
+ 
+Two separate Claude runs, wired together through a file — your first multi-step pipeline.
+ 
+> **Why not pipe them directly?** You might expect `claude -p "..." | claude -p "..."` to just work. It usually won't. In a pipe, *both* processes start at the same instant: the second `claude` opens, waits ~3 seconds for stdin, and gives up with `Warning: no stdin data received in 3s` — long before the first call (a full agent loop) has produced its first byte. Capturing to `files.txt` first removes the race: the second call only starts once real input exists. (If you prefer one line, `claude -p "..." | (sleep 5; claude -p "...")` also works, but the two-step version is clearer and reusable.)
+ 
+![chained calls](./images/cc-se34.png?raw=true "chained calls")
+ 
 ---
 <br><br>
 
 ## 7: Your First Loop Instead of a Prompt
 **What we're doing:** Running Claude once per file inside a bash for-loop.  
 **Why:** This is the core Day 2 move. Yesterday you'd have prompted "summarize all my js files" and hoped. A loop gives you one bounded, repeatable call per item.
-
+ 
 **Action:** Run:
 ```bash
 for f in *.js; do
+  echo "Summarizing $f..."
   echo "## $f" >> summaries.md
   cat "$f" | claude -p "Summarize this file in one sentence" >> summaries.md
 done
 ```
-
-Watch the loop iterate — each pass is an independent headless run.
-
+ 
+The `Summarizing $f...` line prints to your terminal so you can watch each pass; the summaries are redirected into `summaries.md` (you'll inspect that in the next step). Each pass is an independent headless run. (`>>` *appends* — delete `summaries.md` before re-running or entries pile up.)
+ 
+![first loop](./images/cc-se36.png?raw=true "first loop")
+ 
 ---
 <br><br>
 
@@ -1963,7 +1975,7 @@ cat summaries.md
 
 You should see a heading and a one-sentence summary for each .js file.
 
-![loop output](./images/ccode327.png?raw=true "loop output")
+![loop output](./images/cc-se37.png?raw=true "loop output")
 
 ---
 <br><br>
@@ -1979,6 +1991,8 @@ claude -p "Create a file named pipeline.txt containing the single word OK" --per
 
 Then verify with `cat pipeline.txt`. The `acceptEdits` mode auto-approves file writes; `--allowedTools "Bash,Read,Edit"` is the finer-grained alternative that pre-approves specific tools (and supports rules like `Bash(git diff *)`). We'll build on this idea in Lab 11.
 
+![headless with accept edits](./images/cc-se38.png?raw=true "headless with accept edits")
+
 ---
 <br><br>
 
@@ -1988,7 +2002,7 @@ Then verify with `cat pipeline.txt`. The `acceptEdits` mode auto-approves file w
 
 **Action:** Read (nothing to run):
 
-1. **Metering:** Starting **June 15, 2026**, `claude -p` and Agent SDK usage on subscription plans draws from a separate monthly Agent SDK credit, distinct from your interactive limits.
+1. **Metering:** Starting at some point, `claude -p` and Agent SDK usage on subscription plans are expected to draw from a separate monthly Agent SDK credit, distinct from your interactive limits.
 2. **`--bare`:** For CI and scripts, add `--bare` to skip auto-discovery of hooks, skills, plugins, MCP servers, and CLAUDE.md — same result on every machine, faster startup. (It's slated to become the default for `-p`. Note it skips OAuth, so it needs `ANTHROPIC_API_KEY` for auth — which is why we didn't use it in this lab.)
 
 ## Lab Summary
