@@ -1,0 +1,12 @@
+{
+  "name": "cc-se",
+  "version": "1.0.0",
+  "description": "Workshop project for the AI-Powered Coding with Claude Code course. Provides the jest test runner used by `npm test` in Lab 10.",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "license": "MIT"
+}
