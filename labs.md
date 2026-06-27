@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 6.5 - 06/22/26
+## Revision 7.0 - 06/27/26
 
 <br><br>
 
@@ -2066,16 +2066,21 @@ claude-yolo
 
 ---
 <br><br>
+
 ## 3: Set the Goal
 **What we're doing:** Giving Claude a completion condition instead of an instruction.  
 **Why:** A goal states the *end state* and lets Claude figure out the steps. After each turn, a small fast model (Haiku by default) checks the condition against the conversation; "not met" starts another turn automatically.
 
 **Action:** Type:
 ```
-/goal all tests in this project pass (npm test exits 0), no test file is deleted, or stop after 10 turns
+/goal all tests in this project pass (npm test exits 0) without editing package.json or any test file, or stop after 10 turns
 ```
 
 Note the three parts of a good condition: a measurable end state, a stated check, and constraints (including a turn bound so it can't run forever).
+
+> **Why "without editing package.json or any test file"?** A measurable condition can still be *gamed*. "npm test exits 0" is satisfied just as well by fixing the code as by quietly changing what `npm test` runs (editing the `test` script) or weakening the test. Naming the off-limits files forces the agent to close the *real* gap — the bug in `user.js` — instead of redefining success. Anticipating the cheap way out is part of writing a good goal.
+
+> **The condition must be provable in the agent's own output.** The evaluator (the Haiku judge) reads only the **transcript** — it does *not* run your tests or open your repo. So the condition has to be something the agent's output can settle. `all tests pass (npm test exits 0)` works because the agent runs the tests and the result lands in the conversation for the judge to read. `the auth is solid` does **not** work — nothing in the transcript proves it. You're not asking the judge to verify your code; you're asking it to read the receipts the agent already produced. The real verification is still the agent running a real command.
 
 ---
 <br><br>
