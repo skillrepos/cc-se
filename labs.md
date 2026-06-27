@@ -2043,7 +2043,7 @@ npm test
 
 You should see at least one failure left over from the Lab 4/5 work on `user.js` / `user.test.js`.
 
-![failing test](./images/ccode328.png?raw=true "failing test")
+![failing test](./images/cc-se40.png?raw=true "failing test")
 
 > **Why a plain terminal and not inside Claude?** Claude Code auto-responds to bash output — and in the bypass mode you start next, the moment it sees a red test it will usually just *fix* it on the spot, erasing the gap before you ever set the goal. Confirm the failure in a plain shell, and let the **`/goal` loop** be the only thing that runs the tests from here on.
 
@@ -2078,6 +2078,8 @@ claude-yolo
 
 Note the three parts of a good condition: a measurable end state, a stated check, and constraints (including a turn bound so it can't run forever).
 
+![loop spec](./images/cc-se41.png?raw=true "loop spec")
+
 > **Why "without editing package.json or any test file"?** A measurable condition can still be *gamed*. "npm test exits 0" is satisfied just as well by fixing the code as by quietly changing what `npm test` runs (editing the `test` script) or weakening the test. Naming the off-limits files forces the agent to close the *real* gap — the bug in `user.js` — instead of redefining success. Anticipating the cheap way out is part of writing a good goal.
 
 > **The condition must be provable in the agent's own output.** The evaluator (the Haiku judge) reads only the **transcript** — it does *not* run your tests or open your repo. So the condition has to be something the agent's output can settle. `all tests pass (npm test exits 0)` works because the agent runs the tests and the result lands in the conversation for the judge to read. `the auth is solid` does **not** work — nothing in the transcript proves it. You're not asking the judge to verify your code; you're asking it to read the receipts the agent already produced. The real verification is still the agent running a real command.
@@ -2089,65 +2091,62 @@ Note the three parts of a good condition: a measurable end state, a stated check
 **What we're doing:** Observing Claude iterate without further prompting.  
 **Why:** This is the loop made visible — fix, test, evaluate, repeat.
 
-**Action:** Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
+**Action:** Hit `Enter` to start the loop processing. Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
 - the `◎ /goal active` indicator showing how long the goal has been running
 - Claude running tests, reading failures, editing, and re-running on its own
 - (press *ctrl+o* to watch the thinking between turns)
 
-![goal active](./images/ccode329.png?raw=true "goal active")
+![goal active](./images/cc-se42.png?raw=true "goal active")
+
+> **Expect this one to finish fast — usually a single turn.** A one-line bug is a tiny gap, so Claude closes it in one turn and the evaluator confirms immediately. That's success, *not* a missed loop — and you can't force a small, safe task to take more turns (Claude just batch-fixes everything in the one turn it gets). Even so, the loop's machinery is visible: the `npm test → read → edit → npm test` sequence of tool calls, and the `(… · N turns · … tokens)` receipt the loop prints when it stops. You'll watch the loop actually *repeat*, turn after turn, on the open-ended goal in **Step 7**.
 
 ---
 <br><br>
 
-## 5: Check Goal Status Mid-Run
-**What we're doing:** Querying the goal's progress.  
-**Why:** Unattended doesn't mean unobservable.
+## 5: Check Goal Status — and See Who Cleared It
+**What we're doing:** Querying the goal with the bare `/goal` command, and noting what ended the loop.  
+**Why:** Unattended doesn't mean unobservable — and completion is decided by a *separate* evaluator model, not the model doing the work.
 
-**Action:** While the goal is active (or right after), type:
+**Action:** Type:
 ```
 /goal
 ```
 
-With no argument, `/goal` shows the condition, elapsed time, turns evaluated, token spend, and the evaluator's most recent reason for "not met yet."
+With no argument, `/goal` reports the condition, elapsed time, turns evaluated, and token spend. For the test goal you just set, it most likely already shows **achieved** — a one-line fix is usually done before you finish reading this step. (On a goal that's *still* running, the same command shows the evaluator's most recent "not met yet" reason instead — you'll see that live on the open-ended goal in Step 6.)
 
 ![goal status](./images/ccode330.png?raw=true "goal status")
 
----
-<br><br>
-
-## 6: Let It Finish
-**What we're doing:** Watching the goal clear itself.  
-**Why:** Completion is decided by a *separate* evaluator model, not the model doing the work — a fresh pair of eyes confirms the condition.
-
-**Action:** Wait for the tests to go green. When the evaluator returns "yes," the goal clears automatically and an achieved entry is recorded in the transcript.
+Notice *who* ended the loop: the worker model said "I'm done," but it was a **separate evaluator** (Haiku, reading the transcript) that confirmed the condition and cleared the goal — the doer doesn't get to grade its own work. That `achieved` entry is recorded right in the conversation, with its duration, turn count, and token spend.
 
 ![goal achieved](./images/ccode331.png?raw=true "goal achieved")
 
-Run `/goal` once more — it now shows the *achieved* condition with its duration, turn count, and token spend.
-
 ---
 <br><br>
 
-## 7: Set and Clear a Goal Manually
-**What we're doing:** Practicing the off switch.  
-**Why:** You'll want to abandon goals that turn out to be wrong or too expensive.
+## 6: Watch a Goal Loop — Then Clear It
+**What we're doing:** Setting a deliberately open-ended goal so the turn-by-turn loop is finally visible, then practicing the off switch.  
+**Why:** The Step-3 goal was *provable* (`npm test exits 0`), so it cleared the instant it was true — one turn. An open-ended goal is never provably "done," so the loop keeps taking turns until the **turn cap** stops it — and *that* is when you get to watch it iterate. (It's also why a turn bound is non-negotiable.)
 
 **Action:** Type:
 ```
-/goal summaries.md contains an entry for every .js file in this directory, or stop after 5 turns
+/goal the comments in hello.js are as clear and thorough as they can possibly be, or stop after 4 turns
 ```
 
-Let it run one turn, then cancel it:
+"As clear as they can possibly be" can't be confirmed from the transcript — remember the Step-3 note: the evaluator only reads receipts, and nothing settles "as good as possible." So it returns **not met yet** every turn and the loop runs again: edit `hello.js`, evaluate, edit, evaluate. **While it's active, type `/goal` (no argument) between turns** and watch the live status move — turns climbing toward 4, tokens rising, the latest "not met yet" reason. *This* repeating *turn → evaluate → turn* cycle is the loop you couldn't catch on the fast test goal.
+
+Don't wait for the cap — cancel it once you've watched a couple of turns:
 ```
 /goal clear
 ```
 
 (`stop`, `off`, `cancel`, `reset`, and `none` all work as aliases. `/clear` also removes any active goal.)
 
+> **You just saw both ways a condition can behave.** Step 3's goal was measurable and finished in one turn; this one is unprovable and would burn all 4 turns for little gain. A good goal lives in between: real work the agent can *finish*, phrased so the evaluator can *confirm* it — with a turn bound as the backstop for when you get it wrong.
+
 ---
 <br><br>
 
-## 8: Goals in Headless Mode
+## 7: Goals in Headless Mode
 **What we're doing:** Noting that `/goal` composes with Lab 9.  
 **Why:** A goal in `-p` mode runs the whole loop to completion in a single shell command — condition-driven automation with no session open.
 
@@ -2161,7 +2160,7 @@ Ctrl+C stops a non-interactive goal early.
 ---
 <br><br>
 
-## 9: Know the Loop Family
+## 8: Know the Loop Family
 **What we're doing:** Placing `/goal` among its siblings.  
 **Why:** Today you'll meet three ways to keep a session running — pick by what should trigger the next turn.
 
@@ -2175,10 +2174,17 @@ Ctrl+C stops a non-interactive goal early.
 
 Under the hood, `/goal` *is* a session-scoped prompt-based Stop hook — which is why it requires the workspace trust dialog and is unavailable when hooks are disabled.
 
+> **Three caps before you ever leave a loop running unattended.** A turn bound is only one of three hard stops an unbabysat loop needs:
+> 1. **Runaway cap** — `max_turns` / `or stop after N turns` (you used this above). `/goal` gives it almost for free.
+> 2. **Stuck cap** — a *no-progress* detector: halt if `git diff --stat` is unchanged for a few turns (a Stop hook or a small wrapper). Not automatic — you add it.
+> 3. **Wallet cap** — a hard dollar/budget ceiling set once in your provider Console, so a forgotten loop can't bleed into a four-figure bill.
+>
+> And have it **ping you on stop** with the state and the reason. The romantic pitch is "write loops and agents build your company overnight"; the production reality is that most of the engineering is making sure they **halt** — and that they **verify against an external truth** (the build succeeded, tests passed, the health check is green), not the model's own "looks good." A loop with a real check is an engine; a loop without one is just a billing event.
+
 ---
 <br><br>
 
-## 10: Exit
+## 9: Exit
 **Action:** Type `exit` to end the session.
 ```
 exit
