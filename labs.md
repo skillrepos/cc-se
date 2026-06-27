@@ -1389,12 +1389,14 @@ Watch what happens: Claude attempts the edit, and the tool call is **blocked** b
 **What we're doing:** Observing what Claude does with the block message.
 **Why:** Exit code 2 doesn't just stop the tool call — the stderr text is fed back to Claude as feedback. Our message told it to suggest the change to the user instead, so a well-behaved Claude should explain the policy and show you the change it *would* have made.
 
-**Action:** Read Claude's response. Then verify the file is untouched:
-```
-! cat config.json
+**Action:** Read Claude's response. Then verify the file is untouched — in your **original (plain) terminal**, not this Claude session:
+```bash
+cat config.json
 ```
 
 No `connection_timeout` — the file never changed, even in bypass-permissions mode.
+
+> **Why not `! cat config.json` here?** Claude Code auto-responds to in-session bash output, and in bypass mode it may try to *finish* the edit you asked for in step 7 — and since our matcher only guards `Edit|Write`, it could slip the change in via the **Bash** tool, which the hook doesn't block. Verifying from a plain terminal keeps Claude out of the loop so the file provably stays untouched.
 
 > **Spot the loophole:** Our matcher only guards the `Edit|Write` tools. Claude could in principle modify the file through the Bash tool (`sed`, `echo >>`, etc.). Real policies often add a Bash matcher too, or use the `if` field with permission-rule syntax to narrow further. If Claude offers to work around the block, tell it no — and remember this when you design your own hooks.
 
@@ -2030,39 +2032,40 @@ Use `/goal` to set a completion condition and watch Claude keep working turn aft
 ---
 <br><br>
 
-## 1: Start Claude in YOLO Mode
-**What we're doing:** Starting with permissions bypassed.  
-**Why:** `/goal` removes per-*turn* prompts; bypass (or auto) mode removes per-*tool* prompts. Together the loop runs hands-free.
+## 1: Confirm There's a Failing Test (in a plain terminal)
+**What we're doing:** Checking the test state we left after Day 1's user.js work — *before* Claude is in the loop.  
+**Why:** `/goal` needs a verifiable gap between current state and target state — a red test is perfect. We confirm it in a plain shell so nothing fixes it prematurely.
 
-**Action:** In a terminal (not your original one), run:
+**Action:** In your **original terminal** (a normal shell, *not* a Claude session), run:
 ```bash
-claude-yolo
-```
-
----
-<br><br>
-
-## 2: Confirm There's a Failing Test
-**What we're doing:** Checking the test state we left after Day 1's user.js work.  
-**Why:** `/goal` needs a verifiable gap between current state and target state — a red test is perfect.
-
-**Action:** Type:
-```
-! npm test
+npm test
 ```
 
 You should see at least one failure left over from the Lab 4/5 work on `user.js` / `user.test.js`.
 
 ![failing test](./images/ccode328.png?raw=true "failing test")
 
-**If everything passes**, create a gap first:
-```
-Add a test to user.test.js asserting that setName rejects empty strings. Do not change user.js. It's fine if this test fails.
-```
+> **Why a plain terminal and not inside Claude?** Claude Code auto-responds to bash output — and in the bypass mode you start next, the moment it sees a red test it will usually just *fix* it on the spot, erasing the gap before you ever set the goal. Confirm the failure in a plain shell, and let the **`/goal` loop** be the only thing that runs the tests from here on.
+
+**If everything passes**, open `user.test.js` in the editor and add an assertion you know will fail — for example, one expecting `setName('')` to throw (the current `user.js` doesn't enforce non-empty names). Save, then run `npm test` again to confirm it's red.
 
 ---
 <br><br>
 
+## 2: Start Claude in YOLO Mode
+**What we're doing:** Starting with permissions bypassed.  
+**Why:** `/goal` removes per-*turn* prompts; bypass (or auto) mode removes per-*tool* prompts. Together the loop runs hands-free.
+
+**Action:** In a **second** terminal (not the one you just ran `npm test` in), run:
+```bash
+claude-yolo
+```
+> Not in the Codespace? `claude-yolo` won't exist — use `claude --dangerously-skip-permissions` instead.
+
+> **Don't run `npm test` (or `! npm test`) inside this session before you set the goal.** In bypass mode Claude will see the failure and fix it right away, leaving nothing for the loop to do. The very next thing you do here is set the `/goal` (next step).
+
+---
+<br><br>
 ## 3: Set the Goal
 **What we're doing:** Giving Claude a completion condition instead of an instruction.  
 **Why:** A goal states the *end state* and lets Claude figure out the steps. After each turn, a small fast model (Haiku by default) checks the condition against the conversation; "not met" starts another turn automatically.
