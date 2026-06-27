@@ -37,7 +37,7 @@
       }
     }
   },
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && npm install",
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
   "postAttachCommand": "cp extra/.claude.json ~/ && echo alias claude-yolo=\\\"claude --dangerously-skip-permissions\\\" >> ~/.bash_aliases",
   "remoteUser": "node"
 }
