@@ -76,12 +76,11 @@ Required for **Day 3** (Labs 15–21). Cowork mode (Labs 17–21) is only availa
 
 ## Course Repo Setup
 
-Clone the repo and install the root project dependencies (jest, used by `npm test` in Lab 10):
+Clone the repo. The root `package.json` ships with the repo and defines `npm test` (used in Lab 10) as `node user.test.js` — no dependency install is required:
 
 ```bash
 git clone https://github.com/skillrepos/ccode-long.git
 cd ccode-long
-npm install                      # installs jest for npm test (Lab 10)
 ```
 
 ---
@@ -119,7 +118,7 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 - [ ] VS Code with `code` command in PATH
 - [ ] Claude Desktop app (signed in)
 - [ ] Course repo cloned
-- [ ] `npm install` run in repo root (installs jest for Lab 10)
+- [ ] Course repo cloned (ships `package.json` for `npm test` in Lab 10 — no install needed)
 - [ ] `pip install claude-agent-sdk`
 - [ ] Claude Code authenticated (`claude` → `/login`)
 - [ ] *(Windows only)* WSL2 installed and configured
@@ -134,7 +133,7 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 | 6 | 1 | jq (PreToolUse hook script), bash |
 | 7 | 1 | npx (MCP reference server: `@modelcontextprotocol/server-everything`) |
 | 8–9 | 2 | jq (JSON extraction from `claude -p --output-format json`) |
-| 10 | 2 | npm test (jest, installed via root `npm install`) |
+| 10 | 2 | npm test (`node user.test.js`; `package.json` ships with repo, no install) |
 | 11 | 2 | Python 3.10+, `pip install claude-agent-sdk`, VS Code with `code` in PATH |
 | 12 | 2 | GitHub account |
 | 13 | 2 | Claude Code v2.1.72+ for `/loop` and `/schedule`; claude.ai subscription for Routines |
@@ -144,3 +143,4 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 > **Note on Routines (Lab 13):** Cloud Routines run on Anthropic infrastructure and require a claude.ai subscription login with Claude Code on the web. They are currently in research preview and may not be available on all accounts.
 
 > **Note for Windows users:** The hook scripts in Lab 6 are bash scripts. They require WSL2 or Git Bash. Running Claude Code itself inside WSL2 is the simplest path — everything works natively there.
+
