@@ -1,0 +1,11 @@
+# Python dependencies for the Claude Code workshop labs.
+#
+# Codespace users: these are installed automatically into a virtual env when the
+# container is created (see .devcontainer/devcontainer.json) — no action needed.
+#
+# Local / non-Codespace users: install with
+#     python3 -m pip install -r requirements.txt
+# (ideally inside a virtual env — see local-machine-setup.md).
+
+flask>=3.0            # Lab 10 — the to-do API behind the /goal example
+claude-agent-sdk     # Lab 11 — the Claude Agent SDK
