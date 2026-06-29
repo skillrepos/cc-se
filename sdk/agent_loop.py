@@ -4,7 +4,7 @@
 This is the SAME agent loop that powers the Claude Code CLI --
 we are just driving it from Python instead of a terminal.
 
-[Lab 11 - AI-Powered Coding with Claude Code - Rev 6.0 - 06/11/26]
+[Lab 11 - AI-Powered Coding with Claude Code - Rev 6.10 - 06/29/26]
 """
 import asyncio
 import sys
@@ -20,17 +20,14 @@ from claude_agent_sdk import (
 
 async def run_agent(prompt: str) -> None:
     """Send one prompt through the agent loop and print what happens."""
-    raise SystemExit("agent_loop.py: merge the completed code from extra/agent_loop.txt first")
-    # TODO 1: Build ClaudeAgentOptions that pre-approves the read-only tools
-    #         Read, Glob, and Grep, and caps the loop at 5 turns (max_turns).
-    options = ClaudeAgentOptions()
-
-    # TODO 2: Iterate the messages from query(prompt=prompt, options=options).
-    #         For each AssistantMessage, print the text of its TextBlocks.
-    #         When the ResultMessage arrives, print num_turns, duration_ms,
-    #         and result.
-    async for message in query(prompt=prompt, options=options):
-        pass
+    # ------------------------------------------------------------------
+    # SKELETON BODY -- replace everything between these dashed lines by
+    # merging from extra/agent_loop.txt (see the lab's diff-merge step),
+    # then SAVE this file. Two pieces turn this script into an agent:
+    #   1. the OPTIONS -- which tools are pre-approved, plus a turn cap
+    #   2. the LOOP    -- read each message that query() streams back
+    # ------------------------------------------------------------------
+    raise SystemExit("agent_loop.py is still the skeleton -- merge the right side of the diff over this body, SAVE, then run again.")
 
 
 if __name__ == "__main__":
