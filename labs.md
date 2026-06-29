@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.0 - 06/27/26
+## Revision 7.2 - 06/29/26
 
 <br><br>
 
@@ -2025,29 +2025,36 @@ Then verify with `cat pipeline.txt`. The `acceptEdits` mode auto-approves file w
 
 # Lab 10: /goal: Condition-Driven Loops
 ## Lab Purpose
-Use `/goal` to set a completion condition and watch Claude keep working turn after turn — without you prompting each step — until an independent evaluator confirms the condition is met. Estimated time: 10-12 minutes.
+Use `/goal` to set a *completion condition* — an end state — and hand Claude the loop: it works without you prompting each step, and an **independent evaluator** decides when the condition is met and stops. This is *condition-driven* autonomy ("keep going until this is true") — the counterpart to the *time-driven* recurrence of `/loop` in Lab 13 ("run again every interval"). You'll point it at a buggy to-do API and watch it work through several fixes until the test suite passes. Estimated time: 10-12 minutes.
 
 **NOTE: `/goal` requires Claude Code v2.1.139 or later (`claude --version` to check).**
 
 ---
 <br><br>
 
-## 1: Confirm There's a Failing Test (in a plain terminal)
-**What we're doing:** Checking the test state we left after Day 1's user.js work — *before* Claude is in the loop.  
-**Why:** `/goal` needs a verifiable gap between current state and target state — a red test is perfect. We confirm it in a plain shell so nothing fixes it prematurely.
+## 1: Confirm the Failing Tests (in a plain terminal)
+**What we're doing:** Looking at the gap between what the `app/` API does now and what it *should* do — *before* Claude is in the loop.  
+**Why:** `/goal` needs a verifiable gap between current state and target state. The small to-do API in `app/` (a Flask app over `app.py`, `auth.py`, `datastore.py`) returns **500** errors where it should return **400** for bad input and **404** for a missing item. The behavior tests in `app/test_app.py` assert the *correct* contract, so several of them fail today.
 
 **Action:** In your **original terminal** (a normal shell, *not* a Claude session), run:
 ```bash
-npm test
+python3 app/test_app.py
 ```
 
-You should see at least one failure left over from the Lab 4/5 work on `user.js` / `user.test.js`.
+You should see **`10 passed, 4 failed`** — the four failures are the missing-input and missing-item cases that currently blow up as 500s instead of returning 400 / 404.
 
-![failing test](./images/cc-se40.png?raw=true "failing test")
+```
+  FAIL: POST missing name -> 400 (not 500)
+  FAIL: POST empty name -> 400 (not 500)
+  FAIL: PATCH missing item -> 404 (not 500)
+  FAIL: DELETE missing item -> 404 (not 500)
+```
 
-> **Why a plain terminal and not inside Claude?** Claude Code auto-responds to bash output — and in the bypass mode you start next, the moment it sees a red test it will usually just *fix* it on the spot, erasing the gap before you ever set the goal. Confirm the failure in a plain shell, and let the **`/goal` loop** be the only thing that runs the tests from here on.
+![failing test](./images/ccode328.png?raw=true "failing test")
 
-**If everything passes**, open `user.test.js` in the editor and add an assertion you know will fail — for example, one expecting `setName('')` to throw (the current `user.js` doesn't enforce non-empty names). Save, then run `npm test` again to confirm it's red.
+> **`ModuleNotFoundError: flask`?** The dependencies aren't installed in this environment yet — run `python3 -m pip install -r requirements.txt` (or activate the project venv) and try again. See the setup notes for details.
+
+> **Why a plain terminal and not inside Claude?** Claude Code auto-responds to bash output — and in the bypass mode you start next, the moment it sees red tests it will usually just *start fixing* on the spot, eating into the loop before you set the goal. Confirm the failures in a plain shell, and let the **`/goal` loop** be the only thing that runs the tests from here on.
 
 ---
 <br><br>
@@ -2056,13 +2063,13 @@ You should see at least one failure left over from the Lab 4/5 work on `user.js`
 **What we're doing:** Starting with permissions bypassed.  
 **Why:** `/goal` removes per-*turn* prompts; bypass (or auto) mode removes per-*tool* prompts. Together the loop runs hands-free.
 
-**Action:** In a **second** terminal (not the one you just ran `npm test` in), run:
+**Action:** In a **second** terminal (not the one you just ran the tests in), run:
 ```bash
 claude-yolo
 ```
 > Not in the Codespace? `claude-yolo` won't exist — use `claude --dangerously-skip-permissions` instead.
 
-> **Don't run `npm test` (or `! npm test`) inside this session before you set the goal.** In bypass mode Claude will see the failure and fix it right away, leaving nothing for the loop to do. The very next thing you do here is set the `/goal` (next step).
+> **Don't run the tests (or `! python3 app/test_app.py`) inside this session before you set the goal.** In bypass mode Claude will see the failures and start fixing right away, pre-empting the loop. The very next thing you do here is set the `/goal` (next step).
 
 ---
 <br><br>
@@ -2073,16 +2080,14 @@ claude-yolo
 
 **Action:** Type:
 ```
-/goal all tests in this project pass (npm test exits 0) without editing package.json or any test file, or stop after 10 turns
+/goal python3 app/test_app.py exits 0 — fix the code in app/ so every behavior test passes: return 400 for invalid input (missing or empty name) and 404 for actions on a missing item, never 500. Do not edit app/test_app.py, or stop after 15 turns
 ```
 
-Note the three parts of a good condition: a measurable end state, a stated check, and constraints (including a turn bound so it can't run forever).
+Note the three parts of a good condition: a measurable end state (`exits 0`), a stated check (the test the agent runs), and constraints (the off-limits test file plus a turn bound so it can't run forever).
 
-![loop spec](./images/cc-se41.png?raw=true "loop spec")
+> **Why "Do not edit app/test_app.py"?** A measurable condition can still be *gamed*. `python3 app/test_app.py exits 0` is satisfied just as well by fixing the API as by gutting the test that checks it. Naming the test file off-limits forces the agent to close the *real* gap — the 400/404 handling in `app/` — instead of redefining success. Anticipating the cheap way out is part of writing a good goal.
 
-> **Why "without editing package.json or any test file"?** A measurable condition can still be *gamed*. "npm test exits 0" is satisfied just as well by fixing the code as by quietly changing what `npm test` runs (editing the `test` script) or weakening the test. Naming the off-limits files forces the agent to close the *real* gap — the bug in `user.js` — instead of redefining success. Anticipating the cheap way out is part of writing a good goal.
-
-> **The condition must be provable in the agent's own output.** The evaluator (the Haiku judge) reads only the **transcript** — it does *not* run your tests or open your repo. So the condition has to be something the agent's output can settle. `all tests pass (npm test exits 0)` works because the agent runs the tests and the result lands in the conversation for the judge to read. `the auth is solid` does **not** work — nothing in the transcript proves it. You're not asking the judge to verify your code; you're asking it to read the receipts the agent already produced. The real verification is still the agent running a real command.
+> **The condition must be provable in the agent's own output.** The evaluator (the Haiku judge) reads only the **transcript** — it does *not* run your tests or open your repo. So the condition has to be something the agent's output can settle. `python3 app/test_app.py exits 0` works because the agent runs the test and the `14 passed, 0 failed` result lands in the conversation for the judge to read. `the API is solid` does **not** work — nothing in the transcript proves it. You're not asking the judge to verify your code; you're asking it to read the receipts the agent already produced. The real verification is still the agent running a real command.
 
 ---
 <br><br>
@@ -2091,14 +2096,14 @@ Note the three parts of a good condition: a measurable end state, a stated check
 **What we're doing:** Observing Claude iterate without further prompting.  
 **Why:** This is the loop made visible — fix, test, evaluate, repeat.
 
-**Action:** Hit `Enter` to start the loop processing. Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
+**Action:** Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
 - the `◎ /goal active` indicator showing how long the goal has been running
-- Claude running tests, reading failures, editing, and re-running on its own
-- (press *ctrl+o* to watch the thinking between turns)
+- Claude running the tests, reading the tracebacks, editing the route handlers, and re-running on its own
+- (press *ctrl+o* to watch the thinking)
 
-![goal active](./images/cc-se42.png?raw=true "goal active")
+![goal active](./images/ccode329.png?raw=true "goal active")
 
-> **Expect this one to finish fast — usually a single turn.** A one-line bug is a tiny gap, so Claude closes it in one turn and the evaluator confirms immediately. That's success, *not* a missed loop — and you can't force a small, safe task to take more turns (Claude just batch-fixes everything in the one turn it gets). Even so, the loop's machinery is visible: the `npm test → read → edit → npm test` sequence of tool calls, and the `(… · N turns · … tokens)` receipt the loop prints when it stops. You'll watch the loop actually *repeat*, turn after turn, on the open-ended goal in **Step 7**.
+> **Expect real work here — a few minutes and several fixes.** This isn't a one-line bug: there are four failures across three routes (create-validation → 400, update → 404, delete → 404), so you'll watch a genuine run of `test → read traceback → edit → test` cycles before the suite goes green. Whether Claude grinds through it all in one long turn or takes a few, it stops when `app/test_app.py` exits 0. (`/goal` still stops the instant the condition is met — for a loop you *watch tick* on a clock, that's `/loop` in Lab 13.)
 
 ---
 <br><br>
@@ -2112,7 +2117,7 @@ Note the three parts of a good condition: a measurable end state, a stated check
 /goal
 ```
 
-With no argument, `/goal` reports the condition, elapsed time, turns evaluated, and token spend. For the test goal you just set, it most likely already shows **achieved** — a one-line fix is usually done before you finish reading this step. (On a goal that's *still* running, the same command shows the evaluator's most recent "not met yet" reason instead — you'll see that live on the open-ended goal in Step 6.)
+With no argument, `/goal` reports the condition, elapsed time, turns evaluated, and token spend. Because this goal takes a few minutes, you've actually got time to check on it: if Claude is still working you'll see it **active** (and, if the evaluator has bounced a turn, its latest "not met yet" reason); once the suite passes it flips to **achieved**. (Note: while Claude is mid-turn, your typed `/goal` queues until that turn finishes — the status updates land between turns, not during one.)
 
 ![goal status](./images/ccode330.png?raw=true "goal status")
 
@@ -2123,25 +2128,21 @@ Notice *who* ended the loop: the worker model said "I'm done," but it was a **se
 ---
 <br><br>
 
-## 6: Watch a Goal Loop — Then Clear It
-**What we're doing:** Setting a deliberately open-ended goal so the turn-by-turn loop is finally visible, then practicing the off switch.  
-**Why:** The Step-3 goal was *provable* (`npm test exits 0`), so it cleared the instant it was true — one turn. An open-ended goal is never provably "done," so the loop keeps taking turns until the **turn cap** stops it — and *that* is when you get to watch it iterate. (It's also why a turn bound is non-negotiable.)
+## 6: Clear a Goal Manually
+**What we're doing:** Practicing the off switch — and getting clear on when a loop actually iterates.  
+**Why:** A `/goal` clears itself the instant the evaluator confirms the condition — sometimes after one turn, sometimes after several minutes of work like the API fix you just watched. But you'll also want to abandon goals that turn out wrong or too expensive, so learn the manual stop.
 
-**Action:** Type:
+**Action:** Set a goal, then cancel it:
 ```
-/goal the comments in hello.js are as clear and thorough as they can possibly be, or stop after 4 turns
+/goal add a one-line summary comment to the top of hello.js, or stop after 3 turns
 ```
-
-"As clear as they can possibly be" can't be confirmed from the transcript — remember the Step-3 note: the evaluator only reads receipts, and nothing settles "as good as possible." So it returns **not met yet** every turn and the loop runs again: edit `hello.js`, evaluate, edit, evaluate. **While it's active, type `/goal` (no argument) between turns** and watch the live status move — turns climbing toward 4, tokens rising, the latest "not met yet" reason. *This* repeating *turn → evaluate → turn* cycle is the loop you couldn't catch on the fast test goal.
-
-Don't wait for the cap — cancel it once you've watched a couple of turns:
 ```
 /goal clear
 ```
 
 (`stop`, `off`, `cancel`, `reset`, and `none` all work as aliases. `/clear` also removes any active goal.)
 
-> **You just saw both ways a condition can behave.** Step 3's goal was measurable and finished in one turn; this one is unprovable and would burn all 4 turns for little gain. A good goal lives in between: real work the agent can *finish*, phrased so the evaluator can *confirm* it — with a turn bound as the backstop for when you get it wrong.
+> **`/goal` stops when the condition is met — "watching a loop tick" is Lab 13's job.** `/goal` is *condition-driven*: it runs the model, checks the condition, and stops the moment it's true — whether that takes one turn or several minutes of fixing like the API goal. It is *not* a thing you run to watch iterate on a clock; it ends as soon as the end state is reached. The loop you *watch tick* round after round is `/loop` (Lab 13), which fires on a time interval by design. Two different tools: `/goal` for "reach this state," `/loop` for "keep doing this on a schedule."
 
 ---
 <br><br>
@@ -2172,6 +2173,8 @@ Ctrl+C stops a non-interactive goal early.
 | `/loop` (Lab 13) | A time interval elapses | You stop it, or Claude decides the work is done |
 | Stop hook (Lab 6) | The previous turn finishes | Your own script or prompt decides |
 
+The headline split: **`/goal` is condition-driven** — it asks *"is this end state true yet?"* and stops the moment it is (often after a single turn). **`/loop` (Lab 13) is time-driven** — it asks *"has the interval elapsed?"* and fires again until you stop it. `/goal` sets a **finish line**; `/loop` sets a **clock**. Use `/goal` to reach a state and have an independent judge confirm it; use `/loop` to keep doing something on a schedule.
+
 Under the hood, `/goal` *is* a session-scoped prompt-based Stop hook — which is why it requires the workspace trust dialog and is unavailable when hooks are disabled.
 
 > **Three caps before you ever leave a loop running unattended.** A turn bound is only one of three hard stops an unbabysat loop needs:
@@ -2193,7 +2196,7 @@ exit
 ## Lab Summary
 ✅ You've successfully:
 - Set a `/goal` with a measurable condition, check, and turn bound
-- Watched Claude iterate to green tests with zero prompting
+- Watched Claude fix the to-do API to a green test suite with zero prompting
 - Inspected progress with bare `/goal` status
 - Cleared a goal early with `/goal clear`
 - Seen `/goal` run headlessly via `claude -p`
@@ -2209,7 +2212,13 @@ exit
 ## Lab Purpose
 Drive the same agent loop as the CLI from your own Python program — first a read-only explorer, then an *unattended* agent that can act safely with nobody watching (pre-approved tools, an auto-accept mode, a gatekeeper callback, and a hard turn cap). Estimated time: 10-12 minutes.
 
+> **In plain English:** the Agent SDK is the *same Claude loop you've been running in the terminal*, just callable from your own code. Claude Code is the finished app; the SDK is the same engine exposed as a library so you can build Claude into a script, app, or service — and set its permissions in code so it runs safely with no one watching. `query()` here ≈ `claude -p` from Lab 9.
+
 > **⚠️ Diff-merge lab:** You'll start from skeleton files in `sdk/` and merge in the completed code from `extra/`. **Each skeleton is valid Python but will refuse to run until you merge.** For each part: view skeleton → diff/merge → run.
+>
+> **First, confirm the files are here** (they ship with the course repo): `ls sdk/ extra/` — you should see `agent_loop.py`/`auto_agent.py` and the matching `.txt` files. A **skeleton** is a starter file with the key lines left blank (marked `TODO`).
+>
+> **How diff-merge works in VS Code:** the command `code -d A B` opens the two files **side by side** with differences highlighted. Click the arrow (**→ / ←**) in the center gutter to copy a block from one side to the other. Your goal: make the **left** file (the skeleton) match the **right** (the answer) so no differences remain — then **save the left file** (Cmd/Ctrl+S).
 
 ---
 <br><br>
@@ -2220,8 +2229,10 @@ Drive the same agent loop as the CLI from your own Python program — first a re
 
 **Action:** In a terminal, run:
 ```bash
-pip install claude-agent-sdk
+python3 -m pip install claude-agent-sdk
 ```
+
+> **`pip: command not found`?** Use the `python3 -m pip …` form above rather than a bare `pip` — a Codespace built before Python was added to the devcontainer won't have `pip` on the PATH. If `python3 -m pip` itself errors, bootstrap it once with `python3 -m ensurepip --upgrade` and re-run; or **Rebuild Container** to pick up the Python devcontainer feature, which installs `python3` and `pip` for you.
 
 ---
 <br><br>
