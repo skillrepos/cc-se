@@ -2213,15 +2213,16 @@ exit
 
 # Lab 11: Agent SDK: Programmatic and Unattended Loops
 ## Lab Purpose
-Drive the same agent loop as the CLI from your own Python program — first a read-only explorer, then an *unattended* agent that can act safely with nobody watching (pre-approved tools, an auto-accept mode, a gatekeeper callback, and a hard turn cap). Estimated time: 10-12 minutes.
+So far you've run Claude from the terminal. Now you'll run the **same Claude agent from a small Python program** — first as a read-only explorer, then as an *unattended* agent that does real work safely with nobody watching. Estimated time: 10-12 minutes.
 
-> **In plain English:** the Agent SDK is the *same Claude loop you've been running in the terminal*, just callable from your own code. Claude Code is the finished app; the SDK is the same engine exposed as a library so you can build Claude into a script, app, or service — and set its permissions in code so it runs safely with no one watching. `query()` here ≈ `claude -p` from Lab 9.
+> **New to this? Here's the whole idea.** The `claude` command you've been using is a finished app. The **Agent SDK** is that same engine offered as a Python library, so you can drop Claude into your own script or service. Calling `query()` in Python does what `claude -p "..."` did in Lab 9 — and because you're now in code, you set Claude's permissions *in code*, which is what lets it run safely when no human is there to click "approve."
 
-> **⚠️ Diff-merge lab:** You'll start from skeleton files in `sdk/` and merge in the completed code from `extra/`. **Each skeleton is valid Python but will refuse to run until you merge.** For each part: view skeleton → diff/merge → run.
+> **How the merge steps work (no prior experience needed).** A few steps use a **diff-merge**. You open a *skeleton* — a working file with its key lines replaced by a placeholder — next to the *finished* version, and copy the finished lines in:
+> - Run `code -d LEFT RIGHT` to open the two files **side by side**, differences highlighted.
+> - Copy the **right** side (finished) onto the **left** side (skeleton): click the **→** arrow in the center gutter to move a highlighted block across, or select the right side, copy, and paste over the left.
+> - When **nothing is highlighted**, the files match. **Save the left file** (Cmd/Ctrl+S).
 >
-> **First, confirm the files are here** (they ship with the course repo): `ls sdk/ extra/` — you should see `agent_loop.py`/`auto_agent.py` and the matching `.txt` files. A **skeleton** is a starter file with the key lines left blank (marked `TODO`).
->
-> **How diff-merge works in VS Code:** the command `code -d A B` opens the two files **side by side** with differences highlighted. Click the arrow (**→ / ←**) in the center gutter to copy a block from one side to the other. Your goal: make the **left** file (the skeleton) match the **right** (the answer) so no differences remain — then **save the left file** (Cmd/Ctrl+S).
+> Each skeleton prints a *"still the skeleton"* message and stops if you run it before merging — that's the file telling you the merge or the save didn't fully land. Re-open the diff, make sure no highlight remains, and save.
 
 ---
 <br><br>
@@ -2242,9 +2243,9 @@ python3 -m pip install claude-agent-sdk
 
 ## 2: View the Skeleton and Map It to the CLI
 **What we're doing:** Reading `sdk/agent_loop.py` and connecting it to commands you already know.  
-**Why:** Nothing here is new — it's yesterday's CLI with Python names. The two TODOs mark the only pieces that make it an *agent*: the options and the message loop.
+**Why:** Nothing here is new — it's the CLI you used yesterday, with Python names. The placeholder body of `run_agent()` marks the only pieces that make it an *agent*: the **options** (which tools are pre-approved, plus a turn cap) and the **message loop** (reading what `query()` streams back).
 
-**Action:** Open the skeleton and read the two TODO blocks:
+**Action:** Open the skeleton and read the placeholder body of `run_agent()`:
 ```bash
 code sdk/agent_loop.py
 ```
@@ -2264,15 +2265,17 @@ code sdk/agent_loop.py
 <br><br>
 
 ## 3: Diff and Merge
-**What we're doing:** Comparing the skeleton against the completed version and merging.  
-**Why:** Seeing only the *differences* highlights exactly what turns a script into an agent program.
+**What we're doing:** Comparing the skeleton against the completed version and merging it in.  
+**Why:** Seeing only the *difference* highlights exactly what turns a plain script into an agent program.
 
 **Action:** Run:
 ```bash
 code -d sdk/agent_loop.py extra/agent_loop.txt
 ```
 
-For each highlighted block, merge the completed code (right) into `sdk/agent_loop.py` (left) using the gutter arrows or copy/paste. When the differences are gone, **save the left file** and close the diff tab.
+You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
+
+> **If the next step still says "still the skeleton":** a line didn't merge or the file wasn't saved. Re-open the diff, confirm **no** highlight remains, then save again.
 
 ![diff merge](./images/ccode333.png?raw=true "diff merge")
 
@@ -2333,9 +2336,9 @@ The skeleton already provides a `keep_alive` PreToolUse hook and a `prompt_strea
 
 ## 7: Diff and Merge the Unattended Agent
 **What we're doing:** Merging the completed implementation.  
-**Why:** The diff shows exactly the three decisions you're adding: the gatekeeper logic, the options, and the result handling.
+**Why:** The diff shows exactly what you're adding: the gatekeeper logic and the options/result handling.
 
-**Action:** Run, merge each block from the right into the left, save, and close:
+**Action:** Run the diff below. This time there are **two highlighted regions** — the `gatekeeper()` body and the `main()` body. Merge **both** from the right into the left, save, and close:
 ```bash
 code -d sdk/auto_agent.py extra/auto_agent.txt
 ```
