@@ -9,12 +9,17 @@ client, so no server needs to be running. The asserted behavior is the
 400 (bad input) and 404 (missing item), so several tests fail until the
 app code is fixed.
 """
-import sys, os
+import sys, os, logging
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from app import app
 
 app.config["TESTING"] = True
 app.config["PROPAGATE_EXCEPTIONS"] = False   # unhandled errors -> 500 response, not a crash
+
+# The buggy routes raise on purpose; Flask logs each stack trace before the test
+# client turns it into a 500. Silence that so the only output is the PASS/FAIL lines.
+app.logger.setLevel(logging.CRITICAL)
+logging.getLogger("werkzeug").setLevel(logging.CRITICAL)
 client = app.test_client()
 AUTH = {"Authorization": "Bearer secret-token"}
 
@@ -64,3 +69,4 @@ check("DELETE missing item -> 404 (not 500)", r.status_code == 404)
 
 print(f"\n{passed} passed, {failed} failed")
 sys.exit(1 if failed else 0)
+
