@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lab 12: Unattended agent runs that never hang.
+"""Lab 11 (Part 2): Unattended agent runs that never hang.
 
 Three layers keep an unattended run both safe and unblocked:
   1. allowed_tools   -- pre-approve the tools we expect Claude to use
@@ -7,7 +7,7 @@ Three layers keep an unattended run both safe and unblocked:
   3. can_use_tool    -- a programmatic gatekeeper that decides everything
                         else, so no human prompt can ever hang the run
 
-[Lab 12 - AI-Powered Coding with Claude Code - Rev 6.0 - 06/11/26]
+[Lab 11 - AI-Powered Coding with Claude Code - Rev 6.10 - 06/29/26]
 """
 import asyncio
 
