@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lab 12: Unattended agent runs that never hang.
+"""Lab 11 (Part 2): Unattended agent runs that never hang.
 
 Three layers keep an unattended run both safe and unblocked:
   1. allowed_tools   -- pre-approve the tools we expect Claude to use
@@ -7,7 +7,7 @@ Three layers keep an unattended run both safe and unblocked:
   3. can_use_tool    -- a programmatic gatekeeper that decides everything
                         else, so no human prompt can ever hang the run
 
-[Lab 12 - AI-Powered Coding with Claude Code - Rev 6.0 - 06/11/26]
+[Lab 11 - AI-Powered Coding with Claude Code - Rev 6.10 - 06/29/26]
 """
 import asyncio
 
@@ -28,11 +28,10 @@ async def gatekeeper(
     tool_name: str, input_data: dict, context: ToolPermissionContext
 ):
     """Decide any tool call not already pre-approved. Never asks a human."""
-    # TODO 1: If tool_name is "Bash" and the command contains "rm " or "sudo",
-    #         return PermissionResultDeny with a short message. Otherwise
-    #         print a "[gatekeeper] auto-approving: <tool_name>" note and
-    #         return PermissionResultAllow(updated_input=input_data).
-    return PermissionResultDeny(message="gatekeeper not implemented yet")
+    # GATEKEEPER (TODO 1) -- merge this body from extra/auto_agent.txt:
+    #   block Bash commands containing "rm " or "sudo" (return a Deny);
+    #   otherwise log an "auto-approving" note and return an Allow.
+    raise NotImplementedError("gatekeeper: merge extra/auto_agent.txt, then save")
 
 
 # Required workaround: a PreToolUse hook keeps the stream open for can_use_tool
@@ -45,18 +44,12 @@ async def prompt_stream():
 
 
 async def main() -> None:
-    raise SystemExit("auto_agent.py: merge the completed code from extra/auto_agent.txt first")
-    # TODO 2: Build ClaudeAgentOptions with the three safety layers plus a
-    #         hard stop: allowed_tools=["Read", "Glob", "Grep", "Write"],
-    #         permission_mode="acceptEdits", max_turns=10,
-    #         can_use_tool=gatekeeper, and
-    #         hooks={"PreToolUse": [HookMatcher(matcher=None, hooks=[keep_alive])]}
-    options = ClaudeAgentOptions()
-
-    # TODO 3: Iterate query(prompt=prompt_stream(), options=options) and when
-    #         the ResultMessage arrives print num_turns and result.
-    async for message in query(prompt=prompt_stream(), options=options):
-        pass
+    # ------------------------------------------------------------------
+    # SKELETON BODY (TODO 2 + 3) -- merge this whole body from
+    # extra/auto_agent.txt, then SAVE. It builds ClaudeAgentOptions with
+    # the three safety layers plus max_turns, then reads the result.
+    # ------------------------------------------------------------------
+    raise SystemExit("auto_agent.py is still the skeleton -- merge BOTH highlighted regions over the left, SAVE, then run again.")
 
 
 asyncio.run(main())
