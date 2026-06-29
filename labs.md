@@ -2050,7 +2050,7 @@ You should see **`10 passed, 4 failed`** — the four failures are the missing-i
   FAIL: DELETE missing item -> 404 (not 500)
 ```
 
-![failing test](./images/ccode328.png?raw=true "failing test")
+![failing test](./images/cc-se44.png?raw=true "failing test")
 
 > **`ModuleNotFoundError: flask`?** The dependencies aren't installed in this environment yet — run `python3 -m pip install -r requirements.txt` (or activate the project venv) and try again. See the setup notes for details.
 
@@ -2085,6 +2085,8 @@ claude-yolo
 
 Note the three parts of a good condition: a measurable end state (`exits 0`), a stated check (the test the agent runs), and constraints (the off-limits test file plus a turn bound so it can't run forever).
 
+![goal](./images/cc-se47.png?raw=true "goal")
+
 > **Why "Do not edit app/test_app.py"?** A measurable condition can still be *gamed*. `python3 app/test_app.py exits 0` is satisfied just as well by fixing the API as by gutting the test that checks it. Naming the test file off-limits forces the agent to close the *real* gap — the 400/404 handling in `app/` — instead of redefining success. Anticipating the cheap way out is part of writing a good goal.
 
 > **The condition must be provable in the agent's own output.** The evaluator (the Haiku judge) reads only the **transcript** — it does *not* run your tests or open your repo. So the condition has to be something the agent's output can settle. `python3 app/test_app.py exits 0` works because the agent runs the test and the `14 passed, 0 failed` result lands in the conversation for the judge to read. `the API is solid` does **not** work — nothing in the transcript proves it. You're not asking the judge to verify your code; you're asking it to read the receipts the agent already produced. The real verification is still the agent running a real command.
@@ -2093,56 +2095,62 @@ Note the three parts of a good condition: a measurable end state (`exits 0`), a 
 <br><br>
 
 ## 4: Watch the Loop Run
-**What we're doing:** Observing Claude iterate without further prompting.  
-**Why:** This is the loop made visible — fix, test, evaluate, repeat.
+**What we're doing:** Observing Claude work the goal without further prompting.  
+**Why:** This is the loop made visible — fix, test, evaluate.
 
-**Action:** Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
-- the `◎ /goal active` indicator showing how long the goal has been running
+**Action:** Hit `Enter`. Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
+- the `◎ /goal active` indicator
 - Claude running the tests, reading the tracebacks, editing the route handlers, and re-running on its own
 - (press *ctrl+o* to watch the thinking)
 
-![goal active](./images/ccode329.png?raw=true "goal active")
+Claude works through the four failures in a single turn and stops when `app/test_app.py` exits 0.
 
-> **Expect real work here — a few minutes and several fixes.** This isn't a one-line bug: there are four failures across three routes (create-validation → 400, update → 404, delete → 404), so you'll watch a genuine run of `test → read traceback → edit → test` cycles before the suite goes green. Whether Claude grinds through it all in one long turn or takes a few, it stops when `app/test_app.py` exits 0. (`/goal` still stops the instant the condition is met — for a loop you *watch tick* on a clock, that's `/loop` in Lab 13.)
+![goal active](./images/cc-se48.png?raw=true "goal active")
 
 ---
 <br><br>
 
-## 5: Check Goal Status — and See Who Cleared It
-**What we're doing:** Querying the goal with the bare `/goal` command, and noting what ended the loop.  
-**Why:** Unattended doesn't mean unobservable — and completion is decided by a *separate* evaluator model, not the model doing the work.
+## 5: Check Goal Status
+**What we're doing:** Querying the goal with the bare `/goal` command.  
+**Why:** Even an unattended loop leaves a record you can inspect.
 
-**Action:** Type:
+**Action:** After the goal finishes, type:
 ```
 /goal
 ```
 
-With no argument, `/goal` reports the condition, elapsed time, turns evaluated, and token spend. Because this goal takes a few minutes, you've actually got time to check on it: if Claude is still working you'll see it **active** (and, if the evaluator has bounced a turn, its latest "not met yet" reason); once the suite passes it flips to **achieved**. (Note: while Claude is mid-turn, your typed `/goal` queues until that turn finishes — the status updates land between turns, not during one.)
+It shows the **achieved** record — the condition, elapsed time, turns, and token spend (e.g. `✓ Goal achieved · 18s · 1 turn · 1.1k tokens`). Note: you type this *after* it's done. Anything you enter while Claude is mid-turn queues until the turn ends, and the goal clears in that single turn, so `/goal` won't report an in-progress run.
 
-![goal status](./images/ccode330.png?raw=true "goal status")
+![goal status](./images/cc-se49.png?raw=true "goal status")
 
-Notice *who* ended the loop: the worker model said "I'm done," but it was a **separate evaluator** (Haiku, reading the transcript) that confirmed the condition and cleared the goal — the doer doesn't get to grade its own work. That `achieved` entry is recorded right in the conversation, with its duration, turn count, and token spend.
-
-![goal achieved](./images/ccode331.png?raw=true "goal achieved")
+> **How completion was decided (this part isn't in the output):** the goal wasn't cleared by the model doing the work — after each turn a *separate*, small/fast model (Haiku) reads the transcript and judges whether the condition is met. The status line only shows the result; the principle to remember is that the doer doesn't grade its own work (the same point as the "Writing a Good /goal Condition" slide).
 
 ---
 <br><br>
 
-## 6: Clear a Goal Manually
-**What we're doing:** Practicing the off switch — and getting clear on when a loop actually iterates.  
-**Why:** A `/goal` clears itself the instant the evaluator confirms the condition — sometimes after one turn, sometimes after several minutes of work like the API fix you just watched. But you'll also want to abandon goals that turn out wrong or too expensive, so learn the manual stop.
+## 6: Interrupt, Resume, or Cancel a Goal
+**What we're doing:** Stopping a running goal — and seeing the difference between *pausing* it and *cancelling* it.  
+**Why:** You'll want to interrupt a goal that's running too long or heading the wrong way, then decide whether to pick it back up or abandon it.
 
-**Action:** Set a goal, then cancel it:
+**Action:** Set a goal that deliberately waits, so you have an unhurried window to react. A bare `sleep` is blocked in this environment, so the goal waits with a poll-until-a-file-exists loop — and since that file never appears, it holds open:
 ```
-/goal add a one-line summary comment to the top of hello.js, or stop after 3 turns
+/goal create done.txt — but first hold until /tmp/go exists by running: until [ -f /tmp/go ]; do sleep 2; done — or stop after 2 turns
 ```
-```
-/goal clear
-```
+Now walk through interrupting it, resuming it, and finally cancelling it:
 
-(`stop`, `off`, `cancel`, `reset`, and `none` all work as aliases. `/clear` also removes any active goal.)
+1. Claude starts the wait loop and sits there. Press **Esc** — the loop stops and you get the prompt back.
+2. Type `resume`. Claude picks the goal back up and starts waiting again — proof that Esc only *paused* it; the goal was still set.
+3. Press **Esc** again to stop it.
+4. Type `/goal clear`. You'll see `Goal cleared: …` — the goal is removed.
+5. Type `resume` one more time. **The goal will not be resumed** — there's no goal left to resume. That's the difference made visible: `clear` actually cancelled it.
 
-> **`/goal` stops when the condition is met — "watching a loop tick" is Lab 13's job.** `/goal` is *condition-driven*: it runs the model, checks the condition, and stops the moment it's true — whether that takes one turn or several minutes of fixing like the API goal. It is *not* a thing you run to watch iterate on a clock; it ends as soon as the end state is reached. The loop you *watch tick* round after round is `/loop` (Lab 13), which fires on a time interval by design. Two different tools: `/goal` for "reach this state," `/loop` for "keep doing this on a schedule."
+(`stop`, `off`, `cancel`, `reset`, and `none` are aliases for `clear`; `/clear` also removes any active goal.)
+
+![goal clear](./images/cc-se50.png?raw=true "goal clear")
+
+> **Esc pauses; `/goal clear` cancels.** **Esc** interrupts the current turn (the tool call Claude is running) but leaves the goal *set* — which is exactly why `resume` can continue it. **`/goal clear`** removes the goal's stop hook entirely, so the loop is gone for good and there's nothing left to resume. The reliable off-switch is the pair: **Esc** to stop what's running, then **`/goal clear`** so it can't come back. (Tip: you can also *let* this goal finish — create the flag from another terminal with `touch /tmp/go`, the loop exits, and `done.txt` gets created.)
+
+> `/goal` is condition-driven: it stops as soon as the end state is reached, not on a clock. The time-driven loop you run on a schedule is `/loop` (Lab 13).
 
 ---
 <br><br>
