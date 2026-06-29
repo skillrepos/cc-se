@@ -76,20 +76,17 @@ Required for **Day 3** (Labs 15–21). Cowork mode (Labs 17–21) is only availa
 
 ## Course Repo Setup
 
-Clone the repo. The root `package.json` ships with the repo and defines `npm test` (used in Lab 10) as `node user.test.js` — no dependency install is required:
+Clone the repo and install the Python dependencies into a virtual environment. (Codespace users get this automatically; this is only for local machines.) The full step-by-step — including Node.js and Claude Code — is in **[local-machine-setup.md](local-machine-setup.md)**.
 
 ```bash
-git clone https://github.com/skillrepos/ccode-long.git
-cd ccode-long
+git clone https://github.com/skillrepos/cc-se.git
+cd cc-se
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt   # flask (Lab 10) + claude-agent-sdk (Lab 11)
 ```
 
----
-
-## Python Agent SDK (Lab 11)
-
-```bash
-pip install claude-agent-sdk
-```
+The root `package.json` (used by the Lab 1–5 / Lab 14 `npm test` demo) ships with the repo and needs no install. Re-run `source .venv/bin/activate` in each new terminal you use for the Python labs (10 and 11).
 
 ---
 
@@ -118,8 +115,7 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 - [ ] VS Code with `code` command in PATH
 - [ ] Claude Desktop app (signed in)
 - [ ] Course repo cloned
-- [ ] Course repo cloned (ships `package.json` for `npm test` in Lab 10 — no install needed)
-- [ ] `pip install claude-agent-sdk`
+- [ ] Python virtual env created + `python3 -m pip install -r requirements.txt` (flask + claude-agent-sdk)
 - [ ] Claude Code authenticated (`claude` → `/login`)
 - [ ] *(Windows only)* WSL2 installed and configured
 
@@ -133,8 +129,8 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 | 6 | 1 | jq (PreToolUse hook script), bash |
 | 7 | 1 | npx (MCP reference server: `@modelcontextprotocol/server-everything`) |
 | 8–9 | 2 | jq (JSON extraction from `claude -p --output-format json`) |
-| 10 | 2 | npm test (`node user.test.js`; `package.json` ships with repo, no install) |
-| 11 | 2 | Python 3.10+, `pip install claude-agent-sdk`, VS Code with `code` in PATH |
+| 10 | 2 | Python 3.10+, `flask` (the to-do API in `app/`); `python3 app/test_app.py` drives the /goal demo |
+| 11 | 2 | Python 3.10+, `claude-agent-sdk` (both installed via `requirements.txt`), VS Code with `code` in PATH |
 | 12 | 2 | GitHub account |
 | 13 | 2 | Claude Code v2.1.72+ for `/loop` and `/schedule`; claude.ai subscription for Routines |
 | 14 | 2 | claude.ai in browser (for cloud sessions and teleport) |
@@ -143,4 +139,3 @@ Your credentials are saved to `~/.claude/` and automatically carry over to the A
 > **Note on Routines (Lab 13):** Cloud Routines run on Anthropic infrastructure and require a claude.ai subscription login with Claude Code on the web. They are currently in research preview and may not be available on all accounts.
 
 > **Note for Windows users:** The hook scripts in Lab 6 are bash scripts. They require WSL2 or Git Bash. Running Claude Code itself inside WSL2 is the simplest path — everything works natively there.
-
