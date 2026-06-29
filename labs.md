@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.2 - 06/29/26
+## Revision 7.3 - 06/29/26
 
 <br><br>
 
@@ -2159,12 +2159,14 @@ Now walk through interrupting it, resuming it, and finally cancelling it:
 **What we're doing:** Noting that `/goal` composes with Lab 9.  
 **Why:** A goal in `-p` mode runs the whole loop to completion in a single shell command — condition-driven automation with no session open.
 
-**Action:** Read (optional to run — it will iterate for a while):
+**Action:** Read (optional to run — it will iterate for a bit):
 ```bash
 claude -p "/goal summaries.md has an entry for every .js file in this directory, or stop after 5 turns" --permission-mode acceptEdits
 ```
 
-Ctrl+C stops a non-interactive goal early.
+You can use Ctrl+C to stop it running. Ctrl+C stops a non-interactive goal early.
+
+![ctrl-c interrupt](./images/cc-se51.png?raw=true "ctrl-c interrupt")
 
 ---
 <br><br>
@@ -2181,16 +2183,9 @@ Ctrl+C stops a non-interactive goal early.
 | `/loop` (Lab 13) | A time interval elapses | You stop it, or Claude decides the work is done |
 | Stop hook (Lab 6) | The previous turn finishes | Your own script or prompt decides |
 
-The headline split: **`/goal` is condition-driven** — it asks *"is this end state true yet?"* and stops the moment it is (often after a single turn). **`/loop` (Lab 13) is time-driven** — it asks *"has the interval elapsed?"* and fires again until you stop it. `/goal` sets a **finish line**; `/loop` sets a **clock**. Use `/goal` to reach a state and have an independent judge confirm it; use `/loop` to keep doing something on a schedule.
-
 Under the hood, `/goal` *is* a session-scoped prompt-based Stop hook — which is why it requires the workspace trust dialog and is unavailable when hooks are disabled.
 
-> **Three caps before you ever leave a loop running unattended.** A turn bound is only one of three hard stops an unbabysat loop needs:
-> 1. **Runaway cap** — `max_turns` / `or stop after N turns` (you used this above). `/goal` gives it almost for free.
-> 2. **Stuck cap** — a *no-progress* detector: halt if `git diff --stat` is unchanged for a few turns (a Stop hook or a small wrapper). Not automatic — you add it.
-> 3. **Wallet cap** — a hard dollar/budget ceiling set once in your provider Console, so a forgotten loop can't bleed into a four-figure bill.
->
-> And have it **ping you on stop** with the state and the reason. The romantic pitch is "write loops and agents build your company overnight"; the production reality is that most of the engineering is making sure they **halt** — and that they **verify against an external truth** (the build succeeded, tests passed, the health check is green), not the model's own "looks good." A loop with a real check is an engine; a loop without one is just a billing event.
+> **The turn bound is your first guardrail.** The `or stop after N turns` you typed is the runaway cap — the simplest hard stop. It's the first of several you'll want once loops run *unattended* (a no-progress "stuck" cap, a spending cap, a ping when it stops). You watched this `/goal` run; those extra guardrails matter when a loop runs with nobody watching — we'll add them in the labs where that happens (the SDK in Lab 11, scheduled tasks in Lab 13).
 
 ---
 <br><br>
@@ -2206,7 +2201,7 @@ exit
 - Set a `/goal` with a measurable condition, check, and turn bound
 - Watched Claude fix the to-do API to a green test suite with zero prompting
 - Inspected progress with bare `/goal` status
-- Cleared a goal early with `/goal clear`
+- Interrupted a running goal with Esc, then chose to `resume` it or cancel it with `/goal clear`
 - Seen `/goal` run headlessly via `claude -p`
 - Compared `/goal` vs `/loop` vs Stop hooks
 
@@ -2391,6 +2386,13 @@ Run it again (`python3 sdk/auto_agent.py`). The gatekeeper denies the `rm`; Clau
 - **`max_turns=10`** guarantees the program *ends*, with `ResultMessage.subtype == "error_max_turns"` telling your code why. Every unattended run needs a bound — turns, budget, or wall-clock.
 - **`/sandbox`** in the CLI enables OS-enforced boundaries (which file paths and network domains commands may reach). Policy (allowlists, callbacks) + enforcement (sandbox) is how production agents stay both fast and survivable.
 - The cloud surfaces in Labs 13 and 14 run in Anthropic-managed isolated VMs — the same idea, hosted for you.
+
+> **Three caps for a loop that runs with nobody watching.** The turn bound is only the first of three hard stops an unattended agent needs:
+> 1. **Runaway cap** — `max_turns` (the `max_turns=10` you just set) guarantees the program *ends*. Turns, budget, or wall-clock — pick at least one.
+> 2. **Stuck cap** — a *no-progress* detector: halt if `git diff --stat` is unchanged for a few turns (your gatekeeper callback, or a small wrapper). Not automatic — you add it.
+> 3. **Wallet cap** — a hard dollar/budget ceiling set once in your provider Console, so a forgotten run can't bleed into a four-figure bill.
+>
+> And have it **notify you when it stops**, with the final state and the reason. The hard part of running agents unattended isn't starting them — it's making sure they **halt reliably**, and that they **check against an external truth** (the build succeeded, the tests passed, the health check is green) rather than the model's own "looks good." Without a real external check, an unattended run can keep going — and keep costing money — while convinced it's done.
 
 ---
 <br><br>
