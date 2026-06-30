@@ -2439,7 +2439,7 @@ The JSON fields mirror the `ResultMessage` attributes your program printed. Same
 ## Lab Purpose
 Author a GitHub Actions workflow that runs Claude Code in CI using `anthropics/claude-code-action@v1`, understand its trigger and configuration model, and know what it takes to run it in your own repos. Estimated time: 10-12 minutes.
 
-> **⚠️ Note:** You'll author and inspect the workflow in the Codespace. Actually pushing and running it is an **optional advanced** exercise — the workshop repo (`skillrepos/ccode`) isn't yours, so a live run requires your own repo plus `/install-github-app` (covered in step 8).
+> **⚠️ Note:** You'll author and inspect the workflow in the Codespace. Actually running the **`@claude` Action** is an **optional advanced** exercise — it *writes* to the repo (PR comments, commits), and the workshop repo (`skillrepos/cc-se`) isn't yours, so a live run requires your own repo plus `/install-github-app` (covered in step 8). This caveat applies only to the Action. The deep-review step — **step 7, `claude ultrareview`** — is **read-only**, so you *can* run it here against the open Review demo PR.
 
 ---
 <br><br>
@@ -2565,17 +2565,24 @@ cat .github/workflows/claude.yml | claude -p "Explain this GitHub Actions workfl
 <br><br>
 
 ## 7: Deep Review in CI: claude ultrareview
-**What we're doing:** Noting the purpose-built CI review subcommand.  
-**Why:** For PR review specifically, there's a heavier-duty option than authoring your own workflow.
+**What we're doing:** Running a real deep review against a live pull request.  
+**Why:** For PR review specifically there's a heavier-duty, purpose-built option than authoring your own workflow — and unlike the `@claude` Action, you can run it right now.
 
-**Action:** Read:
+**What it is:** `claude ultrareview` launches the same deep multi-agent review as `/code-review ultra`: a fleet of reviewer agents runs in a remote sandbox, blocks until finished, prints verified findings to stdout, and exits 0/1 — ready to gate a pipeline. It only *reads* the code (it doesn't post back to the PR), so you need just read access plus the **Claude.ai login** you already authenticated with for Day 2.
 
+**Action:** This repo has a pull request left open on purpose — **"Review demo: add a user store helper"** (it adds `review-demo/user-store.js`). Find its number in the repo's **Pull requests** tab, then review it:
 ```bash
-claude ultrareview        # review current branch vs default branch
-claude ultrareview 1234   # review PR #1234
+claude ultrareview <PR#>      # e.g. claude ultrareview 42 — use the Review demo PR number
 ```
+It runs in the cloud, so give it a couple of minutes. The demo file has several planted issues — a hardcoded secret, a SQL injection, a loose-equality admin check, insecure token generation, and an unhandled async path that logs a password — so you can see what a deep review surfaces and how it ranks severity. (Exact findings come from the live run.)
 
-The `claude ultrareview` subcommand launches the same deep multi-agent review as `/code-review ultra` from CI or a script: it runs a fleet of reviewer agents in a remote sandbox, blocks until finished, prints verified findings to stdout, and exits 0/1 — ready to gate a pipeline. (Requires claude.ai authentication; research preview.)
+You can also review a branch instead of a PR:
+```bash
+claude ultrareview            # review the current branch vs the default branch
+```
+This form needs the branch pushed to a repo you can write to (the review is cloud-hosted and fetches from GitHub), so it's for your own repos rather than this shared one.
+
+> **Requirements & notes:** Requires a **Claude.ai account** (not an API key or third-party provider) and is a **research preview**, so output and availability may change. Because the review runs in the cloud, the PR/branch must already be pushed to GitHub (the Review demo PR is). Docs: `code.claude.com/docs/en/ultrareview`
 
 ---
 <br><br>
