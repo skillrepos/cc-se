@@ -49,7 +49,7 @@ async def main() -> None:
     # extra/auto_agent.txt, then SAVE. It builds ClaudeAgentOptions with
     # the three safety layers plus max_turns, then reads the result.
     # ------------------------------------------------------------------
-    raise SystemExit("auto_agent.py is still the skeleton -- merge BOTH highlighted regions over the left, SAVE, then run again.")
+    raise SystemExit("auto_agent.py is still the skeleton -- merge BOTH highlighted regions from the left (the finished file) into the right, SAVE, then run again.")
 
 
 asyncio.run(main())
