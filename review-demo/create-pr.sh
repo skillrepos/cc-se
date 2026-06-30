@@ -1,43 +1,32 @@
-// review-demo/user-store.js
-//
-// Intentional review demo for Lab 12 (claude ultrareview).
-// This file ships with several DELIBERATE, real issues so the deep CI review
-// has something concrete to find. It is not used by the app — it exists only
-// so students can run `claude ultrareview` against a live PR.
+#!/usr/bin/env bash
+# Create the Lab 12 "ultrareview" demo branch + PR in skillrepos/cc-se.
+# Run this from your cc-se checkout (this folder has origin -> skillrepos/cc-se).
+# Requires: push access to the repo and an authenticated `gh` CLI (gh auth status).
+set -euo pipefail
 
-const db = require("./fake-db");
+BRANCH="review-demo"
+FILE="review-demo/user-store.js"
+BODY="review-demo/PR-BODY.md"
 
-// Issue 1 (security): hardcoded secret committed to source control.
-const API_KEY = "sk-live-9f3c2a77b1e4please-rotate-me";
+# Confirm the demo file exists (created for you alongside this script).
+test -f "$FILE" || { echo "Missing $FILE — run from the repo root."; exit 1; }
 
-// Issue 2 (security): token built from Math.random — not cryptographically
-// secure, and predictable.
-function newSessionToken() {
-  return "tok_" + Math.random().toString(36).slice(2);
-}
+# Make sure we branch from an up-to-date main (adjust if your default differs).
+git fetch origin
+git checkout main
+git pull --ff-only origin main
 
-// Issue 3 (security): SQL injection — userId is concatenated straight into the
-// query instead of being passed as a parameter.
-async function findUser(userId) {
-  const sql = "SELECT * FROM users WHERE id = '" + userId + "'";
-  return db.query(sql);
-}
+# Create the branch and commit ONLY the demo file (not PR-BODY.md).
+git checkout -b "$BRANCH"
+git add "$FILE"
+git commit -m "Add review-demo/user-store.js (Lab 12 ultrareview fixture)"
+git push -u origin "$BRANCH"
 
-// Issue 4 (correctness/security): loose equality lets "0", 0, "", and false all
-// pass as the same admin check; should be strict (===) against a real role.
-function isAdmin(user) {
-  return user.role == 1;
-}
+# Open the PR against main, keeping it open for the course.
+gh pr create --base main --head "$BRANCH" \
+  --title "Review demo: add a user store helper" \
+  --body-file "$BODY"
 
-// Issue 5 (correctness): the promise is never awaited and errors are swallowed,
-// so a failed lookup silently returns undefined and logs the password.
-function login(userId, password) {
-  let result;
-  findUser(userId).then((u) => {
-    console.log("login attempt", userId, password); // logs the password
-    result = u;
-  });
-  return result;
-}
-
-module.exports = { API_KEY, newSessionToken, findUser, isAdmin, login };
+echo
+echo "PR created. Note its number — that's the <PR#> students pass to:"
+echo "    claude ultrareview <PR#>"
