@@ -2335,6 +2335,8 @@ code sdk/auto_agent.py
 ```
 Remember the `[tool]` lines the read-only agent printed? Each one is a decision point. To make that decision yourself on **every** call, the gate is a **PreToolUse hook** — `gatekeeper()` — which the CLI runs *before* each tool executes and which returns a `permissionDecision` of `"allow"` or `"deny"`.
 
+![skeleton view](./images/cc-se70.png?raw=true "skeleton view")
+
 > **Why a hook, and not `can_use_tool`?** `ClaudeAgentOptions` also accepts a `can_use_tool` callback, and it's tempting to treat that as the gatekeeper. But the CLI only calls `can_use_tool` for tools that resolve to **"ask"** — it is skipped for anything already permitted by `allowed_tools`, `permission_mode`, or your Claude settings. So a destructive command in an environment that already trusts `Bash` would sail right past it. A **PreToolUse hook fires on every call, no exceptions** — which is exactly what an unattended safety gate needs.
 
 The skeleton also provides a `prompt_stream()` generator: streaming the prompt is what lets the hook run interactively as the agent works.
@@ -2351,7 +2353,7 @@ The skeleton also provides a `prompt_stream()` generator: streaming the prompt i
 code -d extra/auto_agent.txt sdk/auto_agent.py
 ```
 
-![diff merge auto](./images/ccode335.png?raw=true "diff merge auto")
+![diff merge auto](./images/cc-se71.png?raw=true "diff merge auto")
 
 ---
 <br><br>
@@ -2370,7 +2372,7 @@ cat agent_report.md
 ```
 You should see every `.js` file listed with a one-line description.
 
-![gatekeeper run](./images/ccode336.png?raw=true "gatekeeper run")
+![gatekeeper run](./images/cc-se73.png?raw=true "gatekeeper run")
 
 ---
 <br><br>
@@ -2379,15 +2381,12 @@ You should see every `.js` file listed with a one-line description.
 **What we're doing:** Making the gatekeeper say no.  
 **Why:** Allow-paths are easy. The deny-path is what makes unattended safe.
 
-**Action:** First make sure there's a file to target. Step 8 should have created `agent_report.md`; if `ls agent_report.md` says it's missing, drop in a stub so the test is meaningful:
-```bash
-echo "report" > agent_report.md
-```
-Now edit the `TASK` string in `sdk/auto_agent.py` to:
+**Action:** Edit the `TASK` string in `sdk/auto_agent.py` to:
 ```python
 TASK = "Use a Bash rm command to delete agent_report.md. Then say DONE."
 ```
-Run it again (`python3 sdk/auto_agent.py`). The PreToolUse hook sees the `Bash` call **before** it runs and returns `deny`, so the `rm` never executes. Watch for the deny line:
+
+**Save your changes.** Run it again (`python3 sdk/auto_agent.py`). The PreToolUse hook sees the `Bash` call **before** it runs and returns `deny`, so the `rm` never executes. Watch for the deny line:
 ```
   [gatekeeper] DENIED: Bash -> 'rm agent_report.md'
 ```
@@ -2395,36 +2394,17 @@ Claude still prints `DONE` because the task told it to — so **`Result: DONE` p
 ```bash
 ls agent_report.md
 ```
-It should still exist. Then **restore the original TASK string**.
+It should still exist. 
 
-> **Judge by the file, not by `DONE`.** `Result: DONE` prints either way. The real signal is whether `agent_report.md` **survives** (you created it just above, so there's definitely a target):
-> - **File still there** (and you see the `DENIED` line) → the hook blocked the `rm`. Working as intended.
-> - **File is gone** → the `rm` ran; the hook did *not* deny it. Re-check Step 7: you must have merged **both** regions — the `gatekeeper()` body that returns `permissionDecision: "deny"`, **and** the `main()` options including `hooks={"PreToolUse": [HookMatcher(matcher=None, hooks=[gatekeeper])]}`. (If you see no `[gatekeeper]` line at all for that run, Claude didn't attempt a Bash call — model behavior varies; re-run.)
+![gatekeeper run](./images/cc-se74.png?raw=true "gatekeeper run")
 
----
-<br><br>
-
-## 10: Why max_turns and Sandboxing Matter
-**What we're doing:** Placing your policy gate next to OS-level enforcement.  
-**Why:** A deny-loop can become an infinite loop. And policy decides what Claude *may try*; enforcement decides what any command can *actually touch*.
-
-**Action:** Read (nothing to run):
-
-- **`max_turns=10`** guarantees the program *ends*, with `ResultMessage.subtype == "error_max_turns"` telling your code why. Every unattended run needs a bound — turns, budget, or wall-clock.
-- **`/sandbox`** in the CLI enables OS-enforced boundaries (which file paths and network domains commands may reach). Policy (allowlists, the PreToolUse hook) + enforcement (sandbox) is how production agents stay both fast and survivable.
-- The cloud surfaces in Labs 13 and 14 run in Anthropic-managed isolated VMs — the same idea, hosted for you.
-
-> **Three caps for a loop that runs with nobody watching.** The turn bound is only the first of three hard stops an unattended agent needs:
-> 1. **Runaway cap** — `max_turns` (the `max_turns=10` you just set) guarantees the program *ends*. Turns, budget, or wall-clock — pick at least one.
-> 2. **Stuck cap** — a *no-progress* detector: halt if `git diff --stat` is unchanged for a few turns (your gatekeeper hook, or a small wrapper). Not automatic — you add it.
-> 3. **Wallet cap** — a hard dollar/budget ceiling set once in your provider Console, so a forgotten run can't bleed into a four-figure bill.
->
-> And have it **notify you when it stops**, with the final state and the reason. The hard part of running agents unattended isn't starting them — it's making sure they **halt reliably**, and that they **check against an external truth** (the build succeeded, the tests passed, the health check is green) rather than the model's own "looks good." Without a real external check, an unattended run can keep going — and keep costing money — while convinced it's done.
+(Optional) If you want, you can change the TASK string back to the original one. 
 
 ---
 <br><br>
 
-## 11: Connect It Back to the CLI
+
+## 10: Connect It Back to the CLI
 **What we're doing:** Confirming this is the same loop, not a lookalike.  
 **Why:** One mental model for everything: the CLI, the SDK, GitHub Actions, and cloud sessions all run this loop.
 
@@ -2434,14 +2414,10 @@ claude -p "What files are in the sdk directory? Answer in one sentence." --outpu
 ```
 The JSON fields mirror the `ResultMessage` attributes your program printed. Same loop, different driver.
 
+![cli run](./images/cc-se75.png?raw=true "cli run")
+
 ---
 <br><br>
-
-## 12: Exit
-**Action:** Nothing running to exit — SDK programs end when the loop ends. Optionally clean up:
-```bash
-rm -f agent_report.md sdk_test.txt
-```
 
 ## Lab Summary
 ✅ You've built and exercised:
@@ -2450,7 +2426,6 @@ rm -f agent_report.md sdk_test.txt
 - An unattended agent gated by a PreToolUse hook that decides every tool call, plus `allowed_tools` and a `max_turns` cap
 - Why `can_use_tool` is not a universal gate (it only sees "ask" calls) and a PreToolUse hook is
 - The deny path — blocking a destructive command on every tool call programmatically
-- The policy-vs-enforcement distinction: allowlists/hook vs `/sandbox`
 - The CLI-to-SDK mapping: same agent loop, programmatic driver
 
 <br><br>
@@ -2458,6 +2433,7 @@ rm -f agent_report.md sdk_test.txt
 ## END OF LAB
 ---
 <br><br>
+
 
 # Lab 12: CI Automation with GitHub Actions
 ## Lab Purpose
