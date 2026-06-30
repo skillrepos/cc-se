@@ -2241,16 +2241,41 @@ python3 -m pip install claude-agent-sdk
 ---
 <br><br>
 
-## 2: View the Skeleton and Map It to the CLI
-**What we're doing:** Reading `sdk/agent_loop.py` and connecting it to commands you already know.  
-**Why:** Nothing here is new — it's the CLI you used yesterday, with Python names. The placeholder body of `run_agent()` marks the only pieces that make it an *agent*: the **options** (which tools are pre-approved, plus a turn cap) and the **message loop** (reading what `query()` streams back).
+## 2: View the Skeleton
+**What we're doing:** Opening `sdk/agent_loop.py` to see what's there before you merge.  
+**Why:** So the diff in the next step is small and readable — you'll know exactly what's blank and what you're adding.
 
-**Action:** Open the skeleton and read the placeholder body of `run_agent()`:
+**Action:** Open the skeleton:
 ```bash
 code sdk/agent_loop.py
 ```
 
-| SDK piece | CLI equivalent you've used |
+At the top, the `import` block already names the SDK pieces you'll use — `query`, `ClaudeAgentOptions`, `AssistantMessage`, `ResultMessage`. The body of `run_agent()`, though, is just a placeholder comment and a `raise` that stops the program until you merge. The two things that make it an *agent* — the **options** (which tools are pre-approved, plus a turn cap) and the **message loop** (reading what `query()` streams back) — are exactly what you'll add next.
+
+![skeleton view](./images/cc-se54.png?raw=true "skeleton view")
+
+---
+<br><br>
+
+## 3: Diff, Merge, and Map It to the CLI
+**What we're doing:** Comparing the skeleton against the completed version, merging it in, then reading what you just added.  
+**Why:** Seeing only the *difference* highlights exactly what turns a plain script into an agent program — and once it's merged, you'll see nothing in it is new: it's the CLI you used yesterday, with Python names.
+
+**Action:** Run:
+```bash
+code -d extra/agent_loop.txt sdk/agent_loop.py 
+```
+
+You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
+
+
+![diff merge](./images/cc-se55.png?raw=true "diff merge")
+
+> **If the next step still says "still the skeleton":** a line didn't merge or the file wasn't saved. Re-open the diff, confirm **no** highlight remains, then save again.
+
+Now look at the merged `run_agent()` body — every piece maps to a CLI flag you've already used:
+
+| SDK piece (now in your file) | CLI equivalent you've used |
 |---|---|
 | `query(prompt=..., options=...)` | `claude -p "<prompt>"` |
 | `ClaudeAgentOptions(allowed_tools=[...])` | `--allowedTools "..."` |
@@ -2259,25 +2284,6 @@ code sdk/agent_loop.py
 
 `query()` returns an async iterator — your `async for` loop receives each message as the agent works, ending with a `ResultMessage` of stats.
 
-![skeleton view](./images/ccode332.png?raw=true "skeleton view")
-
----
-<br><br>
-
-## 3: Diff and Merge
-**What we're doing:** Comparing the skeleton against the completed version and merging it in.  
-**Why:** Seeing only the *difference* highlights exactly what turns a plain script into an agent program.
-
-**Action:** Run:
-```bash
-code -d sdk/agent_loop.py extra/agent_loop.txt
-```
-
-You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
-
-> **If the next step still says "still the skeleton":** a line didn't merge or the file wasn't saved. Re-open the diff, confirm **no** highlight remains, then save again.
-
-![diff merge](./images/ccode333.png?raw=true "diff merge")
 
 ---
 <br><br>
@@ -2293,7 +2299,7 @@ python3 sdk/agent_loop.py "What files are in the sdk directory? Answer in one se
 
 You'll see `[claude]` lines, then the `ResultMessage` stats: turns used, duration, final result.
 
-![sdk run](./images/ccode334.png?raw=true "sdk run")
+![sdk run](./images/cc-se56.png?raw=true "sdk run")
 
 ---
 <br><br>
