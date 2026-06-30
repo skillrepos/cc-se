@@ -30,6 +30,7 @@ async def gatekeeper(
     """Decide any tool call not already pre-approved. Never asks a human."""
     command = input_data.get("command", "")
     if tool_name == "Bash" and ("rm " in command or "sudo" in command):
+        print(f"  [gatekeeper] DENIED: {tool_name} -> {command!r}")
         return PermissionResultDeny(
             message="Destructive commands are blocked in unattended runs"
         )
@@ -62,3 +63,4 @@ async def main() -> None:
 
 
 asyncio.run(main())
+
