@@ -2480,7 +2480,9 @@ jobs:
           # responds to @claude mentions in comments
 ```
 
-![workflow file](./images/ccode338.png?raw=true "workflow file")
+**Save the file**
+
+![workflow file](./images/cc-se76.png?raw=true "workflow file")
 
 ---
 <br><br>
@@ -2508,6 +2510,10 @@ jobs:
             --max-turns 5
             --model claude-sonnet-4-6
 ```
+
+**Save the file**
+
+![workflow file](./images/cc-se77.png?raw=true "workflow file")
 
 ---
 <br><br>
@@ -2539,7 +2545,7 @@ Also note: `prompt:` accepts skill invocations (e.g. `/code-review:code-review .
 cat .github/workflows/claude.yml | claude -p "Explain this GitHub Actions workflow: what triggers it, what the action does, what secrets it needs, and one risk to consider."
 ```
 
-![claude explains](./images/ccode339.png?raw=true "claude explains")
+![claude explains](./images/cc-se78.png?raw=true "claude explains")
 
 ---
 <br><br>
@@ -2589,7 +2595,7 @@ The `claude ultrareview` subcommand launches the same deep multi-agent review as
 
 ## 9: Metering Reminder and Cleanup
 **What we're doing:** Closing the loop on cost awareness.  
-**Why:** Actions usage falls under the June 15, 2026 separate Agent SDK metering on subscription plans — plus normal GitHub Actions minutes.
+**Why:** Actions usage falls under the separate Agent SDK metering on subscription plans — plus normal GitHub Actions minutes.
 
 **Action:** Read the note above, and leave the workflow files in place — they're harmless here (no secret is configured in the workshop repo, and no one will comment `@claude` on it).
 
