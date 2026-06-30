@@ -2263,7 +2263,7 @@ At the top, the `import` block already names the SDK pieces you'll use — `quer
 
 **Action:** Run:
 ```bash
-code -d sdk/agent_loop.py extra/agent_loop.txt
+code -d extra/agent_loop.txt sdk/agent_loop.py 
 ```
 
 You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
