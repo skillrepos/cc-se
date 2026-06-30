@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 """Lab 11 (Part 2): Unattended agent runs that never hang.
 
-Three layers keep an unattended run both safe and unblocked:
-  1. allowed_tools   -- pre-approve the tools we expect Claude to use
-  2. permission_mode -- "acceptEdits" auto-approves file edits
-  3. can_use_tool    -- a programmatic gatekeeper that decides everything
-                        else, so no human prompt can ever hang the run
+For an unattended run, policy has to be enforced on EVERY tool call. The right
+tool for that is a PreToolUse hook: the CLI runs it before each tool executes,
+no matter what, and the hook allows or denies the call by returning a
+permissionDecision.
+
+(ClaudeAgentOptions also has a can_use_tool callback, but the CLI only calls it
+for tools that resolve to "ask" -- it is skipped for anything already permitted
+by allowed_tools, permission_mode, or your settings. So can_use_tool is NOT a
+reliable universal gate for an unattended agent. The PreToolUse hook is.)
 
 [Lab 11 - AI-Powered Coding with Claude Code - Rev 6.10 - 06/29/26]
 """
 import asyncio
 
 from claude_agent_sdk import ClaudeAgentOptions, HookMatcher, ResultMessage, query
-from claude_agent_sdk.types import (
-    PermissionResultAllow,
-    PermissionResultDeny,
-    ToolPermissionContext,
-)
 
 TASK = (
     "Create a file named agent_report.md that lists every .js file in this "
@@ -24,23 +23,26 @@ TASK = (
 )
 
 
-async def gatekeeper(
-    tool_name: str, input_data: dict, context: ToolPermissionContext
-):
-    """Decide any tool call not already pre-approved. Never asks a human."""
-    command = input_data.get("command", "")
+async def gatekeeper(input_data, tool_use_id, context):
+    """PreToolUse gate: deny destructive Bash, allow everything else. Never asks a human."""
+    tool_name = input_data.get("tool_name", "")
+    command = input_data.get("tool_input", {}).get("command", "")
     if tool_name == "Bash" and ("rm " in command or "sudo" in command):
         print(f"  [gatekeeper] DENIED: {tool_name} -> {command!r}")
-        return PermissionResultDeny(
-            message="Destructive commands are blocked in unattended runs"
-        )
-    print(f"  [gatekeeper] auto-approving: {tool_name}")
-    return PermissionResultAllow(updated_input=input_data)
-
-
-# Required workaround: a PreToolUse hook keeps the stream open for can_use_tool
-async def keep_alive(input_data, tool_use_id, context):
-    return {"continue_": True}
+        return {
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "permissionDecisionReason": "Destructive commands are blocked in unattended runs",
+            }
+        }
+    print(f"  [gatekeeper] allowing: {tool_name}")
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+        }
+    }
 
 
 async def prompt_stream():
@@ -49,11 +51,9 @@ async def prompt_stream():
 
 async def main() -> None:
     options = ClaudeAgentOptions(
-        allowed_tools=["Read", "Glob", "Grep", "Write"],  # layer 1: pre-approval
-        permission_mode="acceptEdits",                    # layer 2: edits auto-OK
+        allowed_tools=["Read", "Glob", "Grep", "Write"],  # tools we expect it to use
         max_turns=10,                                     # hard stop for runaways
-        can_use_tool=gatekeeper,                          # layer 3: the gatekeeper
-        hooks={"PreToolUse": [HookMatcher(matcher=None, hooks=[keep_alive])]},
+        hooks={"PreToolUse": [HookMatcher(matcher=None, hooks=[gatekeeper])]},
     )
 
     async for message in query(prompt=prompt_stream(), options=options):
@@ -63,4 +63,3 @@ async def main() -> None:
 
 
 asyncio.run(main())
-
