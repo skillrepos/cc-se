@@ -14,6 +14,7 @@ from claude_agent_sdk import (
     ClaudeAgentOptions,
     ResultMessage,
     TextBlock,
+    ToolUseBlock,
     query,
 )
 
@@ -25,7 +26,8 @@ async def run_agent(prompt: str) -> None:
     # merging from extra/agent_loop.txt (see the lab's diff-merge step),
     # then SAVE this file. Two pieces turn this script into an agent:
     #   1. the OPTIONS -- which tools are pre-approved, plus a turn cap
-    #   2. the LOOP    -- read each message that query() streams back
+    #   2. the LOOP    -- read each message query() streams back: Claude's
+    #                     text replies and the tool calls it makes
     # ------------------------------------------------------------------
     raise SystemExit("agent_loop.py is still the skeleton -- merge the right side of the diff over this body, SAVE, then run again.")
 
