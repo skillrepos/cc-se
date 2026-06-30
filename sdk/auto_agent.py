@@ -29,8 +29,9 @@ async def gatekeeper(
 ):
     """Decide any tool call not already pre-approved. Never asks a human."""
     # GATEKEEPER (TODO 1) -- merge this body from extra/auto_agent.txt:
-    #   block Bash commands containing "rm " or "sudo" (return a Deny);
-    #   otherwise log an "auto-approving" note and return an Allow.
+    #   block Bash commands containing "rm " or "sudo" (print a DENIED note,
+    #   then return a Deny); otherwise print an "auto-approving" note and
+    #   return an Allow.
     raise NotImplementedError("gatekeeper: merge extra/auto_agent.txt, then save")
 
 
