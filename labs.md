@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.3 - 06/29/26
+## Revision 7.4 - 06/30/26
 
 <br><br>
 
@@ -2252,7 +2252,7 @@ code sdk/agent_loop.py
 
 At the top, the `import` block already names the SDK pieces you'll use — `query`, `ClaudeAgentOptions`, `AssistantMessage`, `ResultMessage`. The body of `run_agent()`, though, is just a placeholder comment and a `raise` that stops the program until you merge. The two things that make it an *agent* — the **options** (which tools are pre-approved, plus a turn cap) and the **message loop** (reading what `query()` streams back) — are exactly what you'll add next.
 
-![skeleton view](./images/cc-se54.png?raw=true "skeleton view")
+![skeleton view](./images/ccode332.png?raw=true "skeleton view")
 
 ---
 <br><br>
@@ -2263,13 +2263,10 @@ At the top, the `import` block already names the SDK pieces you'll use — `quer
 
 **Action:** Run:
 ```bash
-code -d extra/agent_loop.txt sdk/agent_loop.py 
+code -d sdk/agent_loop.py extra/agent_loop.txt
 ```
 
 You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
-
-
-![diff merge](./images/cc-se55.png?raw=true "diff merge")
 
 > **If the next step still says "still the skeleton":** a line didn't merge or the file wasn't saved. Re-open the diff, confirm **no** highlight remains, then save again.
 
@@ -2280,10 +2277,11 @@ Now look at the merged `run_agent()` body — every piece maps to a CLI flag you
 | `query(prompt=..., options=...)` | `claude -p "<prompt>"` |
 | `ClaudeAgentOptions(allowed_tools=[...])` | `--allowedTools "..."` |
 | `ClaudeAgentOptions(max_turns=...)` | `--max-turns` |
-| iterating `AssistantMessage` / `ResultMessage` | `--output-format stream-json` events |
+| iterating `AssistantMessage` / `ToolUseBlock` / `ResultMessage` | `--output-format stream-json` events |
 
-`query()` returns an async iterator — your `async for` loop receives each message as the agent works, ending with a `ResultMessage` of stats.
+`query()` returns an async iterator — your `async for` loop receives each message as the agent works. The loop prints two kinds of activity as it goes: `[claude]` lines for Claude's text and `[tool]` lines for each tool call it makes (a `ToolUseBlock`, carrying the tool's `name` and `input`). It ends with a `ResultMessage` of stats.
 
+![diff merge](./images/ccode333.png?raw=true "diff merge")
 
 ---
 <br><br>
@@ -2297,9 +2295,9 @@ Now look at the merged `run_agent()` body — every piece maps to a CLI flag you
 python3 sdk/agent_loop.py "What files are in the sdk directory? Answer in one sentence."
 ```
 
-You'll see `[claude]` lines, then the `ResultMessage` stats: turns used, duration, final result.
+You'll see `[claude]` lines (Claude's text) and likely one or more `[tool]` lines (each tool it calls), then the `ResultMessage` stats: turns used, duration, final result.
 
-![sdk run](./images/cc-se56.png?raw=true "sdk run")
+![sdk run](./images/ccode334.png?raw=true "sdk run")
 
 ---
 <br><br>
@@ -2312,7 +2310,7 @@ You'll see `[claude]` lines, then the `ResultMessage` stats: turns used, duratio
 ```bash
 python3 sdk/agent_loop.py "Find every TODO comment in the .py files under sdk/ and list them"
 ```
-Note **Turns used** — the agent used Grep/Read across turns. Now try to make it write:
+Watch the `[tool]` lines: the agent calls a read-only tool (like `Glob` to find the `.py` files, then `Grep` to scan them), gets the results back, and only then answers. Each `[tool]` line is one trip around the loop — that back-and-forth is the *loop* in "agent loop," and **Turns used** counts those trips. Now try to make it write:
 ```bash
 python3 sdk/agent_loop.py "Create a file named sdk_test.txt containing hello"
 ```
@@ -2329,7 +2327,7 @@ The write isn't blocked — it just isn't *pre-approved*, so with no human attac
 ```bash
 code sdk/auto_agent.py
 ```
-Every tool call falls through this funnel until something decides it:
+Remember the `[tool]` lines you watched the read-only agent print? Each one is a decision point — and unattended, *your code* decides it. Every tool call falls through this funnel until something decides it:
 
 1. `allowed_tools` list → pre-approved? Done.
 2. `permission_mode="acceptEdits"` → file edit? Auto-approved.
