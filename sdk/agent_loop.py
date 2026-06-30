@@ -29,7 +29,7 @@ async def run_agent(prompt: str) -> None:
     #   2. the LOOP    -- read each message query() streams back: Claude's
     #                     text replies and the tool calls it makes
     # ------------------------------------------------------------------
-    raise SystemExit("agent_loop.py is still the skeleton -- merge the right side of the diff over this body, SAVE, then run again.")
+    raise SystemExit("agent_loop.py is still the skeleton -- merge the finished file (left side of the diff) into this body, SAVE, then run again.")
 
 
 if __name__ == "__main__":
@@ -37,3 +37,4 @@ if __name__ == "__main__":
         "What files are in this directory? Answer in one sentence."
     )
     asyncio.run(run_agent(user_prompt))
+
