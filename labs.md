@@ -2218,9 +2218,9 @@ So far you've run Claude from the terminal. Now you'll run the **same Claude age
 > **New to this? Here's the whole idea.** The `claude` command you've been using is a finished app. The **Agent SDK** is that same engine offered as a Python library, so you can drop Claude into your own script or service. Calling `query()` in Python does what `claude -p "..."` did in Lab 9 — and because you're now in code, you set Claude's permissions *in code*, which is what lets it run safely when no human is there to click "approve."
 
 > **How the merge steps work (no prior experience needed).** A few steps use a **diff-merge**. You open a *skeleton* — a working file with its key lines replaced by a placeholder — next to the *finished* version, and copy the finished lines in:
-> - Run `code -d LEFT RIGHT` to open the two files **side by side**, differences highlighted.
-> - Copy the **right** side (finished) onto the **left** side (skeleton): click the **→** arrow in the center gutter to move a highlighted block across, or select the right side, copy, and paste over the left.
-> - When **nothing is highlighted**, the files match. **Save the left file** (Cmd/Ctrl+S).
+> - Run `code -d extra/<finished> sdk/<skeleton>` to open the two files **side by side**, differences highlighted. The finished file (`extra/…`) is on the **left**; your skeleton (`sdk/…`) is on the **right**.
+> - Copy the **left** side (finished) onto the **right** side (skeleton): click the gutter arrow pointing **toward your skeleton on the right** to move a highlighted block across, or select the left side, copy, and paste over the right.
+> - When **nothing is highlighted**, the files match. **Save the right file** — the skeleton (Cmd/Ctrl+S).
 >
 > Each skeleton prints a *"still the skeleton"* message and stops if you run it before merging — that's the file telling you the merge or the save didn't fully land. Re-open the diff, make sure no highlight remains, and save.
 
@@ -2263,10 +2263,10 @@ At the top, the `import` block already names the SDK pieces you'll use — `quer
 
 **Action:** Run:
 ```bash
-code -d extra/agent_loop.txt sdk/agent_loop.py 
+code -d extra/agent_loop.txt sdk/agent_loop.py
 ```
 
-You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **right** side over the **left** (gutter **→** arrow, or select-copy-paste) so nothing stays highlighted, then **save the left file** (Cmd/Ctrl+S) and close the diff tab.
+The finished file (`extra/agent_loop.txt`) is on the **left**; your skeleton (`sdk/agent_loop.py`) is on the **right**. You'll see **one highlighted region** — the body of `run_agent()`. Copy the entire **left** side over the **right** (gutter arrow toward the right, or select-copy-paste) so nothing stays highlighted, then **save the right file** — the skeleton (Cmd/Ctrl+S) — and close the diff tab.
 
 > **If the next step still says "still the skeleton":** a line didn't merge or the file wasn't saved. Re-open the diff, confirm **no** highlight remains, then save again.
 
@@ -2342,9 +2342,9 @@ The skeleton already provides a `keep_alive` PreToolUse hook and a `prompt_strea
 **What we're doing:** Merging the completed implementation.  
 **Why:** The diff shows exactly what you're adding: the gatekeeper logic and the options/result handling.
 
-**Action:** Run the diff below. This time there are **two highlighted regions** — the `gatekeeper()` body and the `main()` body. Merge **both** from the right into the left, save, and close:
+**Action:** Run the diff below. The finished file (`extra/auto_agent.txt`) is on the **left**; your skeleton (`sdk/auto_agent.py`) is on the **right**. This time there are **two highlighted regions** — the `gatekeeper()` body and the `main()` body. Merge **both** from the left into the right, **save the right file** (the skeleton), and close:
 ```bash
-code -d sdk/auto_agent.py extra/auto_agent.txt
+code -d extra/auto_agent.txt sdk/auto_agent.py
 ```
 
 ![diff merge auto](./images/ccode335.png?raw=true "diff merge auto")
