@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.4 - 06/30/26
+## Revision 7.5 - 07/01/26
 
 <br><br>
 
@@ -2838,66 +2838,78 @@ exit
 # Lab 14: Managed Agents: Background, Cloud, and Web
 ## Lab Purpose
 Run Claude sessions that don't need you watching: dispatch a **background agent** and manage it from the `claude agents` dashboard, then start a **cloud session** at claude.ai/code and pull it into your terminal with `--teleport`. Many agents, your machine and the cloud, one mental model. Estimated time: 10-12 minutes.
-
+ 
+> **In plain English:** an "agent" is just Claude running the loop on a task. "Managed" means it runs somewhere you're *not* watching every second — in the **background** (your machine, terminal closed), in the **cloud/web** (a hosted VM; your laptop can be off), or checked from your **phone**. Think of handing off a job and walking away; `claude agents` is your dashboard of those running jobs — what's working, what needs you, what's done.
+ 
 **NOTE: Agent view requires Claude Code v2.1.139+; Claude Code on the web is a research preview (Pro/Max/Team, Enterprise premium seats). Background and cloud sessions consume your subscription quota like interactive ones.**
-
+ 
 ---
 <br><br>
-
+ 
 ## 1: Dispatch a Background Session
 **What we're doing:** Starting a task that immediately detaches from your terminal.  
 **Why:** `claude --bg` is fire-and-forget: the session is hosted by a per-user supervisor process, so it keeps working even if you close this shell.
-
-**Action:** In a terminal, run:
+ 
+**Action:** In a terminal, run a quick **read-only** task — it reports an answer rather than editing files, so the result is easy to see:
 ```bash
-claude --bg --name "js-headers" "Add a one-line comment header to goodbye.js describing what it does"
+claude --bg --dangerously-skip-permissions --name "js-summary" "In one sentence, what does hello.js do? Do not edit any files."
 ```
-Note the output: a short session ID plus the management commands (`claude agents`, `claude attach <id>`, `claude logs <id>`, `claude stop <id>`).
-
-![bg dispatch](./images/ccode346.png?raw=true "bg dispatch")
-
+The `--dangerously-skip-permissions` flag runs it **hands-off** — the same bypass mode as `claude-yolo` — so it won't stop for approvals. Note the output: a short session ID plus the management commands (`claude agents`, `claude attach <id>`, `claude logs <id>`, `claude stop <id>`).
+ 
+> **Why read-only for the demo?** A background agent that *edits* files does its work in an isolated git **worktree** (`.claude/worktrees/…`), not your main directory — so its output isn't where you'd expect and you have to go retrieve it. That's important real-world behavior (see the **"Agent Worktrees"** slide), but it makes for a confusing *first* demo, so here the payoff is simply the agent's **answer**, which you'll read from the dashboard.
+ 
+![bg dispatch](./images/cc-se96.png?raw=true "bg dispatch")
+ 
 ---
 <br><br>
-
+ 
 ## 2: Open Agent View and Read the State Icons
 **What we're doing:** Opening the dashboard for all background sessions.  
 **Why:** One screen answers three questions: what's running, what needs me, what's done.
-
+ 
 **Action:** Run:
 ```bash
-claude agents
+claude agents --dangerously-skip-permissions
 ```
-Your `js-headers` session appears as a row grouped by state, with an AI-generated one-line summary and a dispatch input at the bottom. Press `?` for shortcuts. Decode the icons:
-
+(The `--dangerously-skip-permissions` flag makes the sessions you dispatch *from this dashboard* in Step 4 run hands-off too — otherwise they'd start prompting for approvals again.)
+ 
+Your `js-summary` session appears as a row grouped by state, with an AI-generated one-line summary and a dispatch input at the bottom. It runs quickly and lands on **green (completed)** with its one-sentence answer. Press `?` for shortcuts. Decode the icons:
+ 
 - **Animated** = working; **yellow** = needs input; **green** = completed; **red** = failed; `∙` = process exited but you can still peek/reply/attach (it restarts where it left off); `✢` = a `/loop` session sleeping between iterations.
 - A `PR #N` label means the session opened a pull request.
 
-![agent view](./images/ccode347.png?raw=true "agent view")
-
+![agent view](./images/cc-se97.png?raw=true "agent view")
+ 
 ---
 <br><br>
-
+ 
 ## 3: Peek Without Attaching
-**What we're doing:** Checking on the session in a side panel.  
-**Why:** Most check-ins don't need the full transcript.
-
-**Action:** Select your row with the arrow keys and press `Space`. The peek panel shows the latest output or the question it's blocked on. You can type a reply right here and press `Enter` — without leaving the dashboard.
-
-![peek panel](./images/ccode348.png?raw=true "peek panel")
-
+**What we're doing:** Glancing at the result in a side panel.  
+**Why:** Most check-ins just need the answer, not the full transcript.
+ 
+**Action:** With the `js-summary` row highlighted,  press `Space`. The peek panel shows the agent's latest output — here, its one-sentence description of `hello.js` — without opening the full session. (If an agent were instead *blocked on a question*, this same panel is where you'd type a reply and press `Enter`.)  (If you click instead on the row, you still see the output, just not in the peek panel.)  You can press `Space` again to close the panel.
+ 
+![peek panel](./images/cc-se98.png?raw=true "peek panel")
+ 
 ---
 <br><br>
-
-## 4: Fan Out a Second Agent
-**What we're doing:** Starting another session from the dashboard input.  
+ 
+## 4: Fan Out Parallel Agents
+**What we're doing:** Starting more sessions from the dashboard input.  
 **Why:** Every prompt entered here starts its *own* session — this is how you run parallel work.
-
-**Action:** In the dispatch input at the bottom, type and Enter:
+ 
+**Action:** Your first agent is already **completed**, so to watch agents run side by side, dispatch two read-only tasks in quick succession. In the dispatch input at the bottom, make sure the gray text reads something like "describe a task for a new session" (if it appears to be down a level, you can enter `exit` to get back). Now enter the first task:
 ```
-List every TODO or FIXME comment in this project and write them to todos.md
+Summarize in one sentence what the app/ directory does
 ```
-A second row appears and both run in parallel. **Worktree note:** before editing, a background session moves itself into an isolated git worktree under `.claude/worktrees/`, so parallel agents can't trample each other. (Tip: you can also run a plain shell command as a managed row — type `! npm test` in the dispatch input; no Claude session, no tokens.)
+then immediately enter a second:
+```
+List the .py files in this project and what each one is for
+```
+Both new rows **animate at the same time** — genuinely running in parallel. Each session is also isolated: an agent that *edits* files gets its own git worktree so parallel agents can't trample each other (that's the mechanism behind the **"Agent Worktrees"** slide; these read-only ones just report back). (Tip: you can also run a plain shell command as a managed row — type `! npm test` in the dispatch input; no Claude session, no tokens.)
 
+![agents in parallel](./images/cc-se99.png?raw=true "agents in parallel")
+ 
 ---
 <br><br>
 
@@ -2905,9 +2917,11 @@ A second row appears and both run in parallel. **Worktree note:** before editing
 **What we're doing:** Entering the full conversation, then leaving it running.  
 **Why:** When a peek isn't enough, attach — it becomes a normal interactive session.
 
-**Action:** Select a row and press `Enter` (or `→`). Claude posts a recap of what happened while you were away. Look around, then press `←` on an empty prompt to detach. **Detaching never stops a background session.** (Any normal session can become a background agent the same way — `/bg` or a single `←`.)
+**Action:** Select a row and press `Enter` (or `→`). Claude posts a recap of what happened while you were away. Look around, then press `←` on an empty prompt to detach (get back to the list). **Detaching never stops the background agent** — it keeps running; you've just left its view.
+ 
+> **The reverse move.** To send a *normal* interactive session (one you started with plain `claude`) into the background, run **`/bg`**. It frees your terminal and hands the session to the same supervisor, so you manage it from `claude agents` like any other background agent. It's the counterpart to Step 1's `claude --bg`: that *starts* a session in the background; `/bg` *moves* a session you're already running into it.
 
-![attached session](./images/ccode349.png?raw=true "attached session")
+![attached session](./images/cc-se100.png?raw=true "attached session")
 
 ---
 <br><br>
@@ -2920,7 +2934,11 @@ A second row appears and both run in parallel. **Worktree note:** before editing
 ```bash
 claude agents --json | jq '.[] | {name, status, cwd}'
 ```
-Each live session reports `name`, `status`, `cwd`, `pid`, `sessionId` (and `waitingFor` when blocked). Then run `claude agents`, select each practice row, press `Ctrl+X` to stop and `Ctrl+X` again within two seconds to delete. **Caution:** deleting removes that session's worktree, including uncommitted changes. Press `Esc` to exit.
+Each live session reports `name`, `status`, `cwd`, `pid`, `sessionId` (and `waitingFor` when blocked).
+
+![attached session](./images/cc-se101.png?raw=true "attached session")
+
+Then run `claude agents`, select each practice row, press `Ctrl+X` to stop and `Ctrl+X` again within two seconds to delete. **Caution:** deleting removes that session's worktree, including uncommitted changes. Press `Esc` to exit.
 
 ---
 <br><br>
