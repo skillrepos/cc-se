@@ -3203,15 +3203,16 @@ Create an interactive artifact in claude.ai and iterate on it conversationally, 
 **What we're doing:** Prompting Claude to build a small web app about this course.  
 **Why:** Substantial, self-contained content (apps, pages, documents) automatically becomes an *artifact* — a separate panel beside the chat.
 
-**Action:** In a new chat on claude.ai, type:
+**Action:** In a new chat on claude.ai (click on the `+` sign on the upper left if needed to get back), type:
 ```
 Build an interactive flashcard quiz app to help me study Claude Code.
 Include 10 flashcards covering: plan mode, /compact, CLAUDE.md, skills,
 subagents, plugins, hooks, MCP, headless -p mode, and background agents.
-Show a question, let me flip to reveal the answer, and track my score.
+Show a question, let me flip to reveal the answer, and track my score. 
 ```
 
-![Artifact being created](./images/ccode364.png?raw=true "Artifact being created")
+![Artifact prompt](./images/cc-se106.png?raw=true "Artifact prompt")
+
 
 ---
 <br><br>
@@ -3220,9 +3221,14 @@ Show a question, let me flip to reveal the answer, and track my score.
 **What we're doing:** Observing the live render and viewing the source.  
 **Why:** Artifacts are real React/HTML code you can inspect — the same kind of output Claude Code produces, just rendered for you.
 
-**Action:** Watch the artifact panel open beside the chat and the app appear; click through a few flashcards and flip one. Then, in the panel header, use the **Code / Preview** toggle to skim the source and switch back.
+**Action:** Submit the prompt. Watch the artifact build. Eventually, you'll see a panel open beside the chat and the app appear; click through a few flashcards and flip one. 
 
-![Flashcard app](./images/ccode365.png?raw=true "Flashcard app")
+![Flashcard app](./images/cc-se108.png?raw=true "Flashcard app")
+
+
+Then, in the panel header, use the **Code / Preview** toggle to skim the source and switch back.
+
+![Code/preview toggle](./images/cc-se109.png?raw=true "Code/preview toggle")
 
 ---
 <br><br>
@@ -3230,61 +3236,85 @@ Show a question, let me flip to reveal the answer, and track my score.
 ## 3: Iterate Conversationally
 **What we're doing:** Changing the artifact by just asking — twice.  
 **Why:** Iteration is the core artifact workflow — no edit/compile cycle — and every iteration is kept as a version.
-
+ 
 **Action:** In the chat, type:
 ```
-Add a "shuffle" button and show my score as a percentage at the end,
-with a different message for scores above and below 70%.
-```
-Test the shuffle, then restyle it:
-```
-Restyle it with a dark theme and larger card text.
+Add keyboard shortcuts: spacebar flips the current card, and the
+left and right arrow keys move to the previous and next card.
+Show a one-line hint listing the shortcuts under the card.
 ```
 
+Test the shortcuts, then change the look and feel:
+
+```
+Add a smooth 3D flip animation when I reveal a card, and make the
+answer text noticeably larger than the question text.
+```
+
+![Iterating](./images/cc-se110.png?raw=true "Iterating")
+
+> Note: Claude often builds a fairly complete app in step 1 (it may already have features like a shuffle button, score tracking, or a dark theme). That's expected — the point here is to watch the artifact change and a new version get saved each time you ask. If a change you request already exists, just ask for a different visible tweak instead.
+ 
 ---
 <br><br>
 
-## 4: Browse Version History
-**What we're doing:** Stepping back through artifact versions.  
-**Why:** Every iteration is kept — like `/rewind` from Lab 3, but for artifacts.
+## 4: Publish Your Artifact
+**What we're doing:** Making the artifact public and getting a shareable link.  
+**Why:** Published artifacts are how you hand working tools to teammates — no hosting, no deploy.
+ 
+**Action:** In the artifact panel, open the **dropdown next to Copy** (top-right — the "More options" chevron) and choose **Publish artifact**, then confirm with **Publish & copy link**. (This makes the artifact public; your chat stays private.)
+ 
+![Publish artifact](./images/cc-se111.png?raw=true "Publish artifact")
 
-**Action:** In the artifact panel, find the version selector (near the title or bottom of the panel). Step back to the first version, then return to the latest.
+![Publish artifact](./images/cc-se112.png?raw=true "Publish artifact")
 
-![Version history](./images/ccode367.png?raw=true "Version history")
-
+![Publish artifact](./images/cc-se113.png?raw=true "Publish artifact")
+ 
 ---
 <br><br>
+ 
+## 5: Open the Public Link and Try "Customize"
+**What we're doing:** Viewing the artifact the way anyone with the link would, and seeing how they take their own copy.  
+**Why:** **Customize** is how a viewer opens their own editable copy in Claude — the modern "remix."
+ 
+**Action:** Paste the copied link into a **new browser tab**. On that public page, find the **Customize** control (top-right, next to *Copy link* and *Report*). Click it to see the prompt — *"Take this Artifact with you in a new chat…"* — then close it (no need to actually customize).
 
-## 5: Publish, Share, and Find Your Gallery
-**What we're doing:** Publishing the artifact and locating where all your artifacts live.  
-**Why:** Published artifacts are how you hand working tools to teammates — no hosting, no deploy. Viewers can **Remix** to open their own copy.
-
-**Action:** Use the share/publish control (usually top-right of the panel), copy the link, and open it in a new tab — note the **Remix** ("Open in Claude") control. Then, from the claude.ai sidebar, open the **Artifacts** section and confirm your flashcard app is listed.
-
-![Publish artifact](./images/ccode368.png?raw=true "Publish artifact")
-
+![Customize artifact](./images/cc-se114.png?raw=true "Customize artifact")
+ 
 ---
 <br><br>
+ 
+## 6: Find Your Artifacts Gallery
+**What we're doing:** Locating where all your published artifacts live.  
+**Why:** The gallery is your reusable library of shipped tools.
+ 
+**Action:** Back in claude.ai, open the **Artifacts** section from the left sidebar and confirm your published app is listed. (Artifacts only appear here *after* you publish them.)
 
-## 6: The AI-Powered Twist
+![Artifact gallery](./images/cc-se115.png?raw=true "Artifact gallery")
+ 
+---
+<br><br>
+ 
+## 7: The AI-Powered Twist
 **What we're doing:** Setting up the key idea for the second half.  
-**Why:** Your flashcards are static once built. *AI-powered artifacts* prompt Claude at runtime — the artifact becomes a small AI application.
-
-**Action:** Read before prompting:
+**Why:** Your flashcards are static once built. *AI-powered artifacts* call Claude *while you use them* — every click can ask Claude something new, so the artifact becomes a small AI application.
+ 
+**Action:** Just read:
 ```
 Regular artifact:    your prompt -> Claude writes app -> app is fixed
 AI-powered artifact: your prompt -> Claude writes app -> app itself
                      calls Claude whenever the user clicks a button
 ```
 No API key is involved. The artifact uses the Claude account of whoever is viewing it.
-
+ 
 ---
 <br><br>
-
-## 7: Build a Commit Message Generator
+ 
+ 
+## 8: Build a Commit Message Generator
 **What we're doing:** Building a developer mini-tool that calls Claude inside.  
-**Why:** A commit message generator needs live AI — perfect demo, and it ties back to your Day 1–2 git work.
-
+**Why:** A commit message generator needs live AI, and it ties back to your Day 1–2 git work.
+ 
 **Action:** In a **new chat**, type:
 ```
 Build an AI-powered artifact: a "Commit Message Generator" app.
@@ -3294,16 +3324,16 @@ the app should call Claude to produce a one-line conventional
 commit message plus an optional body, and display the result
 with a copy button.
 ```
-
-![AI artifact build](./images/ccode369.png?raw=true "AI artifact build")
-
+ 
+![AI artifact build](./images/cc-se116.png?raw=true "AI artifact build")
+ 
 ---
 <br><br>
-
-## 8: Test It with a Real Diff
+ 
+## 9: Test It with a Real Diff
 **What we're doing:** Exercising the in-artifact Claude call.  
 **Why:** Proof that the artifact is calling the model live — Claude writes code that calls a built-in completion function available to artifacts; that's the entire "backend."
-
+ 
 **Action:** Paste this into the artifact's textarea and click **Generate**:
 ```
 Added phoneNumber as an optional field to the User class,
@@ -3311,43 +3341,47 @@ updated setName validation, and added a failing-then-fixed
 email format test in user.test.js.
 ```
 Notice the brief processing delay — that's a real model call inside the artifact.
-
-![Generated commit message](./images/ccode370.png?raw=true "Generated commit message")
-
+ 
+**Check it worked:** a generated commit message should appear in the output area within a few seconds. If nothing happens, make sure you're signed in to claude.ai in this browser (AI-powered artifacts run on the viewer's own account).
+ 
+![Generated commit message](./images/cc-se118.png?raw=true "Generated commit message")
+ 
 ---
 <br><br>
-
-## 9: Refine the Embedded Prompt
+ 
+## 10: Refine the Embedded Prompt
 **What we're doing:** Improving the AI behavior conversationally.  
 **Why:** You can refine the *prompt inside the artifact* the same way you refine UI.
-
+ 
 **Action:** In the chat, type:
 ```
 Add a dropdown to choose the commit style: "conventional commits",
 "plain", or "detailed with bullet-point body". Pass the choice into
 the Claude prompt.
 ```
-Test again with a different style selected.
+Test again with a different style selected. (You can just paste the same description from step 9 if you want.)
 
+![Generated commit message](./images/cc-se119.png?raw=true "Generated commit message")
+ 
 ---
 <br><br>
-
-## 10: Inspect the Code — Find the Claude Call
+ 
+## 11: Inspect the Code — Find the Claude Call
 **What we're doing:** Looking at how the artifact prompts Claude.  
 **Why:** Seeing the embedded prompt demystifies the magic — it's prompt engineering, shipped as an app.
-
+ 
 **Action:** Switch the artifact panel to **Code** view and find where the app builds a prompt string and calls the Claude completion function. That string is a prompt template — the same skill you've practiced for two days, now embedded in software.
-
-![Claude call in code](./images/ccode371.png?raw=true "Claude call in code")
-
+ 
+![Claude call in code](./images/cc-se120.png?raw=true "Claude call in code")
+ 
 ---
 <br><br>
-
-## 11: Publish It and Understand Who Pays
-**What we're doing:** Sharing the AI-powered app and learning the economics.  
-**Why:** This removes the #1 blocker for sharing AI tools: keys and billing.
-
-**Action:** Publish via the share control and copy the link (as in step 5). Then note these facts (worth writing down):
+ 
+## 12: Understand Who Pays
+**What we're doing:** Learning the economics that make AI-powered artifacts practical to share.  
+**Why:** This is the biggest payoff of AI-powered artifacts — it removes the #1 blocker for sharing AI tools: keys and billing.
+ 
+**Action:** Publish it the same way as step 4 (**Copy dropdown → Publish artifact → Publish & copy link**) — the mechanics are identical, so the real point of this step is what happens *after* you share. Note these facts (worth writing down):
 ```
 - Viewers of your published AI artifact sign in with THEIR Claude
   account; their generations count against THEIR subscription usage.
@@ -3355,24 +3389,22 @@ Test again with a different style selected.
 - You don't pay for other people's usage of your artifact.
 ```
 
+![Publishing artifact](./images/cc-se121.png?raw=true "Publishing artifact")
+ 
+ 
+Consider: in Lab 9 you piped a prompt into `claude -p`. This artifact does conceptually the same thing — wraps a prompt around input and returns Claude's output — but packaged for non-terminal users. Same engine, different surface. Leave these chats; next we move to Claude Desktop.
+
 ---
 <br><br>
-
-## 12: Connect the Dots
-**What we're doing:** Tying this to the course arc.  
-**Why:** AI-powered artifacts are "headless mode for end users."
-
-**Action:** Consider: in Lab 9 you piped a prompt into `claude -p`. This artifact does conceptually the same thing — wraps a prompt around input and returns Claude's output — but packaged for non-terminal users. Same engine, different surface. Leave these chats; next we move to Claude Desktop.
-
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Created an interactive artifact from a single prompt and toggled code/preview
-- Iterated conversationally (features + styling) and browsed version history
+- Iterated conversationally (features + styling), seeing each change render live
 - Published a shareable link and found your artifacts gallery
 - Built an artifact that calls Claude at runtime (no API key, no backend)
 - Tested live in-artifact generation and inspected the embedded prompt
 - Learned that viewers' usage bills to their own subscription
-
 <br><br>
 ---
 ## END OF LAB
