@@ -2629,7 +2629,7 @@ Local mode uploads your working-tree diff instead of cloning from GitHub, so it 
 ## Lab Purpose
 Schedule time-driven work two ways: `/loop` for a recurring prompt inside your session, and **Routines** for a saved job that runs on Anthropic-managed cloud infrastructure even when your machine is off — then place both in the full scheduling landscape. Estimated time: 10-12 minutes.
 
-**NOTE: `/loop` requires Claude Code v2.1.72+. Routines require a claude.ai subscription login (Pro/Max/Team/Enterprise with Claude Code on the web) and are in research preview.**
+**NOTE: `/loop` requires Claude Code v2.1.72+; `/schedule` (Routines) requires v2.1.81+ and a claude.ai subscription login (Pro/Max/Team/Enterprise with Claude Code on the web) — not an API key. Routines are a research preview, and each run draws down your subscription usage like an interactive session, plus a per-account daily run cap.**
 
 ---
 <br><br>
@@ -2638,13 +2638,13 @@ Schedule time-driven work two ways: `/loop` for a recurring prompt inside your s
 **What we're doing:** Scheduling a 1-minute recurring task with an observable side effect, inside a session.  
 **Why:** `/loop` tasks are session-scoped — they live and die with this conversation. A file that grows a line per fire makes the invisible scheduler visible.
 
-**Action:** Start `claude-yolo`, then type:
+**Action:** Start `claude-yolo` (or `claude --dangerously-skip-permissions` if the alias isn't found), then type:
 ```
 /loop 1m append one line to loop_status.log with the current time and the count of .js files in this directory
 ```
 Claude converts the interval to a cron expression (`*/1 * * * *` — every minute is the minimum), schedules it via `CronCreate`, and confirms an 8-character job ID.
 
-![loop created](./images/ccode340.png?raw=true "loop created")
+![loop created](./images/cc-se79.png?raw=true "loop created")
 
 ---
 <br><br>
@@ -2659,7 +2659,7 @@ Claude converts the interval to a cron expression (`*/1 * * * *` — every minut
 ```
 (Timing note: the scheduler adds deterministic jitter — up to half the interval for sub-hourly tasks — so fires won't land exactly on the minute.)
 
-![loop fired](./images/ccode341.png?raw=true "loop fired")
+![loop fired](./images/cc-se80.png?raw=true "loop fired")
 
 ---
 <br><br>
@@ -2672,13 +2672,18 @@ Claude converts the interval to a cron expression (`*/1 * * * *` — every minut
 ```
 what scheduled tasks do I have?
 ```
-You'll see the task's ID, cron schedule, and prompt. Now add a single-fire task — no `/loop` needed:
+You'll see the task's ID, cron schedule, and prompt. 
+
+![task list](./images/cc-se81.png?raw=true "task list")
+
+Now add a single-fire task — no `/loop` needed:
+
 ```
 in 2 minutes, remind me to check whether the loop is still firing
 ```
 One-shots use the same machinery (a pinned time) and delete themselves after firing.
 
-![task list](./images/ccode342.png?raw=true "task list")
+![reminder](./images/cc-se82.png?raw=true "reminder")
 
 ---
 <br><br>
@@ -2694,49 +2699,60 @@ One-shots use the same machinery (a pinned time) and delete themselves after fir
 - **Min interval 1 minute**; **no catch-up** (missed fires collapse to one); kill switch `CLAUDE_CODE_DISABLE_CRON=1`.
 - **Variants:** `/loop <prompt>` with no interval lets Claude pick the wait each iteration; bare `/loop` runs a maintenance prompt (or your `.claude/loop.md`).
 
+![delete loop](./images/cc-se83.png?raw=true "delete loop")
+
 Type `exit` — and notice: your loop machinery just died with the session. That limit is what the cloud tier removes.
 
 ---
 <br><br>
 
-## 5: Confirm /schedule Is Available
-**What we're doing:** Checking the Routines prerequisite.  
-**Why:** `/schedule` only appears with claude.ai auth and the feature enabled — it's hidden if you're authenticated with an API key.
+## 5: Open /schedule and See What Routines Need
+**What we're doing:** Opening the Routines menu and reading its prerequisites — nothing to set up.  
+**Why:** You can see the interface and grasp the model without connecting anything. Actually creating a routine has real prerequisites, which is why steps 6-8 are an instructor demo.
 
-**Action:** Start `claude`, type `/schedule`, and confirm it's recognized. If you get "Unknown command": check you're logged in via claude.ai (`/login`) and that no `ANTHROPIC_API_KEY` is set. (You can always manage routines at **claude.ai/code/routines**.)
+**Action:** Start `claude` and type:
+```
+/schedule
+```
+You'll get an interactive menu — **Create · List · Update · Run now · Type something · Chat** — with a heads-up reading **"GitHub not connected for skillrepos/cc-se."** 
 
-> **⚠️ No personal repo?** Routines clone a **GitHub repo** on each run. If you don't have a small personal repo connected, follow the instructor demo for steps 6-8 and read along.
+![schedule menu](./images/cc-se84.png?raw=true "schedule menu")
+
+The key idea: routines run in **Anthropic's cloud, not this Codespace**, and each run **clones a GitHub repo** — so creating one requires:
+
+- a **claude.ai subscription** with Claude Code on the web (not an API key; unavailable under Zero Data Retention),
+- **GitHub linked to your Claude account** — `/web-setup` syncs your `gh` token, though in a Codespace the injected `GITHUB_TOKEN` tends to override stored creds and get rejected, so it takes fiddling,
+- **your own repo** (`cc-se` isn't yours), and
+- **subscription usage** per run, against a daily cap.
+
+We won't try to do this in class, so **steps 6-8 are an instructor demo.** You can still confirm the command works now: choose **List** (or type `/schedule list`) — you'll see an empty list and no routines yet.
+
+> **Try it yourself later (optional):** with a claude.ai Pro/Max account and a personal repo, run `/web-setup` (unset `GITHUB_TOKEN` first if it complains), then do steps 6-8 against your own repo — manage routines anytime at **claude.ai/code/routines**. If `/schedule` shows **"Unknown command,"** you're on an API key: `unset ANTHROPIC_API_KEY`, `/login` with your Claude account, and retry.
 
 ---
 <br><br>
 
-## 6: Create a Daily Routine
-**What we're doing:** Describing a scheduled cloud routine conversationally.  
-**Why:** `/schedule <description>` collects the same info the web form does — prompt, repo, schedule — and saves the routine to your cloud account.
+## 6: Create a Daily Routine (instructor demo)
+**What we're doing:** Watching a scheduled cloud routine get created conversationally.  
+**Why:** Creating a routine collects the same info the web form does — prompt, repo, schedule — and saves it to your cloud account.
 
-**Action:** Type (adjust the repo to your own):
+**Watch — the instructor runs this** against a connected personal repo:
 ```
 /schedule every weekday at 9am, review open issues in my repo and post a one-paragraph triage summary as a comment on the newest one
 ```
-Answer Claude's follow-ups (repository, schedule confirmation). If GitHub isn't connected, Claude prompts you to run `/web-setup` first.
+(Or run `/schedule` and choose **Create** / **Type something**.) Claude asks follow-ups — which repository, schedule confirmation — then saves the routine. If GitHub isn't connected, it routes to `/web-setup` first.
 
 ![schedule create](./images/ccode343.png?raw=true "schedule create")
 
 ---
 <br><br>
 
-## 7: List and Run It On Demand
-**What we're doing:** Verifying the routine, then triggering it immediately.  
-**Why:** Routines live on your claude.ai account, not in this session. "Run now" is how you validate before trusting the schedule.
+## 7: List and Run It On Demand (instructor demo)
+**What we're doing:** Verifying the routine, then firing it immediately.  
+**Why:** Routines live on your claude.ai account, not this session. "Run now" validates before you trust the schedule.
 
-**Action:** Type:
-```
-/schedule list
-```
-You should see your routine (also visible at **claude.ai/code/routines**). Then:
-```
-/schedule run
-```
+**Watch:** `/schedule list` (under the hood Claude calls `RemoteTrigger(list)`) shows the saved routine; `/schedule run` fires it now. Both are also on the `/schedule` menu as **List** and **Run now**.
+
 Each run creates a full Claude Code **cloud session** — autonomous, **no permission prompts**, using the repos and connectors the routine includes.
 
 ![schedule list](./images/ccode344.png?raw=true "schedule list")
@@ -2744,11 +2760,11 @@ Each run creates a full Claude Code **cloud session** — autonomous, **no permi
 ---
 <br><br>
 
-## 8: Inspect the Run
+## 8: Inspect the Run (instructor demo)
 **What we're doing:** Reading what the routine actually did.  
-**Why:** A *green* status only means the session exited without infrastructure errors — it does **not** mean your task succeeded. Always read the transcript.
+**Why:** A *green* status only means the session exited without infrastructure errors — it does **not** mean the task succeeded. Always read the transcript.
 
-**Action:** At **claude.ai/code/routines**, click your routine, then the latest run to open it as a session. Review what Claude did; from here you could comment, review changes, or open a PR.
+**Watch:** At **claude.ai/code/routines**, open the routine, then the latest run as a session — review what Claude did; from here you could comment, review changes, or open a PR.
 
 ![routine run](./images/ccode345.png?raw=true "routine run")
 
@@ -2792,9 +2808,9 @@ Rule of thumb: **`/loop`** for quick polling during a session, **Desktop/Cowork 
 
 ## 11: Clean Up
 **What we're doing:** Removing or pausing the practice routine.  
-**Why:** Routines count against a daily run allowance and act as *you* (commits/comments use your GitHub identity) — don't leave practice automation live.
+**Why:** Each run draws down your normal subscription usage (like any session), routines count against a per-account daily run cap, and they act as *you* (commits/comments use your GitHub identity) — don't leave practice automation live.
 
-**Action:** At **claude.ai/code/routines**, open your routine and either toggle off **Repeats** (pause) or delete it. Verify with `/schedule list`.
+**Action:** If a routine was created (the instructor demo, or your optional self-run), open it at **claude.ai/code/routines** and either toggle off **Repeats** (pause) or delete it — verify with `/schedule list`.
 
 ---
 <br><br>
@@ -2809,7 +2825,7 @@ exit
 ✅ You've successfully:
 - Created a recurring session task with `/loop 1m ...` and watched it fire twice
 - Managed tasks in natural language and learned the session-scoped lifecycle
-- Created a cloud routine with `/schedule`, listed it, and ran it on demand
+- Saw a cloud routine created, listed, and run on demand (`/schedule` instructor demo)
 - Inspected a run's transcript (and learned green ≠ task success)
 - Learned the three trigger types and the official 3-way scheduling comparison
 
