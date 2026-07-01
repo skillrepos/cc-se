@@ -2837,7 +2837,7 @@ exit
 
 # Lab 14: Managed Agents: Background, Cloud, and Web
 ## Lab Purpose
-Run Claude sessions that don't need you watching: dispatch a **background agent** and manage it from the `claude agents` dashboard, then start a **cloud session** at claude.ai/code and pull it into your terminal with `--teleport`. Many agents, your machine and the cloud, one mental model. Estimated time: 10-12 minutes.
+Run Claude sessions that don't need you watching: dispatch a **background agent** and manage it from the `claude agents` dashboard, then watch a **cloud session** at claude.ai/code get pulled into the terminal with `--teleport` (an instructor demo — it needs a GitHub-write-connected personal repo). Many agents, your machine and the cloud, one mental model. Estimated time: 10-12 minutes.
  
 > **In plain English:** an "agent" is just Claude running the loop on a task. "Managed" means it runs somewhere you're *not* watching every second — in the **background** (your machine, terminal closed), in the **cloud/web** (a hosted VM; your laptop can be off), or checked from your **phone**. Think of handing off a job and walking away; `claude agents` is your dashboard of those running jobs — what's working, what needs you, what's done.
  
@@ -2943,64 +2943,65 @@ Then run `claude agents`, select each practice row, press `Ctrl+X` to stop and `
 ---
 <br><br>
 
-## 7: Open Claude Code on the Web
+## 7: Open Claude Code on the Web (instructor demo)
 **What we're doing:** Visiting the cloud surface.  
 **Why:** This is the same agent loop from Lab 11 — running in an isolated VM on Anthropic infrastructure instead of your machine.
-
-**Action:** In your browser, go to **https://claude.ai/code** and sign in with your claude.ai account. Connect your GitHub account (first time only) and select a small personal repository — each cloud session starts by cloning your repo into a fresh VM.
-
-> **⚠️ No personal repo?** Do steps 7-8 read-only, then follow the **instructor demo** for teleport — the flow is the lesson.
-
+ 
+**Watch — the instructor runs steps 7-10.** In a browser, go to **https://claude.ai/code**, sign in with a claude.ai account, connect GitHub, and select a small **personal** repository — each cloud session starts by cloning that repo into a fresh VM.
+ 
+> **Why these steps are a demo, not per-student.** The cloud session **pushes** its branch to GitHub (that's what teleport later pulls down), so it needs a GitHub connection with **write access to a repo you own** — plus a claude.ai subscription with Claude Code on the web (unavailable under Zero Data Retention). Connecting at claude.ai/code installs the Claude GitHub App, but you still have to grant it *your* repo (All repositories, or select-with-that-repo included); an org repo you don't own (like `cc-se`) fails the push with a **403**. That per-student GitHub-write setup isn't worth stalling the class on — the instructor runs it once and you watch the flow, which is the lesson.
+ 
 ![web code home](./images/ccode350.png?raw=true "web code home")
-
+ 
 ---
 <br><br>
-
-## 8: Start a Cloud Session and Prove It's Untethered
+ 
+## 8: Start a Cloud Session and Prove It's Untethered (instructor demo)
 **What we're doing:** Submitting a task that runs entirely in the cloud, then closing the tab.  
 **Why:** The headline feature: cloud sessions persist when your browser closes (you can even monitor them from the Claude mobile app).
-
-**Action:** Enter a self-contained task:
+ 
+**Watch:** With the **repository selector** beside the input set to the instructor's repo (the task runs against the *selected* repo, not one inferred from the text), submit a self-contained task:
 ```
 Add a "Project layout" section to the README that describes the repository structure. Keep it under 15 lines.
 ```
-Submit it and watch the VM provision, repo clone, Claude work. While it's running, **close the tab**, wait ~30 seconds, then reopen `claude.ai/code` — your session is still there with the full transcript. Changes land on a `claude/`-prefixed branch with a **Create PR** option (don't create it — we'll teleport instead).
-
+The VM provisions, clones the repo, and Claude works. Close the tab, wait ~30 seconds, reopen `claude.ai/code` — the session is still there with its full transcript. Changes land on a `claude/`-prefixed branch with a **Create PR** option (skip it — we teleport instead).
+ 
 ![cloud session](./images/ccode351.png?raw=true "cloud session")
-
+ 
 ---
 <br><br>
-
-## 9: Teleport the Session Down
-**What we're doing:** Pulling the cloud session into your terminal.  
+ 
+## 9: Teleport the Session Down (instructor demo)
+**What we're doing:** Pulling the cloud session into the terminal.  
 **Why:** Start in the cloud, finish locally — `--teleport` hands you the branch *and* the conversation.
-
-**Action:** In a Codespace terminal, get a checkout of the **same repo** with clean git state, then teleport:
+ 
+**Watch:** In a terminal with a clean checkout of the **same repo**, teleport:
 ```bash
 cd /workspaces && git clone https://github.com/<you>/<your-repo>.git && cd <your-repo>
 claude --teleport
 ```
 Pick the session from step 8 in the interactive list (or `claude --teleport <session-id>`). Claude fetches and checks out the session's branch and loads the full conversation history.
-
+ 
 ![teleport picker](./images/ccode352.png?raw=true "teleport picker")
-
+ 
 ---
 <br><br>
-
-## 10: Continue the Conversation Locally
+ 
+## 10: Continue the Conversation Locally (instructor demo)
 **What we're doing:** Proving the context came with the branch.  
 **Why:** This is a continuation, not a copy — Claude remembers the cloud work.
-
-**Action:** In the teleported session, type:
+ 
+**Watch:** In the teleported session:
 ```
 Summarize what you changed in the cloud session, then suggest one follow-up improvement.
 ```
-Claude answers from the imported history. Confirm the branch: `! git branch --show-current` — you're on the session's `claude/...` branch.
-
+Claude answers from the imported history. Confirm the branch with `! git branch --show-current` — it's the session's `claude/...` branch.
+ 
 ![teleported session](./images/ccode353.png?raw=true "teleported session")
-
+ 
 ---
 <br><br>
+
 
 ## 11: The Whole Movement Map
 **What we're doing:** Learning all the doors between surfaces.  
@@ -3038,17 +3039,15 @@ exit
 - Dispatched background sessions with `claude --bg` and from the dashboard input
 - Read agent view's state model and peeked/replied without attaching
 - Attached and detached cleanly; scripted status with `claude agents --json`
-- Started a cloud session at claude.ai/code and verified it persists with the browser closed
-- Teleported a cloud session into your terminal (branch + conversation) and continued locally
+- Saw a cloud session at claude.ai/code persist with the browser closed (instructor demo)
+- Saw a cloud session teleported into the terminal (branch + conversation) and continued locally (instructor demo)
 - Mapped all surface movements: --teleport, /tp, --remote, and Remote Control
-
 <br><br>
 ---
 ## END OF LAB
 ---
 <br><br>
-
-
+ 
 
 # 🗓️ DAY 3: The Claude Platform — Artifacts, Cowork, and Connectors
 **Today we leave the terminal: the same Claude concepts (skills, plugins, MCP, scheduling) in claude.ai and the Claude Desktop app, ending with the capstone.**
