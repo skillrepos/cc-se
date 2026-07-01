@@ -3118,14 +3118,14 @@ Sign in with your course account. Open your settings (your initials/avatar, lowe
 ---
 <br><br>
 
-## 3: Find the Unified Directory
-**What we're doing:** Locating the browsable directory of connectors, skills, and plugins.
-**Why:** Anthropic now surfaces skills, connectors, and plugins in one unified directory — the consumer face of everything you hand-built in Labs 4–7.
-
-**Action:** In claude.ai settings, look for the section listing **Connectors** (with a "Browse" or directory option) and the section for **Skills/Capabilities**. Scroll the directory — notice familiar names (GitHub, Google Drive, document skills). Don't connect anything yet; that's Lab 18.
-
-![Unified directory](./images/ccode362.png?raw=true "Unified directory")
-
+## 3: Find the Customize Panel — Skills, Connectors, Plugins in One Place
+**What we're doing:** Locating where claude.ai surfaces connectors, skills, and plugins together.
+**Why:** Anthropic now gathers skills, connectors, and plugins under one **Customize** panel — the consumer face of everything you hand-built in Labs 4–7.
+ 
+**Action:** In claude.ai, open **Customize** from the left sidebar. You'll see **Skills** and **Connectors** listed, plus a **Personal plugins** section with a **Browse plugins** button. Click **Connectors** and scroll the list — notice familiar names (Gmail, Google Drive, Slack, GitHub). Don't connect anything yet; that's Lab 18.
+ 
+![Customize panel — Skills, Connectors, Plugins](./images/cc-se104.png?raw=true "Customize panel")
+ 
 ---
 <br><br>
 
@@ -3135,7 +3135,7 @@ Sign in with your course account. Open your settings (your initials/avatar, lowe
 
 **Action:** Open the Claude Desktop app on your machine. Sign in with the same account if prompted. Locate the mode selector with **Chat**, **Cowork**, and **Code**.
 
-![Three tabs](./images/ccode363.png?raw=true "Three tabs")
+![Three tabs](./images/cc-se105.png?raw=true "Three tabs")
 
 ---
 <br><br>
@@ -3170,9 +3170,9 @@ Sign in with your course account. Open your settings (your initials/avatar, lowe
 ## 7: Set the Frame
 **What we're doing:** Stating the Day 3 thesis.
 **Why:** So you watch for it all day.
-
-**Action:** Keep this in mind: **it's the same agentic engine.** Cowork literally runs Claude Code's architecture under the hood. The SKILL.md anatomy from Lab 4, the plugin packaging from Lab 5, and the MCP protocol from Lab 7 all reappear today — just with friendlier UI.
-
+ 
+**Action:** Keep this in mind: **it's the same agent engine.** Cowork and Claude Code are both built on the **Claude Agent SDK** — the same underlying agentic foundation — so Cowork brings Claude Code's agent capabilities to people who don't write code. That's why the SKILL.md anatomy from Lab 4, the plugin packaging from Lab 5, and the MCP protocol from Lab 7 all reappear today — just with a friendlier UI.
+ 
 ---
 <br><br>
 
@@ -3180,15 +3180,16 @@ Sign in with your course account. Open your settings (your initials/avatar, lowe
 ✅ You've successfully:
 - Mapped Day 1–2 terminal concepts to their Day 3 platform equivalents
 - Signed in to claude.ai and verified your paid plan
-- Found the unified directory of connectors, skills, and plugins
+- Found the Customize panel where connectors, skills, and plugins live together
 - Opened Claude Desktop and toured the Chat / Cowork / Code tabs
 - Learned Cowork's two ground rules (app stays open; tasks take minutes)
-
 <br><br>
 ---
 ## END OF LAB
 ---
 <br><br>
+
+
 # Lab 16: Artifacts: Interactive and AI-Powered
 ## Lab Purpose
 Create an interactive artifact in claude.ai and iterate on it conversationally, then build an *AI-powered* artifact that calls Claude from inside — a mini AI app with no API key and no backend. Estimated time: 10-12 minutes.
@@ -3494,12 +3495,12 @@ You should see renamed files plus the report (expense total 604.50 — check Cla
 
 ## 7: Find Cowork's Customize Section
 **What we're doing:** Locating where Cowork groups skills, plugins, and connectors.  
-**Why:** The **Customize** area gathers all three extension types in one place — the desktop twin of the unified directory from Lab 15.
-
+**Why:** The **Customize** area gathers all three extension types in one place — the desktop twin of the Customize panel from Lab 15.
+ 
 **Action:** In the Cowork tab, open **Customize** (check the sidebar or settings area). Note the groupings: skills, plugins, connectors.
-
+ 
 ![Customize section](./images/ccode378.png?raw=true "Customize section")
-
+ 
 ---
 <br><br>
 
@@ -3589,12 +3590,12 @@ Here:  these plugins distribute the same asset types to Cowork users
 <br><br>
 
 
-# Lab 18: Connectors — The Directory, OAuth, and Your First Connected Tool
+# Lab 18: Connectors — The Catalog, OAuth, and Your First Connected Tool
 ## Lab Purpose
-Connect a real external tool through the connectors directory, authorize it, and use it in a conversation — then see that connectors are managed remote MCP, the Lab 7 concept productized. Estimated time: 10-12 minutes.
-
+Connect a real external tool through the connectors catalog, authorize it, and use it in a conversation — then see that connectors are managed remote MCP, the Lab 7 concept productized. Estimated time: 10-12 minutes.
+ 
 **Environment: claude.ai in your browser (works the same in Claude Desktop)**
-
+ 
 ---
 <br><br>
 
@@ -3612,14 +3613,14 @@ Same protocol (MCP). Same result (Claude gets tools). Less typing.
 ---
 <br><br>
 
-## 2: Open the Connectors Directory
+## 2: Open the Connectors Catalog
 **What we're doing:** Browsing the catalog.
-**Why:** The directory is browsable on both claude.ai and Claude Desktop; it's part of the unified directory from Lab 15.
-
-**Action:** In claude.ai settings, open the **Connectors** section and browse the directory.
-
+**Why:** The connectors catalog is browsable on both claude.ai and Claude Desktop; it's part of the Customize panel from Lab 15.
+ 
+**Action:** In claude.ai, open **Customize → Connectors** and browse the list.
+ 
 ![Connectors directory](./images/ccode382.png?raw=true "Connectors directory")
-
+ 
 ---
 <br><br>
 
@@ -3718,13 +3719,12 @@ my cowork-lab folder listing my repos and their last update dates.
 
 ## Lab Summary
 ✅ You've successfully:
-- Browsed the connectors directory (part of the unified directory)
+- Browsed the connectors catalog (part of the Customize panel)
 - Connected and OAuth-authorized the GitHub connector
 - Used connector tools in chat and in a Cowork task
 - Located the custom-connector (remote MCP) option — the Lab 7 concept productized
 - Gained awareness of .mcpb Desktop Extensions
 - Found where to disconnect a connector
-
 <br><br>
 ---
 ## END OF LAB
