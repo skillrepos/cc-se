@@ -3458,9 +3458,9 @@ You should see three messily-named files.
 **What we're doing:** Switching Claude Desktop into Cowork mode and granting access to `~/cowork-lab` only.  
 **Why:** Cowork is where Claude gets file access and autonomous execution — and you control exactly which folders it sees. Least privilege applies to agents too.
 
-**Action:** In Claude Desktop, click the **Cowork** tab (if you see "Setting up Claude's workspace," wait). Then use the folder selector ("Add folder" / working-folder control) and choose your `cowork-lab` folder.
+**Action:** In Claude Desktop, click the **Cowork** tab (if you see "Setting up Claude's workspace," wait). Then use the folder selector ("Work in a project or folder") and choose your `cowork-lab` folder. You can respond "Always allow" to the question about allowing Claude to change files.
 
-![Cowork tab](./images/ccode373.png?raw=true "Cowork tab")
+![Cowork tab](./images/cc-se122.png?raw=true "Cowork tab")
 
 ---
 <br><br>
@@ -3477,6 +3477,12 @@ each file's contents, lists the action items from the meeting notes,
 and totals the expenses. Show me your plan before renaming anything.
 ```
 
+Then submit it.
+
+![Cowork tab](./images/cc-se123.png?raw=true "Cowork tab")
+
+> **Tie-back:** This request is the *"How to Ask Cowork Well"* slide in practice — specific output **and** format, ask for the plan first, and iterate to refine.
+
 ---
 <br><br>
 
@@ -3484,9 +3490,9 @@ and totals the expenses. Show me your plan before renaming anything.
 **What we're doing:** Checking Claude's proposed actions before it touches files.  
 **Why:** Same philosophy as Plan Mode in Lab 2 — review first, then execute.
 
-**Action:** Read the plan Claude presents (proposed filenames, report outline). If it looks right, approve/confirm it.
+**Action:** Read the plan Claude presents (proposed filenames, report outline). If it looks ok, you can tell it to proceed.
 
-![Cowork plan](./images/ccode375.png?raw=true "Cowork plan")
+![Cowork plan](./images/cc-se125.png?raw=true "Cowork plan")
 
 ---
 <br><br>
@@ -3494,12 +3500,13 @@ and totals the expenses. Show me your plan before renaming anything.
 ## 5: Watch the Progress UI
 **What we're doing:** Observing an autonomous multi-step run.  
 **Why:** This is the Day 2 background-agent experience with a visual task UI: steps, progress, live reasoning — and Claude may coordinate sub-agents (Lab 4's concept!) for parallel pieces.
+ 
+**Action:** Watch the task execute — steps, progress, and live reasoning appear in the task UI. Note that anything you type in the chat *after* a run has started is **queued** for the next turn, not folded into the job that's already running. To adjust a run, let it finish, then send your follow-up (e.g. `Also flag any blockers you find in the notes.`) as the next message.
+ 
+> ⏱ **Timing note:** These runs are often quick — frequently under a minute. Larger multi-step tasks can take longer, and if one does, that's normal — it's doing real work and you can step away.
+ 
 
-**Action:** Watch the task execute. You can steer mid-run — try typing `In the report, also flag any blockers you find in the notes.` and Claude folds it in.
-
-> ⏱ **Patience note:** Cowork tasks routinely take a few minutes. That's normal — it's doing real work. You can step away.
-
-![Task progress](./images/ccode376.png?raw=true "Task progress")
+![Task progress](./images/cc-se126.png?raw=true "Task progress")
 
 ---
 <br><br>
@@ -3507,24 +3514,26 @@ and totals the expenses. Show me your plan before renaming anything.
 ## 6: Verify on Disk and Note the Safety Rails
 **What we're doing:** Confirming real filesystem changes, and naming what protected you.  
 **Why:** Cowork output isn't a chat reply — it's files. Knowing the guardrails lets you delegate confidently.
-
+ 
 **Action:** Back in your terminal:
 ```bash
 ls -la ~/cowork-lab
 cat ~/cowork-lab/summary-report.md
 ```
-You should see renamed files plus the report (expense total 604.50 — check Claude's math). Three protections were active:
+You should see renamed files plus the report (expense total 603.50 — check Claude's math). Three protections were active:
 ```
 1. Folder scoping  - Claude saw only ~/cowork-lab
 2. Plan approval   - it showed the plan before renaming
 3. Delete guard    - permanent deletions always require an explicit "Allow"
 ```
-
-![Report on disk](./images/ccode377.png?raw=true "Report on disk")
-
+ 
+![Report on disk](./images/cc-se127.png?raw=true "Report on disk")
+ 
+> **Tie-back:** These file rails scale to the *"Three Golden Rules"* slide once connectors are in play — see the plan first, review-first for one-way doors (send/delete/publish), never delegate money. And the same *"describe outcome → review plan → approve once"* flow drives the everyday uses from the *"What People Use Cowork For"* slide — inbox triage, receipts → totals, morning briefings.
+ 
 ---
 <br><br>
-
+ 
 ## 7: Find Cowork's Customize Section
 **What we're doing:** Locating where Cowork groups skills, plugins, and connectors.  
 **Why:** The **Customize** area gathers all three extension types in one place — the desktop twin of the Customize panel from Lab 15.
@@ -3535,11 +3544,11 @@ You should see renamed files plus the report (expense total 604.50 — check Cla
  
 ---
 <br><br>
-
+ 
 ## 8: Enable a Document Skill — Same SKILL.md as Lab 4
 **What we're doing:** Turning on a skill and connecting it to what you built.  
 **Why:** Enabled skills load automatically when a task matches their description — exactly like your `api-checker` did in Lab 4.
-
+ 
 **Action:** Browse the skills list, find a document-creation skill (e.g., Word/.docx or slides), and enable it. Then read:
 ```
 Lab 4: you wrote SKILL.md with name + description frontmatter,
@@ -3547,45 +3556,45 @@ Lab 4: you wrote SKILL.md with name + description frontmatter,
 Here:  every skill in this list IS that same anatomy — SKILL.md plus
        supporting files — selected the same way. Same mechanism, new surface.
 ```
-
+ 
 ![Enable skill](./images/ccode379.png?raw=true "Enable skill")
-
+ 
 ---
 <br><br>
-
+ 
 ## 9: Invoke the Skill by Intent (Not by Name)
 **What we're doing:** Letting Cowork pick the skill from context, like Lab 4 Step 7.  
 **Why:** Skills should trigger on intent, not on being named.
-
+ 
 **Action:** Start a Cowork task in your `~/cowork-lab` folder and type:
 ```
 Turn summary-report.md into a polished one-page Word document
 with a title, headings for each section, and the expense total
 highlighted. Save it in this folder.
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 10: Watch the Skill Load and Open the Output
 **What we're doing:** Spotting the skill activation, then judging the deliverable.  
 **Why:** Confirms auto-selection happened — and the point of skills is *better, more consistent output*.
-
+ 
 **Action:** Watch the progress output for the document skill loading/being used.
-
+ 
 > ⏱ **Patience note:** Document generation can take a couple of minutes.
-
+ 
 When it finishes, open the new `.docx` in `~/cowork-lab` (double-click in Finder/Explorer). Compare it mentally to raw prompting.
-
+ 
 ![Skill in action](./images/ccode380.png?raw=true "Skill in action")
-
+ 
 ---
 <br><br>
-
+ 
 ## 11: Browse Plugins — plugin.json, All Grown Up
 **What we're doing:** Looking at plugin offerings and connecting them to Lab 5.  
 **Why:** Plugins here are the same packaging mechanism you built by hand — bundles of skills + connectors + commands + sub-agents.
-
+ 
 **Action:** In Customize, switch to the plugins area and browse a few (e.g., role-based plugins like legal, finance, brand). Notice each plugin's listed contents. Then read:
 ```
 Lab 5: you wrote .claude-plugin/plugin.json bundling commands,
@@ -3594,33 +3603,46 @@ Here:  these plugins distribute the same asset types to Cowork users
        with one click — the cross-surface distribution story.
        (Enterprise admins can host private plugin marketplaces.)
 ```
-
+ 
 ![Plugins list](./images/ccode381.png?raw=true "Plugins list")
-
+ 
 ---
 <br><br>
-
+ 
 ## 12: Keep the Folder
 **What we're doing:** Preserving the sandbox.  
 **Why:** Labs 19 and 21 build on this folder.
-
+ 
 **Action:** Leave `~/cowork-lab` and its files in place, and leave Claude Desktop open.
-
+ 
+---
+<br><br>
+ 
+## Going Further (Optional) — Make It Persist with a Project
+ 
+Everything above was a single task. For work that spans **days**, put it in a **Project** so Cowork remembers context across sessions instead of starting cold each time.
+ 
+**Action (optional, no check required):**
+1. Create a new **Project** (e.g., "Workshop demo") and add a line of **project instructions** — your goals and preferences (e.g., *"Keep reports in kebab-case; always show a plan first."*).
+2. Attach the `~/cowork-lab` folder (and later, any **connectors** the work needs).
+3. Run a task, then **close and reopen** the project tomorrow and ask: *"Where did we leave off?"*
+> **Tie-back:** A Project persists **instructions + connections + memory** across sessions — the *"Cowork Projects"* slide, and the Cowork twin of Day 1's `CLAUDE.md` standing brief.
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Pointed Cowork at a specific local folder (least privilege) and delegated a multi-step task
-- Reviewed the plan, watched progress, steered mid-task, and verified real file changes
-- Identified Cowork's safety rails (scoping, plan approval, delete guard)
+- Reviewed the plan, watched progress, and verified real file changes
+- Identified Cowork's safety rails (scoping, plan approval, delete guard) and the three golden rules (plan-first, review-first, never delegate money)
 - Found Customize and enabled a document skill — recognized as the same SKILL.md from Lab 4
 - Triggered the skill by intent and produced a polished document deliverable
 - Mapped Cowork plugins to the plugin.json packaging from Lab 5
-
+- (Concepts) everyday use cases, how to ask Cowork well, and persistent Projects + memory
 <br><br>
 ---
 ## END OF LAB
 ---
 <br><br>
-
+ 
 
 # Lab 18: Connectors — The Catalog, OAuth, and Your First Connected Tool
 ## Lab Purpose
