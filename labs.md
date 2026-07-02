@@ -3682,15 +3682,41 @@ Enter the following in the chat area in the Cowork section.
  
 ---
 <br><br>
-## Going Further (Optional) — Make It Persist with a Project
+
+## 7: Make It Persist with a Project
+**What we're doing:** Moving this work into a **Project** so Cowork remembers it across sessions.  
+**Why:** A single task starts cold every time. Real work spans days — a Project keeps your instructions, connected tools, and context so you never re-explain. It's the Cowork twin of Day 1's `CLAUDE.md` standing brief.
  
-Everything above was a single task. For work that spans **days**, put it in a **Project** so Cowork remembers context across sessions instead of starting cold each time.
+**Action:**
+1. Create a new **Project** via the menu on the left.
+   
+![New project](./images/cc-se142.png?raw=true "New project")
+
+2. Attach the `~/cowork-lab` folder.
+
+![Attach folder](./images/cc-se143.png?raw=true "Attach folder")
+
+3. You can also give it a name (like "Workshop Demo") and attach a line of instructions to it on things it should always do (like "Keep reports in kebab-case and always show a plan first").
+
+![Project info](./images/cc-se144.png?raw=true "Project info")
+
+4. Then you should see your new project created.
+
+![Project created](./images/cc-se145.png?raw=true "Project created")
+
+5. Run a quick task that exercises both the instructions and the folder, e.g.:
+```
+   From the files in this folder, draft a two-line status update
+   I could paste into a team chat, and save it as a new file.
+```
+   Watch for the tells: Claude should **show a plan first** and propose a **kebab-case** filename (e.g., `team-status-update.md`) — that's your Project *instructions* at work — and it should pull real details from the folder's files, proving it *sees the attached folder*.
+
+![Project test](./images/cc-se146.png?raw=true "Project test")
+
+> **Try it after class:** close the Project, reopen it tomorrow, and ask *"Where did we leave off?"* A Project persists **instructions + connections + memory** — the *"Cowork Projects"* slide — which is what makes multi-day work feel continuous.
  
-**Action (optional, no check required):**
-1. Create a new **Project** (e.g., "Workshop demo") and add a line of **project instructions** — your goals and preferences (e.g., *"Keep reports in kebab-case; always show a plan first."*).
-2. Attach the `~/cowork-lab` folder (and later, any **connectors** the work needs).
-3. Run a task, then **close and reopen** the project tomorrow and ask: *"Where did we leave off?"*
-> **Tie-back:** A Project persists **instructions + connections + memory** across sessions — the *"Cowork Projects"* slide, and the Cowork twin of Day 1's `CLAUDE.md` standing brief.
+---
+<br><br>
  
 ## Lab Summary
 ✅ You've successfully:
