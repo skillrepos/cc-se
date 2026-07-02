@@ -3560,7 +3560,7 @@ Using the folder and `summary-report.md` from Lab 17, work in Cowork's **Customi
  
 **Action:** In the Cowork tab, open **Customize** (check the sidebar or settings area). Note the groupings: skills, plugins, connectors.
  
-![Customize section](./images/ccode378.png?raw=true "Customize section")
+![Customize section](./images/cc-se128.png?raw=true "Customize section")
  
 ---
 <br><br>
@@ -3577,9 +3577,11 @@ Here:  same anatomy. Core skills (Word/PDF/Excel/PPT) ship active and
        auto-select on intent; optional ones in this catalog you toggle on.
        Same mechanism, new surface.
 ```
-You can open a skill's **SKILL.md** right in the app (e.g. the built-in `docx` — via the Skills list, or by clicking its chip in the **Context** panel once it's loaded in Step 3). You'll see the same **name + description frontmatter**, a Quick Reference, and `scripts/…` helpers you wrote by hand in Lab 4. *That's the anatomy, shipped.*
+
+![Customize section](./images/cc-se129.png?raw=true "Customize section")
  
-![Skills directory](./images/ccode379.png?raw=true "Skills directory")
+
+
  
 ---
 <br><br>
@@ -3594,11 +3596,18 @@ Turn summary-report.md into a polished one-page Word document
 with a title, headings for each section, and the expense total
 highlighted. Save it in this folder.
 ```
-Expand the **Context** panel at the top of the task — you'll see **`docx`** listed. *That's your proof the skill auto-selected*; no one typed its name. When it finishes, open the new `.docx` (double-click, or **Open in Microsoft Word**) and compare it to raw prompting.
+
+![docx by intent](./images/cc-se131.png?raw=true "docx by intent")
+
+Expand the **Context** panel at the top of the task — you'll see **`docx`** listed. *That's your proof the skill auto-selected*; no one typed its name.
+
+![docx by intent](./images/cc-se132.png?raw=true "docx by intent")
+
+You can open a skill's **SKILL.md** right in the app (e.g. the built-in `docx` — via the Skills list, or by clicking its chip in the **Context** panel once it's loaded. You'll see the same **name + description frontmatter**, a Quick Reference, and `scripts/…` helpers you wrote by hand in Lab 4. *That's the anatomy, shipped.*
  
-> ⏱ **Timing note:** Usually quick — often under a minute.
- 
-![docx by intent](./images/ccode380.png?raw=true "docx by intent")
+![Skills directory](./images/cc-se133.png?raw=true "Skills directory")
+
+When it finishes, you can open the new `.docx` (double-click, or **Open in Microsoft Word**) and compare it to raw prompting.
  
 ---
 <br><br>
@@ -3607,13 +3616,25 @@ Expand the **Context** panel at the top of the task — you'll see **`docx`** li
 **What we're doing:** The other half of the story — toggling a *catalog* skill on, then invoking it.  
 **Why:** `docx` was built in. `canvas-design` is optional: enable it once, and from then on it auto-selects on intent, exactly like Lab 4.
  
-**Action:** In the **Skills** directory, find **`canvas-design`** and enable it. Then, in a task in `~/cowork-lab`, type:
+**Action:** In the **Skills** directory, find **`canvas-design`** and enable it. 
+
+![Skills directory](./images/cc-se134.png?raw=true "Skills directory")
+
+![Find skill](./images/cc-se136.png?raw=true "Find skill")
+
+![Install skill](./images/cc-se135.png?raw=true "Install skill")
+
+Then, in a task in `~/cowork-lab`, type:
 ```
 Turn summary-report.md into a designed one-page PDF summary.
 ```
-Check the **Context** panel again — now **`canvas-design`** appears alongside `docx`. Open the resulting `.pdf`: a laid-out, visual one-pager — a *different* deliverable from the Word doc, built from the same source and the same "describe the outcome" ask.
+Check the **Context** panel again — now **`canvas-design`** appears alongside `docx`. 
+
+![Run with skill](./images/cc-se137.png?raw=true "Run with skill")
+
+Open the resulting `.pdf`: a laid-out, visual one-pager — a *different* deliverable from the Word doc, built from the same source and the same "describe the outcome" ask.
  
-![canvas-design PDF](./images/ccode382.png?raw=true "canvas-design PDF")
+![canvas-design PDF](./images/cc-se138.png?raw=true "canvas-design PDF")
  
 ---
 <br><br>
@@ -3625,19 +3646,26 @@ Check the **Context** panel again — now **`canvas-design`** appears alongside 
 **Action:** Two bounded follow-up turns on the PDF, one goal each.
  
 1. **Fix the content (and verify the math):**
+
+Enter the following in the chat area in the Cowork section.
+
 ```
    The total is wrong — it should exclude the conference ticket.
    Recompute and update the PDF.
 ```
    The new total should be **204.50** (84.50 + 120.00). Confirm Claude got it right — the numbers are real, so *you* check them.
+
+![canvas-design PDF](./images/cc-se139.png?raw=true "canvas-design PDF")
  
 2. **Restyle to a constraint:**
 ```
    Our brand color is forest green (#1B4332). Redo the accent in that.
 ```
    One purposeful change, stated as a goal — the model adapts the finished piece instead of starting over.
+
+![canvas-design PDF](./images/cc-se140.png?raw=true "canvas-design PDF")   
  
-> **Guardrail — don't bikeshed.** One directed change per turn, framed as an *outcome* ("make it warmer," "match our brand"), not endless hex-code fiddling. After a round or two you've got the lesson: **you drive, the model iterates.**
+> **Tip:** Change one thing at a time, and describe the goal rather than exact values — "make it warmer," "match our brand." The takeaway of this step isn't the color; it's the habit of steering a finished draft toward what you need instead of settling for the first version.
  
 ---
 <br><br>
@@ -3646,15 +3674,14 @@ Check the **Context** panel again — now **`canvas-design`** appears alongside 
 **What we're doing:** A quick look at plugins, connecting them to Lab 5.  
 **Why:** Plugins here are the same packaging mechanism you built by hand — bundles of skills + connectors + commands + sub-agents.
  
-**Action:** In Customize, glance at the **Plugins** area and note that each plugin bundles several assets. That's your Lab 5 `.claude-plugin/plugin.json` — commands, agents, and skills packaged so others install one thing — distributed to Cowork users with one click. (Enterprise admins can host private plugin marketplaces.)
+**Action:** In Customize, open the **Plugins** area. It may well be **empty** — that's expected if you haven't installed any, and it's fine. Empty or not, the concept is what matters: a plugin bundles several assets — commands, agents, skills, connectors — using the *same* `.claude-plugin/plugin.json` packaging you wrote in Lab 5, installable in one click. You **won't** see your own Lab 5 plugin here (it lives in your Codespace repo and was never published), so the point isn't to find it — it's to recognize the shape: one bundle of many capabilities that others install in a single step. (Teams publish their own plugins the same way; enterprise admins can host private plugin marketplaces.)
  
-![Plugins list](./images/ccode381.png?raw=true "Plugins list")
+![Plugins list](./images/cc-se141.png?raw=true "Plugins list")
  
 > **Keep the folder:** leave `~/cowork-lab` and its files in place (and Claude Desktop open) — Labs 20 and 22 build on it.
  
 ---
 <br><br>
- 
 ## Going Further (Optional) — Make It Persist with a Project
  
 Everything above was a single task. For work that spans **days**, put it in a **Project** so Cowork remembers context across sessions instead of starting cold each time.
