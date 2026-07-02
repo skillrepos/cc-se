@@ -3742,7 +3742,7 @@ Connect a real external tool through the connectors catalog, authorize it, and u
 ---
 <br><br>
  
-## 1: Connectors = MCP with a Bow on It
+## 1: Connectors = MCP plus
 **What we're doing:** Framing before connecting.
 **Why:** In Lab 7 you ran `claude mcp add` and edited `.mcp.json`. Connectors are the same protocol — remote MCP servers — wrapped in a directory with one-click OAuth.
  
@@ -3762,27 +3762,33 @@ Same protocol (MCP). Same result (Claude gets tools). Less typing.
  
 **Action:** In claude.ai, open **Customize → Connectors** and browse the list.
  
-![Connectors directory](./images/ccode382.png?raw=true "Connectors directory")
+![Connectors directory](./images/cc-se147.png?raw=true "Connectors directory")
  
 ---
 <br><br>
  
-## 3: Choose GitHub
-**What we're doing:** Picking a connector that needs no admin setup.
-**Why:** You already have a GitHub account from Days 1–2 (Codespaces!), and GitHub's OAuth flow is self-serve — no workspace admin required. (If you prefer, Google Drive/Gmail works the same way with a personal Google account.)
+## 3: Choose Google Drive
+**What we're doing:** Picking a connector that exposes callable tools and needs no admin setup.
+**Why:** Not every connector in the directory is the same *kind*. Google Drive is a **tool-serving** connector — connect it and Claude gains callable tools (search, read, create files), exactly like the servers you added with `claude mcp add` in Lab 7. Its OAuth is self-serve with a personal Google account (no workspace admin). We'll contrast it with a *different* kind of connector — GitHub — in step 8.
  
-**Action:** Find the **GitHub** connector in the directory and click **Connect**.
+> **Requirement:** This lab uses a personal Google account. Any Google account works, and your Drive can even be empty — you'll seed it through the connector in step 6.
+ 
+**Action:** Find the **Google Drive** connector in the directory and click **Connect**.
+
+![Google Drive connect](./images/cc-se155.png?raw=true "Google Drive connect")
  
 ---
 <br><br>
  
 ## 4: Authorize via OAuth
-**What we're doing:** Granting Claude scoped access to your GitHub account.
+**What we're doing:** Granting Claude scoped access to your Google Drive.
 **Why:** OAuth means Claude never sees your password, and you can revoke access anytime.
  
-**Action:** Follow the sign-in flow in the popup/tab: sign in to GitHub, review the requested permissions, and authorize. You should land back in Claude with the connector showing as connected.
+**Action:** Follow the sign-in flow in the popup/tab: sign in to Google, review the requested permissions, and authorize. You should land back in Claude with the connector showing as connected.
  
-![OAuth authorize](./images/ccode383.png?raw=true "OAuth authorize")
+![OAuth authorize](./images/cc-se156.png?raw=true "OAuth authorize")
+
+![OAuth authorize](./images/cc-se157.png?raw=true "OAuth authorize")
  
 ---
 <br><br>
@@ -3791,24 +3797,43 @@ Same protocol (MCP). Same result (Claude gets tools). Less typing.
 **What we're doing:** Confirming the connector's tools are available.
 **Why:** Trust but verify — same as `/mcp` in Lab 7.
  
-**Action:** In your connectors list, confirm GitHub shows as connected/enabled. Many connectors also let you expand them to see the individual tools they expose — recognize the tools-list idea from `/mcp`?
- 
+**Action:** In your connectors list, confirm Google Drive shows as connected. Click it to open its detail page — you'll see a **Tool permissions** list grouped into **read-only tools** (search, list recent, read/download, metadata) and **write/delete tools** (create/copy), each with an allow / needs-approval / deny control. Recognize the tools-list idea from `/mcp`? This is the same thing, productized.
+
+
+![Connector tools](./images/cc-se158.png?raw=true "Connector tools")
+
+
+> ⏱ **Detail page says "This connector has no tools available"?** Tool discovery isn't instant right after you connect. Open the connector's **⋮** menu (top-right) and click **Refresh tools list** — the read-only and write/delete tools appear immediately. (Reloading the Connectors page also works.) This empty state is a normal, *transient* just-connected condition — it is **not** the same as GitHub's no-tools state you'll see in step 8, which is permanent by design.
+
+![Refresh tools list](./images/cc-se159.png?raw=true "Refresh tools list")
+
 ---
 <br><br>
  
-## 6: Use It in a Chat
-**What we're doing:** Letting Claude call the connector.
-**Why:** The payoff: Claude can now act on your real data.
+## 6: Use It in a Chat — Upload a Real File, Then Read It Back
+**What we're doing:** Calling a write tool (upload) then a read tool — using a real file from your earlier labs.
+**Why:** A write *then* a read exercises both permission tiers and seeds Drive with genuine content for Lab 21.
  
-**Action:** Start a new chat and type:
+**Action:** Start a new chat. Click the **+** (attach) and pick `Add files or photos`.  Then browse and choose a **text** file from your `~/cowork-lab` folder — e.g., `project-ideas.md` or `team-sync-meeting-notes.txt`.
+ 
+> **Text files only.** Stick to `.md`, `.txt`, or `.csv`. When you attach a **PDF or Word doc**, Claude receives an *extracted* version of the content, not the original bytes — so it can't re-upload the binary faithfully. Text round-trips perfectly; binaries don't.
+
+![Attach a file](./images/cc-se160.png?raw=true "Attach a file")
+
+![Attach a file](./images/cc-se161.png?raw=true "Attach a file")
+ 
+Then type:
 ```
-Using the GitHub connector, list my repositories and summarize
-what each one is for in a sentence. Which has the most recent activity?
+Using the Google Drive connector, upload this attached file to my
+Google Drive, keeping the same filename. Then search my Drive for
+it and confirm it's there.
 ```
-Approve any tool-use permission prompts. Claude will call GitHub tools and synthesize an answer.
- 
-![Connector in use](./images/ccode384.png?raw=true "Connector in use")
- 
+Approve the write prompt (write/delete tools default to *needs approval*), then the read prompt. Claude calls `create_file` to upload, then `search_files` / `read_file_content` to verify — you'll get back the filename, size, and a content snippet proving it landed.
+
+![Upload attachment](./images/cc-se162.png?raw=true "Upload attachment")
+
+![Upload attachment](./images/cc-se163.png?raw=true "Upload attachment")
+
 ---
 <br><br>
  
@@ -3816,55 +3841,72 @@ Approve any tool-use permission prompts. Claude will call GitHub tools and synth
 **What we're doing:** Confirming connectors cross surfaces.
 **Why:** The connector you just added is also available to Cowork tasks (check Cowork's Customize/connector controls) — one connection, many surfaces.
  
-**Action:** In Claude Desktop's Cowork tab, start a quick task:
+**Action:** In Claude Desktop's Cowork tab, start a new task:
 ```
-Check my GitHub account and write a short repo-activity.md note in
-my cowork-lab folder listing my repos and their last update dates.
+Using my Google Drive connector, list my most recently modified
+files and write a short drive-activity.md note in my cowork-lab
+folder summarizing them.
 ```
-> ⏱ **Patience note:** Allow a couple of minutes; approve permissions as prompted.
- 
+
+![Cowork list files](./images/cc-se164.png?raw=true "Cowork list files")
+
+> ⏱ **Patience note: This may take some time; approve permissions as prompted.
+
+![Cowork list files](./images/cc-se165.png?raw=true "Cowork list files")
+
+Notice how Cowork honored the rule you set for it - showing you a plan first and respecting the case requirement.
+
 ---
 <br><br>
  
 ## 8: Custom Connectors — Bring Your Own MCP
-**What we're doing:** Seeing where your Lab 7 skills plug in.
-**Why:** The directory isn't a walled garden: you can add any remote MCP server as a *custom connector* by URL.
+**What we're doing:** Seeing where your Lab 7 skills plug in — and optionally adding a real one.
+**Why:** The directory isn't a walled garden: you can add any remote MCP server as a *custom connector* by URL. Same idea as `claude mcp add` from Lab 7, now one dialog in the UI.
  
-**Action:** In the connectors settings, find the **Add custom connector** option (don't add one now — just locate it). Note:
+**Action:** In the connectors settings, open **Add → Add custom connector** and note the fields — a **Name** and a **Remote MCP server URL** (OAuth is optional, under Advanced settings). Note:
 ```
 - Custom connector = a remote MCP server URL you supply
 - Free plan: 1 custom connector; paid plans: multiple
 - Anything you could `claude mcp add` remotely, you can add here
 ```
  
+> **(Optional) Add a real public MCP to see it work.** Add a no-auth public server: Name it `DeepWiki`, URL `https://mcp.deepwiki.com/mcp`, leave OAuth blank, and click **Add**. Open its detail page — a **Tool permissions** list appears with 3 tools (*Ask question, Read wiki contents, Read wiki structure*), exactly like Google Drive's. DeepWiki answers questions about **public** GitHub repos; it's read-only and touches none of your data. When done, open its **⋮** menu → **Remove**. (On the free plan this uses your one custom-connector slot, so remove it before adding others.)
+ 
 ![Custom connector option](./images/ccode385.png?raw=true "Custom connector option")
  
 ---
 <br><br>
  
-## 9: Awareness — Desktop Extensions (.mcpb)
-**What we're doing:** One-paragraph awareness of locally-packaged connectors.
-**Why:** For *local* MCP servers, Claude Desktop supports Desktop Extensions: `.mcpb` (**MCP Bundle**) packages built with `mcpb init` / `mcpb pack` that users install by double-click. You won't build one today — just know the name when you see it.
- 
-**Action:** No action — file `.mcpb` next to plugin.json in your mental model of "ways to ship MCP to non-terminal users."
- 
----
-<br><br>
- 
-## 10: Know How to Disconnect
+## 9: Know How to Disconnect
 **What we're doing:** Locating the off switch.
 **Why:** Access hygiene: connectors should be as easy to revoke as to grant.
  
-**Action:** In your connectors settings, find the manage/disconnect control for GitHub. **Leave it connected** — Labs 21 and 22 use it — but remember where this is for after the course.
- 
+**Action:** In your connectors settings, find the manage/disconnect control for Google Drive. **Leave Google Drive connected** — Lab 21 uses it — but remember where this is for after the course. (You can leave GitHub connected too; Claude Code uses it for repo selection.)
+
+![Custom connector option](./images/cc-se166.png?raw=true "Custom connector option")
+
 ---
 <br><br>
  
 ## Lab Summary
 ✅ You've successfully:
 - Browsed the connectors catalog (part of the Customize panel)
-- Connected and OAuth-authorized the GitHub connector
-- Used connector tools in chat and in a Cowork task
+- Connected and OAuth-authorized the Google Drive connector
+- Called a write tool (`create_file`) and read tools (`search_files`/`read_file_content`) in chat, and in a Cowork task
+- Located the custom-connector (remote MCP) option — the Lab 7 concept productized
+- Found where to disconnect a connector
+<br><br>
+---
+## END OF LAB
+---
+ 
+ 
+## Lab Summary
+✅ You've successfully:
+- Browsed the connectors catalog (part of the Customize panel)
+- Connected and OAuth-authorized the Google Drive connector
+- Called a write tool (`create_file`) and read tools (`search_files`/`read_file_content`) in chat, and in a Cowork task
+- Saw the two connector flavors: tool-serving (Google Drive) vs access (GitHub)
 - Located the custom-connector (remote MCP) option — the Lab 7 concept productized
 - Gained awareness of .mcpb Desktop Extensions
 - Found where to disconnect a connector
@@ -4025,7 +4067,7 @@ If a job must run unconditionally, that's a Routine (cloud tier).
  
 # Lab 21: Live Artifacts — A Connector-Fed Dashboard (Cowork)
 ## Lab Purpose
-Build a Live Artifact: a persistent dashboard that pulls fresh data through your GitHub connector every time it opens — and that Claude itself can run inside. Estimated time: 10-12 minutes.
+Build a Live Artifact: a persistent dashboard that pulls fresh data through your Google Drive connector every time it opens — and that Claude itself can run inside. Estimated time: 10-12 minutes.
  
 **Environment: Claude Desktop app (Cowork)**
  
@@ -4048,10 +4090,10 @@ Live Artifact:     pulls fresh connector/MCP data on every open,
 <br><br>
  
 ## 2: Confirm Your Connector
-**What we're doing:** Checking GitHub (from Lab 19) is available to Cowork.
-**Why:** The dashboard's data source must be connected before building.
+**What we're doing:** Checking Google Drive (from Lab 19) is available to Cowork.
+**Why:** The dashboard's data source must be connected *and* have some content before building. You uploaded a real file from `~/cowork-lab` in Lab 19, so you already have at least one file.
  
-**Action:** In Cowork's Customize/connector area, confirm **GitHub** is connected and enabled. If you connected Google Drive instead in Lab 19, you'll build a "recent docs tracker" — same steps, swap the data source.
+**Action:** In Cowork's Customize/connector area, confirm **Google Drive** is connected and enabled. If your Drive is nearly empty, upload a couple more `~/cowork-lab` text files first (same move as Lab 19 step 6) — so the dashboard has a few items to show.
  
 ---
 <br><br>
@@ -4062,11 +4104,11 @@ Live Artifact:     pulls fresh connector/MCP data on every open,
  
 **Action:** In a new Cowork task, type:
 ```
-Create a Live Artifact dashboard called "Repo Activity Tracker".
-Each time it opens, it should pull fresh data from my GitHub
-connector and show: my repositories, last commit date for each,
-open issues/PR counts if available, and a "most active this week"
-highlight. Keep the layout clean and scannable.
+Create a Live Artifact dashboard called "Recent Drive Activity".
+Each time it opens, it should pull fresh data from my Google Drive
+connector and show: my most recently modified files, each file's
+type and last-modified date, and a "changed this week" highlight.
+Keep the layout clean and scannable.
 ```
  
 ![Live Artifact request](./images/ccode390.png?raw=true "Live Artifact request")
@@ -4080,16 +4122,16 @@ highlight. Keep the layout clean and scannable.
  
 **Action:** Approve the plan and any connector permission prompts.
  
-> ⏱ **Patience note:** First build can take several minutes — it's fetching live GitHub data, not inventing placeholder numbers.
+> ⏱ **Patience note:** First build can take several minutes — it's fetching live Google Drive data, not inventing placeholder numbers.
  
 ---
 <br><br>
  
 ## 5: Explore the Dashboard
 **What we're doing:** Verifying the data is *yours*.
-**Why:** The wow moment: those are your real repos and real commit dates.
+**Why:** The wow moment: those are your real files and real modified dates.
  
-**Action:** When the Live Artifact opens, check the repo list against what you know — you should recognize your course repo from Days 1–2 with very recent activity.
+**Action:** When the Live Artifact opens, check the file list against what you know — you should recognize the file you uploaded from `~/cowork-lab` in Lab 19 with very recent activity.
  
 ![Dashboard open](./images/ccode391.png?raw=true "Dashboard open")
  
@@ -4100,7 +4142,7 @@ highlight. Keep the layout clean and scannable.
 **What we're doing:** Creating a detectable change in the data source.
 **Why:** A reload that shows the change is the proof of freshness.
  
-**Action:** In your browser, go to your course repo on github.com and make a tiny change — e.g., open a new issue titled `live-artifact-test` (or star a repo).
+**Action:** Make a tiny change in your Drive — e.g., in another chat ask "Using my Google Drive connector, create a file called `live-artifact-test.txt`", or add/rename a file directly in Google Drive.
  
 ---
 <br><br>
@@ -4109,7 +4151,7 @@ highlight. Keep the layout clean and scannable.
 **What we're doing:** Triggering a fresh data pull.
 **Why:** Live Artifacts refresh from their sources on open.
  
-**Action:** Close and reopen the Live Artifact (or use its refresh control). Confirm your new issue/change appears — no rebuild, no re-prompt.
+**Action:** Close and reopen the Live Artifact (or use its refresh control). Confirm your new file appears — no rebuild, no re-prompt.
  
 ![Fresh data](./images/ccode392.png?raw=true "Fresh data")
  
@@ -4122,7 +4164,8 @@ highlight. Keep the layout clean and scannable.
  
 **Action:** Use the artifact's ask/chat affordance (look for a prompt box or "Ask Claude" control inside the dashboard) and ask:
 ```
-Which repo needs my attention most right now, and why?
+Which of my files looks most recently active, and what should
+I look at first?
 ```
  
 ---
@@ -4155,7 +4198,7 @@ This is "a dashboard that explains itself" — and in Lab 22 you'll point it at 
 ✅ You've successfully:
 - Distinguished Live Artifacts from regular and AI-powered artifacts
 - Built a connector-fed dashboard in Cowork
-- Verified it shows your real GitHub data
+- Verified it shows your real Google Drive data
 - Proved freshness by changing the source and reloading
 - Asked Claude questions from inside the artifact
 - Identified the connector → Live Artifact → embedded-Claude pattern
@@ -4178,7 +4221,9 @@ Tie all three days together: use Claude Code to build a project status reporter,
 **What we're doing:** Returning to your Day 1–2 environment and having Claude Code build a project status reporter.  
 **Why:** A deterministic script (Lab 4's lesson: scripts beat re-prompting) that any agent or schedule can run.
  
-**Action:** Reopen your Codespace (or local terminal in your course project) and start `claude --model sonnet --effort medium` (if `--effort` isn't recognized on your version, just run `claude`). Then type:
+> **Which environment?** If you have your **own** repo (a fork or a personal repo) you can push to, work in your Codespace as usual. If you're on a **shared/instructor Codespace with no push rights**, do this capstone in a **local clone** of the course repo instead — on your machine run `git clone <course-repo-url> ~/capstone` and `cd ~/capstone`. Everything below is identical, and it makes the Cowork bridge in step 7 a no-op. The dashboard reads **local git history**, so you never need to push.
+ 
+**Action:** Reopen your Codespace (or your local `~/capstone` clone) and start `claude --model sonnet --effort medium` (if `--effort` isn't recognized on your version, just run `claude`). Then type:
 ```
 Create a script scripts/status.sh that writes STATUS.md containing:
 a timestamp, a file count by type, the 5 most recent git commits
@@ -4205,16 +4250,16 @@ Check the report looks sane (timestamp, files, commits, test summary).
 ---
 <br><br>
  
-## 3: Commit and Push
+## 3: Commit (and Push if You Can)
 **What we're doing:** Getting the script and report into git.  
-**Why:** The Live Artifact dashboard later reads repo activity — commits are the signal.
+**Why:** The dashboard later reads the recent commits recorded in STATUS.md — **local** commits are the signal, so a remote isn't required.
  
 **Action:** Type:
 ```
 Commit scripts/status.sh and STATUS.md with a sensible commit
-message, and push to the remote.
+message. If this repo has a remote I can push to, push it too.
 ```
-(Recognize the commit-message task from Lab 16? You built an app for that.)
+If you're on a shared/instructor Codespace without push rights, a local commit is all you need. (Recognize the commit-message task from Lab 16? You built an app for that.)
  
 ---
 <br><br>
@@ -4267,11 +4312,18 @@ Let it fire at least once, then cancel the loop (Esc or its stop control) and co
  
 ## 7: Bridge to Cowork
 **What we're doing:** Getting the project where Cowork can see it.  
-**Why:** Cowork points at *local* folders; your Codespace is remote.
+**Why:** Cowork points at *local* folders; your Codespace is remote — so the project has to land on your local machine.
  
-**Action:** Make sure your latest STATUS.md is pushed (`git push`). Then on your **local machine** terminal, clone your course repo:
+**Action:** Pick the path that matches your setup:
+ 
+- **Already building locally** (you followed step 1's local-clone note): you're done — your `~/capstone` folder is ready. Skip to the check below.
+- **You have your own repo you can push to:** push (`git push`), then on your **local machine** clone it:
 ```bash
-git clone https://github.com/<your-username>/<your-course-repo>.git ~/capstone
+  git clone https://github.com/<your-username>/<your-course-repo>.git ~/capstone
+```
+ 
+Either way, confirm the folder is there:
+```bash
 ls ~/capstone
 ```
 You should see your project, including `STATUS.md` and `scripts/status.sh`.
@@ -4286,14 +4338,15 @@ You should see your project, including `STATUS.md` and `scripts/status.sh`.
 **Action:** In the Cowork tab, start a task with `~/capstone` as the working folder, then type:
 ```
 Create a Live Artifact dashboard called "Capstone Project Status".
-Each time it opens it should: read STATUS.md from this folder, pull
-fresh commit and issue activity for this repo from my GitHub
-connector, and display: latest status summary, recent commits,
-test pass/fail, and any TODO/FIXME flags. Highlight anything that
-changed since the last open.
+Each time it opens it should read STATUS.md from this folder and
+display: the latest status summary, the recent commits listed in it,
+the test pass/fail result, and any TODO/FIXME flags. Highlight
+anything that changed since the last open.
 ```
  
-> ⏱ **Patience note:** Several minutes — it's reading your repo AND your local folder.
+> ⏱ **Patience note:** Several minutes — it's reading and rendering your local folder's STATUS.md.
+ 
+> **Note:** The freshness here comes from **STATUS.md** being regenerated by your `/loop` (step 6) and the scheduled task (step 10) — the dashboard re-reads the file on every open. (In Lab 21 the freshness came from a *connector*; here it comes from a *local file* your automation keeps up to date. Same "live" idea, different source.)
  
 When it opens, verify it shows your real STATUS.md content and the commits from steps 3–6.
  
@@ -4343,8 +4396,7 @@ cat ~/capstone/capstone-daily-summary.md
 ```
 Claude Code (build script)  -> git repo
 background agent (improve)  -> git repo
-/loop or Routine (refresh)  -> STATUS.md -> git repo
-GitHub connector ---------------------------+
+/loop or Routine (refresh)  -> STATUS.md (local git history)
 local capstone folder ----------------------+--> Live Artifact dashboard
 Cowork scheduled task (daily summary) ------+        |
 claude.ai artifact (share out) <---------------------+
@@ -4379,20 +4431,19 @@ Background/managed agents    Lab 14 -> Lab 22
 Artifacts & Live Artifacts   Lab 16, 21 -> Lab 22
 Cowork                       Lab 17-18, 20-22
 ```
-Then decide for each: Cowork scheduled tasks (keep or pause), GitHub connector (keep or disconnect, Lab 19), published artifacts (keep or unpublish), `~/cowork-lab` (delete if you like; `~/capstone` is yours to keep).
+Then decide for each: Cowork scheduled tasks (keep or pause), Google Drive connector (keep or disconnect, Lab 19), published artifacts (keep or unpublish), `~/cowork-lab` (delete if you like; `~/capstone` is yours to keep).
  
-**Done!** You came in typing "Hello Claude" into a terminal; you're leaving with a self-updating, agent-maintained, connector-fed, shareable project monitoring system — and the knowledge that it's all the same Claude underneath.
+**Done!** You came in typing "Hello Claude" into a terminal; you're leaving with a self-updating, agent-maintained, shareable project monitoring system — and the knowledge that it's all the same Claude underneath.
  
 ## Lab Summary
 ✅ You've successfully:
 - Built a deterministic status-report script with Claude Code and validated it before automating
 - Dispatched and monitored a background agent (`claude --bg`, `claude agents`)
 - Scheduled a refresh with `/loop` and noted the Routine upgrade path
-- Built a connector-fed Live Artifact over your own project and interrogated it
+- Built a Live Artifact over your own project (fed by your local STATUS.md) and interrogated it
 - Added a Cowork daily-summary scheduled task and (optionally) published a shareable artifact
 - Mapped every course concept to where you practiced it
 <br><br>
 ---
 ## END OF LAB
 ---
- 
