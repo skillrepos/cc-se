@@ -3869,11 +3869,31 @@ Notice how Cowork honored the rule you set for it - showing you a plan first and
 - Free plan: 1 custom connector; paid plans: multiple
 - Anything you could `claude mcp add` remotely, you can add here
 ```
+
+![Custom connector option](./images/cc-se167.png?raw=true "Custom connector option")
+
+> **(Optional) Add a real public MCP to see it work.** Add a no-auth public server: Name it `DeepWiki`, URL `https://mcp.deepwiki.com/mcp`, leave OAuth blank, and click **Add**. Its detail page shows a **Tool permissions** list with 3 tools (*Ask question, Read wiki contents, Read wiki structure*) — just like Google Drive's.
+
+![Custom connector option](./images/cc-se168.png?raw=true "Custom connector option")
+
+![Custom connector option](./images/cc-se169.png?raw=true "Custom connector option")
+
+Then start a new chat and ask:
  
-> **(Optional) Add a real public MCP to see it work.** Add a no-auth public server: Name it `DeepWiki`, URL `https://mcp.deepwiki.com/mcp`, leave OAuth blank, and click **Add**. Open its detail page — a **Tool permissions** list appears with 3 tools (*Ask question, Read wiki contents, Read wiki structure*), exactly like Google Drive's. DeepWiki answers questions about **public** GitHub repos; it's read-only and touches none of your data. When done, open its **⋮** menu → **Remove**. (On the free plan this uses your one custom-connector slot, so remove it before adding others.)
+```
+Using the DeepWiki connector, what is the modelcontextprotocol/servers
+GitHub repository about? Summarize its purpose and name a few example
+servers it includes.
+```
  
-![Custom connector option](./images/ccode385.png?raw=true "Custom connector option")
- 
+Approve the prompts; Claude returns a real summary of that public repo. DeepWiki is read-only over **public** GitHub repos and touches none of your data. 
+
+![Using DeepWiki connector](./images/cc-se170.png?raw=true "Using DeepWiki connector")
+
+When done, open the connector's **⋮** menu → **Remove**. (Free plan = 1 custom-connector slot, so remove it before adding others.)
+
+![Remove DeepWiki connector](./images/cc-se171.png?raw=true "Remove DeepWiki connector")
+
 ---
 <br><br>
  
@@ -3883,7 +3903,7 @@ Notice how Cowork honored the rule you set for it - showing you a plan first and
  
 **Action:** In your connectors settings, find the manage/disconnect control for Google Drive. **Leave Google Drive connected** — Lab 21 uses it — but remember where this is for after the course. (You can leave GitHub connected too; Claude Code uses it for repo selection.)
 
-![Custom connector option](./images/cc-se166.png?raw=true "Custom connector option")
+![Disconnect option](./images/cc-se166.png?raw=true "Disconnect option")
 
 ---
 <br><br>
