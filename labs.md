@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.5 - 07/01/26
+## Revision 7.6 - 07/02/26
 
 <br><br>
 
@@ -3411,12 +3411,12 @@ Consider: in Lab 9 you piped a prompt into `claude -p`. This artifact does conce
 ---
 <br><br>
 
-# Lab 17: Cowork: Folder Tasks, Skills, and Plugins
+# Lab 17: Cowork — Autonomous Folder Tasks & Safety Rails
 ## Lab Purpose
-Point Cowork at a local folder of messy files and hand it a multi-step task, then use Cowork's **Customize** area to enable a skill and trigger it — recognizing both the autonomous-task pattern and the exact SKILL.md/plugin anatomy you built on Day 1. Estimated time: 10-12 minutes.
-
-**Environment: Claude Desktop app (Cowork)**
-
+Point Cowork at a local folder of messy files, hand it a multi-step organize-and-report task, review the plan, and verify the real file changes on disk — learning the autonomous-task pattern and the safety rails that let you delegate confidently. (Lab 18 picks up the same folder to explore skills.) Estimated time: 8-10 minutes.
+ 
+**Environment: Claude Desktop app (Cowork)** — requires the desktop app installed on your own machine and a paid Claude plan (done in the Day-3 pre-class setup). If you don't have it, follow along with the instructor demo.
+ 
 ---
 <br><br>
 
@@ -3534,7 +3534,27 @@ You should see renamed files plus the report (expense total 603.50 — check Cla
 ---
 <br><br>
  
-## 7: Find Cowork's Customize Section
+## Lab Summary
+✅ You've successfully:
+- Pointed Cowork at a specific local folder (least privilege) and delegated a multi-step organize-and-report task
+- Reviewed the plan before any files changed, watched the run, and verified the real file changes on disk
+- Identified Cowork's safety rails (folder scoping, plan approval, delete guard) and the three golden rules (plan-first, review-first, never delegate money)
+<br><br>
+---
+## END OF LAB
+---
+<br><br>
+ 
+# Lab 18: Cowork — Skills, Refinement & Plugins
+## Lab Purpose
+Using the folder and `summary-report.md` from Lab 17, work in Cowork's **Customize** area: invoke a built-in document skill by intent, enable an optional catalog skill, steer its output through a refinement loop, and connect Cowork plugins back to the plugin.json you packaged on Day 1 — recognizing the exact SKILL.md/plugin anatomy from Labs 4–5. Estimated time: 10-12 minutes.
+ 
+**Environment: Claude Desktop app (Cowork)** — continues from Lab 17. You need the `~/cowork-lab` folder and its `summary-report.md` still in place, with Claude Desktop open. If you skipped Lab 17, run its steps 1–6 first.
+ 
+---
+<br><br>
+ 
+## 1: Find Cowork's Customize Section
 **What we're doing:** Locating where Cowork groups skills, plugins, and connectors.  
 **Why:** The **Customize** area gathers all three extension types in one place — the desktop twin of the Customize panel from Lab 15.
  
@@ -3545,26 +3565,28 @@ You should see renamed files plus the report (expense total 603.50 — check Cla
 ---
 <br><br>
  
-## 8: Enable a Document Skill — Same SKILL.md as Lab 4
-**What we're doing:** Turning on a skill and connecting it to what you built.  
-**Why:** Enabled skills load automatically when a task matches their description — exactly like your `api-checker` did in Lab 4.
+## 2: Document Skills Are Already On — Browse the Catalog
+**What we're doing:** Recognizing that the core document skills need no setup, and seeing what the Directory *does* let you add.  
+**Why:** Cowork ships the document skills (Word, PowerPoint, PDF, Excel) already active — they auto-load when a task matches, exactly like your `api-checker` did in Lab 4. Nothing to enable.
  
-**Action:** Browse the skills list, find a document-creation skill (e.g., Word/.docx or slides), and enable it. Then read:
+**Action:** Open the **Skills** directory and scroll it. Notice there's **no "Word/.docx" or slides skill to turn on** — the doc-creation skills aren't add-ons, they're built in and always available. What the Directory lists is the *optional* catalog you can add: e.g. `skill-creator`, `canvas-design`, `web-artifacts-builder`, `mcp-builder`, `brand-guidelines`. (Enabling one of those is how you'd add a *new* capability.) Then read:
 ```
 Lab 4: you wrote SKILL.md with name + description frontmatter,
        rules, and a helper script — auto-selected on a matching request.
-Here:  every skill in this list IS that same anatomy — SKILL.md plus
-       supporting files — selected the same way. Same mechanism, new surface.
+Here:  same anatomy. Core skills (Word/PDF/Excel/PPT) ship active and
+       auto-select on intent; optional ones in this catalog you toggle on.
+       Same mechanism, new surface.
 ```
+You can open a skill's **SKILL.md** right in the app (e.g. the built-in `docx` — via the Skills list, or by clicking its chip in the **Context** panel once it's loaded in Step 3). You'll see the same **name + description frontmatter**, a Quick Reference, and `scripts/…` helpers you wrote by hand in Lab 4. *That's the anatomy, shipped.*
  
-![Enable skill](./images/ccode379.png?raw=true "Enable skill")
+![Skills directory](./images/ccode379.png?raw=true "Skills directory")
  
 ---
 <br><br>
  
-## 9: Invoke the Skill by Intent (Not by Name)
-**What we're doing:** Letting Cowork pick the skill from context, like Lab 4 Step 7.  
-**Why:** Skills should trigger on intent, not on being named.
+## 3: Invoke by Intent — the Built-in Word Skill
+**What we're doing:** Producing a real deliverable with zero setup, letting Cowork pick the skill from context (like Lab 4 Step 7).  
+**Why:** Skills trigger on intent, not on being named — and the built-in `docx` needs no enabling to prove it.
  
 **Action:** Start a Cowork task in your `~/cowork-lab` folder and type:
 ```
@@ -3572,48 +3594,63 @@ Turn summary-report.md into a polished one-page Word document
 with a title, headings for each section, and the expense total
 highlighted. Save it in this folder.
 ```
+Expand the **Context** panel at the top of the task — you'll see **`docx`** listed. *That's your proof the skill auto-selected*; no one typed its name. When it finishes, open the new `.docx` (double-click, or **Open in Microsoft Word**) and compare it to raw prompting.
+ 
+> ⏱ **Timing note:** Usually quick — often under a minute.
+ 
+![docx by intent](./images/ccode380.png?raw=true "docx by intent")
  
 ---
 <br><br>
  
-## 10: Watch the Skill Load and Open the Output
-**What we're doing:** Spotting the skill activation, then judging the deliverable.  
-**Why:** Confirms auto-selection happened — and the point of skills is *better, more consistent output*.
+## 4: Enable an Optional Skill — canvas-design
+**What we're doing:** The other half of the story — toggling a *catalog* skill on, then invoking it.  
+**Why:** `docx` was built in. `canvas-design` is optional: enable it once, and from then on it auto-selects on intent, exactly like Lab 4.
  
-**Action:** Watch the progress output for the document skill loading/being used.
+**Action:** In the **Skills** directory, find **`canvas-design`** and enable it. Then, in a task in `~/cowork-lab`, type:
+```
+Turn summary-report.md into a designed one-page PDF summary.
+```
+Check the **Context** panel again — now **`canvas-design`** appears alongside `docx`. Open the resulting `.pdf`: a laid-out, visual one-pager — a *different* deliverable from the Word doc, built from the same source and the same "describe the outcome" ask.
  
-> ⏱ **Patience note:** Document generation can take a couple of minutes.
- 
-When it finishes, open the new `.docx` in `~/cowork-lab` (double-click in Finder/Explorer). Compare it mentally to raw prompting.
- 
-![Skill in action](./images/ccode380.png?raw=true "Skill in action")
+![canvas-design PDF](./images/ccode382.png?raw=true "canvas-design PDF")
  
 ---
 <br><br>
  
-## 11: Browse Plugins — plugin.json, All Grown Up
-**What we're doing:** Looking at plugin offerings and connecting them to Lab 5.  
+## 5: Steer It — The Refinement Loop
+**What we're doing:** Not accepting the first output — conversing to direct it.  
+**Why:** This is the habit most beginners skip. *Generating* a draft is one skill; *steering* it to what you actually need is a separate, more valuable one. You don't restart — you refine.
+ 
+**Action:** Two bounded follow-up turns on the PDF, one goal each.
+ 
+1. **Fix the content (and verify the math):**
+```
+   The total is wrong — it should exclude the conference ticket.
+   Recompute and update the PDF.
+```
+   The new total should be **204.50** (84.50 + 120.00). Confirm Claude got it right — the numbers are real, so *you* check them.
+ 
+2. **Restyle to a constraint:**
+```
+   Our brand color is forest green (#1B4332). Redo the accent in that.
+```
+   One purposeful change, stated as a goal — the model adapts the finished piece instead of starting over.
+ 
+> **Guardrail — don't bikeshed.** One directed change per turn, framed as an *outcome* ("make it warmer," "match our brand"), not endless hex-code fiddling. After a round or two you've got the lesson: **you drive, the model iterates.**
+ 
+---
+<br><br>
+ 
+## 6: Browse Plugins — plugin.json, All Grown Up
+**What we're doing:** A quick look at plugins, connecting them to Lab 5.  
 **Why:** Plugins here are the same packaging mechanism you built by hand — bundles of skills + connectors + commands + sub-agents.
  
-**Action:** In Customize, switch to the plugins area and browse a few (e.g., role-based plugins like legal, finance, brand). Notice each plugin's listed contents. Then read:
-```
-Lab 5: you wrote .claude-plugin/plugin.json bundling commands,
-       agents, and skills so teammates could install one thing.
-Here:  these plugins distribute the same asset types to Cowork users
-       with one click — the cross-surface distribution story.
-       (Enterprise admins can host private plugin marketplaces.)
-```
+**Action:** In Customize, glance at the **Plugins** area and note that each plugin bundles several assets. That's your Lab 5 `.claude-plugin/plugin.json` — commands, agents, and skills packaged so others install one thing — distributed to Cowork users with one click. (Enterprise admins can host private plugin marketplaces.)
  
 ![Plugins list](./images/ccode381.png?raw=true "Plugins list")
  
----
-<br><br>
- 
-## 12: Keep the Folder
-**What we're doing:** Preserving the sandbox.  
-**Why:** Labs 19 and 21 build on this folder.
- 
-**Action:** Leave `~/cowork-lab` and its files in place, and leave Claude Desktop open.
+> **Keep the folder:** leave `~/cowork-lab` and its files in place (and Claude Desktop open) — Labs 20 and 22 build on it.
  
 ---
 <br><br>
@@ -3630,21 +3667,20 @@ Everything above was a single task. For work that spans **days**, put it in a **
  
 ## Lab Summary
 ✅ You've successfully:
-- Pointed Cowork at a specific local folder (least privilege) and delegated a multi-step task
-- Reviewed the plan, watched progress, and verified real file changes
-- Identified Cowork's safety rails (scoping, plan approval, delete guard) and the three golden rules (plan-first, review-first, never delegate money)
-- Found Customize and enabled a document skill — recognized as the same SKILL.md from Lab 4
-- Triggered the skill by intent and produced a polished document deliverable
+- Found Cowork's **Customize** area and recognized that document skills are built in and auto-load (nothing to enable)
+- Saw the built-in `docx` skill auto-select by intent (Context panel) and opened its SKILL.md — the same anatomy as Lab 4
+- Enabled an optional catalog skill (`canvas-design`) and invoked it to produce a designed PDF from the same source
+- Practiced the refinement loop — steering output with bounded content and style changes, and verifying the real numbers
 - Mapped Cowork plugins to the plugin.json packaging from Lab 5
-- (Concepts) everyday use cases, how to ask Cowork well, and persistent Projects + memory
+- (Concept) persistent Projects + memory for multi-day work
 <br><br>
 ---
 ## END OF LAB
 ---
 <br><br>
  
-
-# Lab 18: Connectors — The Catalog, OAuth, and Your First Connected Tool
+ 
+# Lab 19: Connectors — The Catalog, OAuth, and Your First Connected Tool
 ## Lab Purpose
 Connect a real external tool through the connectors catalog, authorize it, and use it in a conversation — then see that connectors are managed remote MCP, the Lab 7 concept productized. Estimated time: 10-12 minutes.
  
@@ -3652,21 +3688,21 @@ Connect a real external tool through the connectors catalog, authorize it, and u
  
 ---
 <br><br>
-
+ 
 ## 1: Connectors = MCP with a Bow on It
 **What we're doing:** Framing before connecting.
 **Why:** In Lab 7 you ran `claude mcp add` and edited `.mcp.json`. Connectors are the same protocol — remote MCP servers — wrapped in a directory with one-click OAuth.
-
+ 
 **Action:** Read:
 ```
 Lab 7 (terminal):  claude mcp add <name> <server>  -> tools appear
 Today (directory): click Connect -> sign in       -> tools appear
 Same protocol (MCP). Same result (Claude gets tools). Less typing.
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 2: Open the Connectors Catalog
 **What we're doing:** Browsing the catalog.
 **Why:** The connectors catalog is browsable on both claude.ai and Claude Desktop; it's part of the Customize panel from Lab 15.
@@ -3677,100 +3713,100 @@ Same protocol (MCP). Same result (Claude gets tools). Less typing.
  
 ---
 <br><br>
-
+ 
 ## 3: Choose GitHub
 **What we're doing:** Picking a connector that needs no admin setup.
 **Why:** You already have a GitHub account from Days 1–2 (Codespaces!), and GitHub's OAuth flow is self-serve — no workspace admin required. (If you prefer, Google Drive/Gmail works the same way with a personal Google account.)
-
+ 
 **Action:** Find the **GitHub** connector in the directory and click **Connect**.
-
+ 
 ---
 <br><br>
-
+ 
 ## 4: Authorize via OAuth
 **What we're doing:** Granting Claude scoped access to your GitHub account.
 **Why:** OAuth means Claude never sees your password, and you can revoke access anytime.
-
+ 
 **Action:** Follow the sign-in flow in the popup/tab: sign in to GitHub, review the requested permissions, and authorize. You should land back in Claude with the connector showing as connected.
-
+ 
 ![OAuth authorize](./images/ccode383.png?raw=true "OAuth authorize")
-
+ 
 ---
 <br><br>
-
+ 
 ## 5: Verify It's Live
 **What we're doing:** Confirming the connector's tools are available.
 **Why:** Trust but verify — same as `/mcp` in Lab 7.
-
+ 
 **Action:** In your connectors list, confirm GitHub shows as connected/enabled. Many connectors also let you expand them to see the individual tools they expose — recognize the tools-list idea from `/mcp`?
-
+ 
 ---
 <br><br>
-
+ 
 ## 6: Use It in a Chat
 **What we're doing:** Letting Claude call the connector.
 **Why:** The payoff: Claude can now act on your real data.
-
+ 
 **Action:** Start a new chat and type:
 ```
 Using the GitHub connector, list my repositories and summarize
 what each one is for in a sentence. Which has the most recent activity?
 ```
 Approve any tool-use permission prompts. Claude will call GitHub tools and synthesize an answer.
-
+ 
 ![Connector in use](./images/ccode384.png?raw=true "Connector in use")
-
+ 
 ---
 <br><br>
-
+ 
 ## 7: Try It in Cowork Too
 **What we're doing:** Confirming connectors cross surfaces.
 **Why:** The connector you just added is also available to Cowork tasks (check Cowork's Customize/connector controls) — one connection, many surfaces.
-
+ 
 **Action:** In Claude Desktop's Cowork tab, start a quick task:
 ```
 Check my GitHub account and write a short repo-activity.md note in
 my cowork-lab folder listing my repos and their last update dates.
 ```
 > ⏱ **Patience note:** Allow a couple of minutes; approve permissions as prompted.
-
+ 
 ---
 <br><br>
-
+ 
 ## 8: Custom Connectors — Bring Your Own MCP
 **What we're doing:** Seeing where your Lab 7 skills plug in.
 **Why:** The directory isn't a walled garden: you can add any remote MCP server as a *custom connector* by URL.
-
+ 
 **Action:** In the connectors settings, find the **Add custom connector** option (don't add one now — just locate it). Note:
 ```
 - Custom connector = a remote MCP server URL you supply
 - Free plan: 1 custom connector; paid plans: multiple
 - Anything you could `claude mcp add` remotely, you can add here
 ```
-
+ 
 ![Custom connector option](./images/ccode385.png?raw=true "Custom connector option")
-
+ 
 ---
 <br><br>
-
+ 
 ## 9: Awareness — Desktop Extensions (.mcpb)
 **What we're doing:** One-paragraph awareness of locally-packaged connectors.
-**Why:** For *local* MCP servers, Claude Desktop supports Desktop Extensions: `.mcpb` packages built with `mcpb init` / `mcpb pack` that users install by double-click. You won't build one today — just know the name when you see it.
-
+**Why:** For *local* MCP servers, Claude Desktop supports Desktop Extensions: `.mcpb` (**MCP Bundle**) packages built with `mcpb init` / `mcpb pack` that users install by double-click. You won't build one today — just know the name when you see it.
+ 
 **Action:** No action — file `.mcpb` next to plugin.json in your mental model of "ways to ship MCP to non-terminal users."
-
+ 
 ---
 <br><br>
-
+ 
 ## 10: Know How to Disconnect
 **What we're doing:** Locating the off switch.
 **Why:** Access hygiene: connectors should be as easy to revoke as to grant.
-
-**Action:** In your connectors settings, find the manage/disconnect control for GitHub. **Leave it connected** — Labs 20 and 21 use it — but remember where this is for after the course.
-
+ 
+**Action:** In your connectors settings, find the manage/disconnect control for GitHub. **Leave it connected** — Labs 21 and 22 use it — but remember where this is for after the course.
+ 
 ---
 <br><br>
-
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Browsed the connectors catalog (part of the Customize panel)
@@ -3783,45 +3819,45 @@ my cowork-lab folder listing my repos and their last update dates.
 ---
 ## END OF LAB
 ---
-
-
-# Lab 19: Cowork Scheduled Tasks
+ 
+ 
+# Lab 20: Cowork Scheduled Tasks
 ## Lab Purpose
 Create a recurring scheduled task in Cowork, run it on demand, and place it in the three-tier scheduling picture from Day 2 (/loop, Routines, and now Cowork). Estimated time: 10-12 minutes.
-
+ 
 **Environment: Claude Desktop app (Cowork)**
-
+ 
 ---
 <br><br>
-
+ 
 ## 1: Open a Cowork Task in Your Lab Folder
 **What we're doing:** Starting from the familiar sandbox.
 **Why:** Scheduled tasks need a context — ours is `~/cowork-lab`.
-
+ 
 **Action:** In the Cowork tab, start a new task with `~/cowork-lab` as the working folder (as in Lab 17).
-
+ 
 ---
 <br><br>
-
+ 
 ## 2: Invoke /schedule
 **What we're doing:** Opening the scheduled-task creator.
 **Why:** Cowork supports slash commands too — another cross-surface echo.
-
+ 
 **Action:** In the Cowork prompt, type:
 ```
 /schedule
 ```
 (Alternatively, look for **Scheduled** in the left sidebar — both routes work.)
-
+ 
 ![Schedule command](./images/ccode386.png?raw=true "Schedule command")
-
+ 
 ---
 <br><br>
-
+ 
 ## 3: Define the Task
 **What we're doing:** Describing the recurring work.
 **Why:** Same principle as Lab 17 — describe the outcome; Claude handles the steps each run.
-
+ 
 **Action:** Define the task as:
 ```
 Every day, tidy my cowork-lab folder: move any new loose files into
@@ -3829,62 +3865,62 @@ sensible subfolders, then update daily-digest.md with today's date,
 a list of files changed since yesterday, and any new action items
 found in notes files.
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 4: Set the Cadence
 **What we're doing:** Choosing daily recurrence.
 **Why:** Cowork scheduled tasks support recurring cadences and on-demand runs.
-
+ 
 **Action:** Set the schedule to **daily** at a time of your choosing (pick something later today so it won't fire mid-lab). Save the task.
-
+ 
 ![Set cadence](./images/ccode387.png?raw=true "Set cadence")
-
+ 
 ---
 <br><br>
-
+ 
 ## 5: Find It in the Scheduled List
 **What we're doing:** Verifying the task is registered.
 **Why:** The Scheduled sidebar is your management console: view, edit, pause, delete.
-
+ 
 **Action:** Click **Scheduled** in the left sidebar and confirm your daily-tidy task appears.
-
+ 
 ![Scheduled list](./images/ccode388.png?raw=true "Scheduled list")
-
+ 
 ---
 <br><br>
-
+ 
 ## 6: Run It On Demand
 **What we're doing:** Triggering the task now instead of waiting for the schedule.
 **Why:** On-demand runs are how you test scheduled work — never wait until tomorrow to find out a daily job is broken.
-
+ 
 **Action:** From the scheduled task's entry, use the run-now control to start it immediately.
-
+ 
 > ⏱ **Patience note:** Let it run — a few minutes is normal.
-
+ 
 ---
 <br><br>
-
+ 
 ## 7: Inspect the Result
 **What we're doing:** Checking the digest file.
 **Why:** Proof of a successful scheduled run.
-
+ 
 **Action:** In your terminal:
 ```bash
 cat ~/cowork-lab/daily-digest.md
 ```
 You should see today's date, the file inventory, and action items pulled from your notes.
-
+ 
 ![Digest output](./images/ccode389.png?raw=true "Digest output")
-
+ 
 ---
 <br><br>
-
+ 
 ## 8: The Three-Tier Scheduling Picture
 **What we're doing:** Placing Cowork scheduling alongside Day 2's options.
 **Why:** You now have three scheduling tiers — choosing the right one is the skill.
-
+ 
 **Action:** Study this comparison (callback to Day 2, Lab 13):
 ```
 Tier              Where it runs          Runs when...           Best for
@@ -3894,33 +3930,33 @@ Routines          Anthropic's cloud      always (cloud-side)    always-on jobs, 
 Cowork scheduled  your computer (app)    computer awake +       local-file jobs with a
                   via Claude Desktop     Desktop app open       friendly UI
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 9: The Fine Print
 **What we're doing:** Internalizing Cowork scheduling's key limitation.
 **Why:** It's the most common gotcha.
-
+ 
 **Action:** Remember:
 ```
 Cowork scheduled tasks ONLY run while your computer is awake and
 the Claude Desktop app is open. Laptop closed = task skipped.
 If a job must run unconditionally, that's a Routine (cloud tier).
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 10: Pause It (Housekeeping)
 **What we're doing:** Pausing the daily task so it doesn't surprise you tonight.
 **Why:** Good agent hygiene — we'll create a purposeful scheduled task in the capstone.
-
+ 
 **Action:** In the Scheduled sidebar, pause (or delete) the daily-tidy task. Leave Cowork open.
-
+ 
 ---
 <br><br>
-
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Created a recurring scheduled task in Cowork via /schedule
@@ -3928,26 +3964,25 @@ If a job must run unconditionally, that's a Routine (cloud tier).
 - Ran it on demand and verified the output file
 - Placed Cowork scheduling in the 3-tier model with /loop and Routines
 - Learned the awake-and-open constraint (and when to use a Routine instead)
-
 <br><br>
 ---
 ## END OF LAB
 ---
-
-
-# Lab 20: Live Artifacts — A Connector-Fed Dashboard (Cowork)
+ 
+ 
+# Lab 21: Live Artifacts — A Connector-Fed Dashboard (Cowork)
 ## Lab Purpose
 Build a Live Artifact: a persistent dashboard that pulls fresh data through your GitHub connector every time it opens — and that Claude itself can run inside. Estimated time: 10-12 minutes.
-
+ 
 **Environment: Claude Desktop app (Cowork)**
-
+ 
 ---
 <br><br>
-
+ 
 ## 1: What Makes an Artifact "Live"
 **What we're doing:** Distinguishing Live Artifacts (April 2026, Cowork) from Lab 16's artifacts.
 **Why:** Lab 16's flashcards were frozen at build time. Live Artifacts are persistent dashboards that fetch *fresh* data from connectors/MCP each time you open them — and Claude can run inside the artifact to answer questions about that data.
-
+ 
 **Action:** Read the comparison:
 ```
 Regular artifact:  data baked in at creation; static until you rebuild
@@ -3955,23 +3990,23 @@ AI-powered (L16):  calls Claude at runtime, but no data sources
 Live Artifact:     pulls fresh connector/MCP data on every open,
                    AND Claude can run inside it
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 2: Confirm Your Connector
-**What we're doing:** Checking GitHub (from Lab 18) is available to Cowork.
+**What we're doing:** Checking GitHub (from Lab 19) is available to Cowork.
 **Why:** The dashboard's data source must be connected before building.
-
-**Action:** In Cowork's Customize/connector area, confirm **GitHub** is connected and enabled. If you connected Google Drive instead in Lab 18, you'll build a "recent docs tracker" — same steps, swap the data source.
-
+ 
+**Action:** In Cowork's Customize/connector area, confirm **GitHub** is connected and enabled. If you connected Google Drive instead in Lab 19, you'll build a "recent docs tracker" — same steps, swap the data source.
+ 
 ---
 <br><br>
-
+ 
 ## 3: Ask for the Dashboard
 **What we're doing:** Prompting Cowork to build a Live Artifact.
 **Why:** One outcome-oriented prompt; Claude handles wiring the connector.
-
+ 
 **Action:** In a new Cowork task, type:
 ```
 Create a Live Artifact dashboard called "Repo Activity Tracker".
@@ -3980,89 +4015,89 @@ connector and show: my repositories, last commit date for each,
 open issues/PR counts if available, and a "most active this week"
 highlight. Keep the layout clean and scannable.
 ```
-
+ 
 ![Live Artifact request](./images/ccode390.png?raw=true "Live Artifact request")
-
+ 
 ---
 <br><br>
-
+ 
 ## 4: Approve and Wait
 **What we're doing:** Letting the build run.
 **Why:** Building + first data fetch is a real multi-step task.
-
+ 
 **Action:** Approve the plan and any connector permission prompts.
-
+ 
 > ⏱ **Patience note:** First build can take several minutes — it's fetching live GitHub data, not inventing placeholder numbers.
-
+ 
 ---
 <br><br>
-
+ 
 ## 5: Explore the Dashboard
 **What we're doing:** Verifying the data is *yours*.
 **Why:** The wow moment: those are your real repos and real commit dates.
-
+ 
 **Action:** When the Live Artifact opens, check the repo list against what you know — you should recognize your course repo from Days 1–2 with very recent activity.
-
+ 
 ![Dashboard open](./images/ccode391.png?raw=true "Dashboard open")
-
+ 
 ---
 <br><br>
-
+ 
 ## 6: Prove the "Live" Part — Change Something
 **What we're doing:** Creating a detectable change in the data source.
 **Why:** A reload that shows the change is the proof of freshness.
-
+ 
 **Action:** In your browser, go to your course repo on github.com and make a tiny change — e.g., open a new issue titled `live-artifact-test` (or star a repo).
-
+ 
 ---
 <br><br>
-
+ 
 ## 7: Reopen and Watch Fresh Data Arrive
 **What we're doing:** Triggering a fresh data pull.
 **Why:** Live Artifacts refresh from their sources on open.
-
+ 
 **Action:** Close and reopen the Live Artifact (or use its refresh control). Confirm your new issue/change appears — no rebuild, no re-prompt.
-
+ 
 ![Fresh data](./images/ccode392.png?raw=true "Fresh data")
-
+ 
 ---
 <br><br>
-
+ 
 ## 8: Ask Claude Inside the Artifact
 **What we're doing:** Using the embedded Claude.
 **Why:** Live Artifacts aren't just charts — Claude can run inside them to interpret the live data.
-
+ 
 **Action:** Use the artifact's ask/chat affordance (look for a prompt box or "Ask Claude" control inside the dashboard) and ask:
 ```
 Which repo needs my attention most right now, and why?
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 9: Where Live Artifacts Live
 **What we're doing:** Finding the artifact again later.
 **Why:** Persistent means it survives this conversation.
-
+ 
 **Action:** Locate the Live Artifact in your Cowork session/sidebar so you can reopen it tomorrow. It will pull tomorrow's data when you do.
-
+ 
 ---
 <br><br>
-
+ 
 ## 10: Pattern Check
 **What we're doing:** Naming the architecture you just used.
 **Why:** You'll reuse it in the capstone.
-
+ 
 **Action:** Note the pattern:
 ```
 connector (live data) -> Live Artifact (persistent view)
                       -> Claude inside (interpretation on demand)
 ```
-This is "a dashboard that explains itself" — and in Lab 21 you'll point it at your own project.
-
+This is "a dashboard that explains itself" — and in Lab 22 you'll point it at your own project.
+ 
 ---
 <br><br>
-
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Distinguished Live Artifacts from regular and AI-powered artifacts
@@ -4071,27 +4106,26 @@ This is "a dashboard that explains itself" — and in Lab 21 you'll point it at 
 - Proved freshness by changing the source and reloading
 - Asked Claude questions from inside the artifact
 - Identified the connector → Live Artifact → embedded-Claude pattern
-
 <br><br>
 ---
 ## END OF LAB
 ---
-
-
-# Lab 21: Capstone — Build, Automate, Monitor, Present
+ 
+ 
+# Lab 22: Capstone — Build, Automate, Monitor, Present
 ## Lab Purpose
 Tie all three days together: use Claude Code to build a project status reporter, hand it to a background agent, schedule it, then bring it into the platform as a Live Artifact dashboard with a Cowork scheduled task — and map every course concept to where you used it. Brisk pace; you've done every piece before. Estimated time: 10-12 minutes.
-
+ 
 **Environment: GitHub Codespace (terminal) for steps 1-7, then Claude Desktop (Cowork) + claude.ai for steps 8-12.**
-
+ 
 ---
 <br><br>
-
+ 
 ## 1: Build the Status Script
 **What we're doing:** Returning to your Day 1–2 environment and having Claude Code build a project status reporter.  
 **Why:** A deterministic script (Lab 4's lesson: scripts beat re-prompting) that any agent or schedule can run.
-
-**Action:** Reopen your Codespace (or local terminal in your course project) and start `claude --model sonnet --effort medium`. Then type:
+ 
+**Action:** Reopen your Codespace (or local terminal in your course project) and start `claude --model sonnet --effort medium` (if `--effort` isn't recognized on your version, just run `claude`). Then type:
 ```
 Create a script scripts/status.sh that writes STATUS.md containing:
 a timestamp, a file count by type, the 5 most recent git commits
@@ -4099,103 +4133,103 @@ a timestamp, a file count by type, the 5 most recent git commits
 (pass/fail summary only). Make it runnable with bash scripts/status.sh.
 ```
 Approve as needed.
-
+ 
 ---
 <br><br>
-
+ 
 ## 2: Run It Once
 **What we're doing:** Validating the script before automating it.  
 **Why:** Capstone rule: never schedule something you haven't run by hand.
-
+ 
 **Action:** Type:
 ```
 Run scripts/status.sh and show me STATUS.md
 ```
 Check the report looks sane (timestamp, files, commits, test summary).
-
+ 
 ![STATUS.md](./images/ccode393.png?raw=true "STATUS.md")
-
+ 
 ---
 <br><br>
-
+ 
 ## 3: Commit and Push
 **What we're doing:** Getting the script and report into git.  
 **Why:** The Live Artifact dashboard later reads repo activity — commits are the signal.
-
+ 
 **Action:** Type:
 ```
 Commit scripts/status.sh and STATUS.md with a sensible commit
 message, and push to the remote.
 ```
 (Recognize the commit-message task from Lab 16? You built an app for that.)
-
+ 
 ---
 <br><br>
-
+ 
 ## 4: Dispatch a Background Agent
 **What we're doing:** Handing improvement work to a background agent, Day 2 style.  
 **Why:** Build is done; now automate. Background agents work while you do something else.
-
+ 
 **Action:** Exit Claude (`exit`), then dispatch:
 ```bash
 claude --bg "Improve scripts/status.sh: add a section to STATUS.md
 flagging any TODO or FIXME comments found in the codebase, then
 re-run the script, verify STATUS.md updated, and commit the change."
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 5: Monitor and Review the Agent
 **What we're doing:** Watching the run, then verifying the change.  
 **Why:** Same observability and trust-but-verify habits as Day 2.
-
+ 
 **Action:** Watch with `claude agents` until it completes (a few minutes is normal), then:
 ```bash
 git log --oneline -3
 cat STATUS.md
 ```
 Confirm the TODO/FIXME section exists and the commit landed.
-
+ 
 ![Background agent](./images/ccode394.png?raw=true "Background agent")
-
+ 
 ---
 <br><br>
-
+ 
 ## 6: Schedule the Refresh with /loop
 **What we're doing:** Making the report self-updating in-session, then stopping it cleanly.  
 **Why:** Tier 1 of your 3-tier scheduling model: session-local cron. (When the Codespace closes, `/loop` dies — a Routine from Lab 13 survives; same prompt text, different runner.)
-
+ 
 **Action:** Start Claude again (`claude`), then type:
 ```
 /loop every 5 minutes: run scripts/status.sh, and if STATUS.md
 changed, commit it with message "chore: refresh status report"
 ```
 Let it fire at least once, then cancel the loop (Esc or its stop control) and confirm it stopped.
-
+ 
 ![Loop running](./images/ccode395.png?raw=true "Loop running")
-
+ 
 ---
 <br><br>
-
+ 
 ## 7: Bridge to Cowork
 **What we're doing:** Getting the project where Cowork can see it.  
 **Why:** Cowork points at *local* folders; your Codespace is remote.
-
+ 
 **Action:** Make sure your latest STATUS.md is pushed (`git push`). Then on your **local machine** terminal, clone your course repo:
 ```bash
 git clone https://github.com/<your-username>/<your-course-repo>.git ~/capstone
 ls ~/capstone
 ```
 You should see your project, including `STATUS.md` and `scripts/status.sh`.
-
+ 
 ---
 <br><br>
-
+ 
 ## 8: Build a Live Artifact Over Your Project
 **What we're doing:** Building a connector-fed dashboard on your real project.  
-**Why:** Lab 20's pattern (connector → Live Artifact → embedded Claude), now with stakes.
-
+**Why:** Lab 21's pattern (connector → Live Artifact → embedded Claude), now with stakes.
+ 
 **Action:** In the Cowork tab, start a task with `~/capstone` as the working folder, then type:
 ```
 Create a Live Artifact dashboard called "Capstone Project Status".
@@ -4205,33 +4239,33 @@ connector, and display: latest status summary, recent commits,
 test pass/fail, and any TODO/FIXME flags. Highlight anything that
 changed since the last open.
 ```
-
+ 
 > ⏱ **Patience note:** Several minutes — it's reading your repo AND your local folder.
-
+ 
 When it opens, verify it shows your real STATUS.md content and the commits from steps 3–6.
-
+ 
 ![Capstone dashboard](./images/ccode396.png?raw=true "Capstone dashboard")
-
+ 
 ---
 <br><br>
-
+ 
 ## 9: Interrogate It
 **What we're doing:** Using the embedded Claude on real project data.  
 **Why:** A dashboard you can question beats a dashboard you can only read.
-
+ 
 **Action:** Inside the Live Artifact, ask:
 ```
 Summarize the state of this project in 3 bullets and tell me the
 single most useful next step.
 ```
-
+ 
 ---
 <br><br>
-
+ 
 ## 10: Add a Daily Summary Scheduled Task
 **What we're doing:** Automating the monitoring layer, then testing it now.  
 **Why:** Tier 3 of your scheduling model: a local, UI-managed daily job over local files. Same rule as always: never trust an untested schedule.
-
+ 
 **Action:** In the Cowork task, type `/schedule` and create (daily/weekday cadence):
 ```
 Every weekday at 9am: read STATUS.md and recent git activity in my
@@ -4242,16 +4276,16 @@ From the **Scheduled** sidebar, run it now and wait, then check:
 ```bash
 cat ~/capstone/capstone-daily-summary.md
 ```
-
+ 
 ![Capstone schedule](./images/ccode397.png?raw=true "Capstone schedule")
-
+ 
 ---
 <br><br>
-
+ 
 ## 11: (Optional) Publish a Shareable Summary
 **What we're doing:** Creating a stakeholder-facing artifact and seeing the whole system.  
 **Why:** Cowork sessions are local and not shareable — but claude.ai artifacts are.
-
+ 
 **Action:** In claude.ai, start a chat, paste the contents of `capstone-daily-summary.md`, and ask: `Turn this into a clean, visual one-page project status artifact suitable for sharing with a stakeholder.` Publish it. The full system you just built:
 ```
 Claude Code (build script)  -> git repo
@@ -4262,16 +4296,16 @@ local capstone folder ----------------------+--> Live Artifact dashboard
 Cowork scheduled task (daily summary) ------+        |
 claude.ai artifact (share out) <---------------------+
 ```
-
+ 
 ![Shared summary](./images/ccode399.png?raw=true "Shared summary")
-
+ 
 ---
 <br><br>
-
+ 
 ## 12: Course Concept Map and Housekeeping
 **What we're doing:** Mapping every concept to where you used it, and tidying up.  
 **Why:** Retention — and you now own agents, schedules, and connectors, so manage them deliberately.
-
+ 
 **Action:** With the class, walk this table and call out one thing you'd use first at work:
 ```
 Concept                      Where you used it
@@ -4279,23 +4313,23 @@ Concept                      Where you used it
 CLI basics, @/#/! shortcuts  Lab 1
 Modes (plan/auto/bypass)     Lab 2, every approval since
 Context, CLAUDE.md, /rewind  Lab 3
-Skills (SKILL.md)            Lab 4 -> Lab 17 (Cowork, same anatomy)
+Skills (SKILL.md)            Lab 4 -> Lab 18 (Cowork, same anatomy)
 Subagents & delegation       Labs 4-5 -> Cowork sub-agents (Lab 17)
-Commands & plugins           Lab 5 -> Lab 17 (Cowork plugins)
+Commands & plugins           Lab 5 -> Lab 18 (Cowork plugins)
 Hooks                        Lab 6
-MCP                          Lab 7 -> Lab 18 (connectors, .mcpb)
+MCP                          Lab 7 -> Lab 19 (connectors, .mcpb)
 Headless -p / loops / /goal  Labs 9-10 -> Lab 16 (AI artifacts!)
 Agent SDK                    Lab 11
 GitHub Actions               Lab 12
-Scheduling (3 tiers)         Lab 13 -> Lab 19 -> Lab 21
-Background/managed agents    Lab 14 -> Lab 21
-Artifacts & Live Artifacts   Lab 16, 20 -> Lab 21
-Cowork                       Lab 17, 19-21
+Scheduling (3 tiers)         Lab 13 -> Lab 20 -> Lab 22
+Background/managed agents    Lab 14 -> Lab 22
+Artifacts & Live Artifacts   Lab 16, 21 -> Lab 22
+Cowork                       Lab 17-18, 20-22
 ```
-Then decide for each: Cowork scheduled tasks (keep or pause), GitHub connector (keep or disconnect, Lab 18), published artifacts (keep or unpublish), `~/cowork-lab` (delete if you like; `~/capstone` is yours to keep).
-
+Then decide for each: Cowork scheduled tasks (keep or pause), GitHub connector (keep or disconnect, Lab 19), published artifacts (keep or unpublish), `~/cowork-lab` (delete if you like; `~/capstone` is yours to keep).
+ 
 **Done!** You came in typing "Hello Claude" into a terminal; you're leaving with a self-updating, agent-maintained, connector-fed, shareable project monitoring system — and the knowledge that it's all the same Claude underneath.
-
+ 
 ## Lab Summary
 ✅ You've successfully:
 - Built a deterministic status-report script with Claude Code and validated it before automating
@@ -4304,8 +4338,8 @@ Then decide for each: Cowork scheduled tasks (keep or pause), GitHub connector (
 - Built a connector-fed Live Artifact over your own project and interrogated it
 - Added a Cowork daily-summary scheduled task and (optionally) published a shareable artifact
 - Mapped every course concept to where you practiced it
-
 <br><br>
 ---
 ## END OF LAB
 ---
+ 
