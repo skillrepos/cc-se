@@ -3921,21 +3921,6 @@ When done, open the connector's **⋮** menu → **Remove**. (Free plan = 1 cust
 ---
  
  
-## Lab Summary
-✅ You've successfully:
-- Browsed the connectors catalog (part of the Customize panel)
-- Connected and OAuth-authorized the Google Drive connector
-- Called a write tool (`create_file`) and read tools (`search_files`/`read_file_content`) in chat, and in a Cowork task
-- Saw the two connector flavors: tool-serving (Google Drive) vs access (GitHub)
-- Located the custom-connector (remote MCP) option — the Lab 7 concept productized
-- Gained awareness of .mcpb Desktop Extensions
-- Found where to disconnect a connector
-<br><br>
----
-## END OF LAB
----
- 
- 
 # Lab 20: Cowork Scheduled Tasks
 ## Lab Purpose
 Create a recurring scheduled task in Cowork, run it on demand, and place it in the three-tier scheduling picture from Day 2 (/loop, Routines, and now Cowork). Estimated time: 10-12 minutes.
@@ -4157,6 +4142,8 @@ Live Artifact:     pulls fresh connector/MCP data on every open,
 **Why:** The dashboard's data source must be connected *and* have some content before building. You uploaded a real file from `~/cowork-lab` in Lab 19, so you already have at least one file.
  
 **Action:** In Cowork's Customize/connector area, confirm **Google Drive** is connected and enabled. If your Drive is nearly empty, upload a couple more `~/cowork-lab` text files first (same move as Lab 19 step 6) — so the dashboard has a few items to show.
+
+![Confirming Drive connection](./images/cc-se185.png?raw=true "Confirming Drive connection")
  
 ---
 <br><br>
@@ -4174,7 +4161,7 @@ type and last-modified date, and a "changed this week" highlight.
 Keep the layout clean and scannable.
 ```
  
-![Live Artifact request](./images/ccode390.png?raw=true "Live Artifact request")
+![Live Artifact request](./images/cc-se186.png?raw=true "Live Artifact request")
  
 ---
 <br><br>
@@ -4186,17 +4173,19 @@ Keep the layout clean and scannable.
 **Action:** Approve the plan and any connector permission prompts.
  
 > ⏱ **Patience note:** First build can take several minutes — it's fetching live Google Drive data, not inventing placeholder numbers.
+
+![Plan and approve](./images/cc-se187.png?raw=true "Plan and approve")
  
 ---
 <br><br>
  
 ## 5: Explore the Dashboard
 **What we're doing:** Verifying the data is *yours*.
-**Why:** The wow moment: those are your real files and real modified dates.
+**Why:** The insight: those are your real files and real modified dates.
  
 **Action:** When the Live Artifact opens, check the file list against what you know — you should recognize the file you uploaded from `~/cowork-lab` in Lab 19 with very recent activity.
  
-![Dashboard open](./images/ccode391.png?raw=true "Dashboard open")
+![Dashboard open](./images/cc-se188.png?raw=true "Dashboard open")
  
 ---
 <br><br>
@@ -4206,6 +4195,8 @@ Keep the layout clean and scannable.
 **Why:** A reload that shows the change is the proof of freshness.
  
 **Action:** Make a tiny change in your Drive — e.g., in another chat ask "Using my Google Drive connector, create a file called `live-artifact-test.txt`", or add/rename a file directly in Google Drive.
+
+![Creating file](./images/cc-se189.png?raw=true "Creating file")
  
 ---
 <br><br>
@@ -4214,9 +4205,13 @@ Keep the layout clean and scannable.
 **What we're doing:** Triggering a fresh data pull.
 **Why:** Live Artifacts refresh from their sources on open.
  
-**Action:** Close and reopen the Live Artifact (or use its refresh control). Confirm your new file appears — no rebuild, no re-prompt.
+**Action:** If visible, close and reopen the Live Artifact (or use its `Reload` control). Confirm your new file appears — no rebuild, no re-prompt. If not visible, click on the `Artifacts` item in the top left list and select the `Recent Drive Activity` artifact.
+
+![Dashboard open](./images/cc-se190.png?raw=true "Dashboard open")
+
+If you don't see your change, click on the `Reload` control in the upper right.
  
-![Fresh data](./images/ccode392.png?raw=true "Fresh data")
+![Fresh data](./images/cc-se191.png?raw=true "Fresh data")
  
 ---
 <br><br>
@@ -4225,25 +4220,21 @@ Keep the layout clean and scannable.
 **What we're doing:** Using the embedded Claude.
 **Why:** Live Artifacts aren't just charts — Claude can run inside them to interpret the live data.
  
-**Action:** Use the artifact's ask/chat affordance (look for a prompt box or "Ask Claude" control inside the dashboard) and ask:
+**Action:** Use the artifact's `Chat` option at the top left and ask:
 ```
 Which of my files looks most recently active, and what should
 I look at first?
 ```
- 
+
+![Chat in artifact](./images/cc-se192.png?raw=true "Chat in artifact")
+
+Note: For this type of query, Claude may answer from an older snapshot. If it gets it wrong, you can challenge it and ask an "Are you sure?" question or tell it to "re-check live".
+
 ---
 <br><br>
  
-## 9: Where Live Artifacts Live
-**What we're doing:** Finding the artifact again later.
-**Why:** Persistent means it survives this conversation.
  
-**Action:** Locate the Live Artifact in your Cowork session/sidebar so you can reopen it tomorrow. It will pull tomorrow's data when you do.
- 
----
-<br><br>
- 
-## 10: Pattern Check
+## 9: Pattern Check
 **What we're doing:** Naming the architecture you just used.
 **Why:** You'll reuse it in the capstone.
  
