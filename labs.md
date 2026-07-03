@@ -4262,22 +4262,50 @@ This is "a dashboard that explains itself" — and in Lab 22 you'll point it at 
 ---
  
  
+ 
 # Lab 22: Capstone — Build, Automate, Monitor, Present
 ## Lab Purpose
 Tie all three days together: use Claude Code to build a project status reporter, hand it to a background agent, schedule it, then bring it into the platform as a Live Artifact dashboard with a Cowork scheduled task — and map every course concept to where you used it. Brisk pace; you've done every piece before. Estimated time: 10-12 minutes.
  
-**Environment: GitHub Codespace (terminal) for steps 1-7, then Claude Desktop (Cowork) + claude.ai for steps 8-12.**
+**Environment: GitHub Codespace (terminal) for steps 1-8, then Claude Desktop (Cowork) + claude.ai for steps 9-13.**
  
 ---
 <br><br>
  
-## 1: Build the Status Script
-**What we're doing:** Returning to your Day 1–2 environment and having Claude Code build a project status reporter.  
+## 1: Set Up Your Capstone Environment
+**What we're doing:** Choosing where you'll work, then launching Claude Code.  
+**Why:** The whole capstone builds on a repo Claude Code can edit and (optionally) commit to. Settle this once and steps 2–8 just flow.
+ 
+**Action — pick your environment:**
+ 
+- **Your own repo** (a fork or personal repo you can push to): work in your **Codespace** as usual.
+- **Shared/instructor Codespace with no push rights:** do the capstone in a **local clone** instead — on your machine run
+
+```bash
+git clone https://github.com/skillrepos/cc-se ~/capstone
+cd ~/capstone
+```
+
+Everything below is identical, and it makes the Cowork bridge in step 8 a no-op. The dashboard reads **local git history**, so you never need to push.
+**Action — start Claude Code:** In that folder, launch the interactive CLI:
+
+```bash
+claude --model sonnet --effort medium
+```
+`--model` selects the model; `--effort medium` sets how hard Claude reasons per step (levels: low/medium/high). If your version doesn't recognize `--effort`, just run `claude`.
+
+![Chat in artifact](./images/cc-se195.png?raw=true "Chat in artifact")
+ 
+> **You may need to run `/login` to authenticate for Claude as we did earlier.**
+ 
+---
+<br><br>
+ 
+## 2: Build the Status Script
+**What we're doing:** Having Claude Code build a project status reporter.  
 **Why:** A deterministic script (Lab 4's lesson: scripts beat re-prompting) that any agent or schedule can run.
  
-> **Which environment?** If you have your **own** repo (a fork or a personal repo) you can push to, work in your Codespace as usual. If you're on a **shared/instructor Codespace with no push rights**, do this capstone in a **local clone** of the course repo instead — on your machine run `git clone <course-repo-url> ~/capstone` and `cd ~/capstone`. Everything below is identical, and it makes the Cowork bridge in step 7 a no-op. The dashboard reads **local git history**, so you never need to push.
- 
-**Action:** Reopen your Codespace (or your local `~/capstone` clone) and start `claude --model sonnet --effort medium` (if `--effort` isn't recognized on your version, just run `claude`). Then type:
+**Action:** At the Claude Code prompt, type:
 ```
 Create a script scripts/status.sh that writes STATUS.md containing:
 a timestamp, a file count by type, the 5 most recent git commits
@@ -4285,11 +4313,14 @@ a timestamp, a file count by type, the 5 most recent git commits
 (pass/fail summary only). Make it runnable with bash scripts/status.sh.
 ```
 Approve as needed.
- 
+
+![Building script](./images/cc-se196.png?raw=true "Building script")
+
+
 ---
 <br><br>
  
-## 2: Run It Once
+## 3: Run It Once
 **What we're doing:** Validating the script before automating it.  
 **Why:** Capstone rule: never schedule something you haven't run by hand.
  
@@ -4299,12 +4330,12 @@ Run scripts/status.sh and show me STATUS.md
 ```
 Check the report looks sane (timestamp, files, commits, test summary).
  
-![STATUS.md](./images/ccode393.png?raw=true "STATUS.md")
+![STATUS.md](./images/cc-se197.png?raw=true "STATUS.md")
  
 ---
 <br><br>
  
-## 3: Commit (and Push if You Can)
+## 4: Commit (and Push if You Can)
 **What we're doing:** Getting the script and report into git.  
 **Why:** The dashboard later reads the recent commits recorded in STATUS.md — **local** commits are the signal, so a remote isn't required.
  
@@ -4314,11 +4345,15 @@ Commit scripts/status.sh and STATUS.md with a sensible commit
 message. If this repo has a remote I can push to, push it too.
 ```
 If you're on a shared/instructor Codespace without push rights, a local commit is all you need. (Recognize the commit-message task from Lab 16? You built an app for that.)
+
+![committing](./images/cc-se198.png?raw=true "committing")
+
+![committed](./images/cc-se199.png?raw=true "committed")
  
 ---
 <br><br>
  
-## 4: Dispatch a Background Agent
+## 5: Dispatch a Background Agent
 **What we're doing:** Handing improvement work to a background agent, Day 2 style.  
 **Why:** Build is done; now automate. Background agents work while you do something else.
  
@@ -4328,11 +4363,13 @@ claude --bg "Improve scripts/status.sh: add a section to STATUS.md
 flagging any TODO or FIXME comments found in the codebase, then
 re-run the script, verify STATUS.md updated, and commit the change."
 ```
- 
+
+Note that you may need to approve more operations.
+
 ---
 <br><br>
  
-## 5: Monitor and Review the Agent
+## 6: Monitor and Review the Agent
 **What we're doing:** Watching the run, then verifying the change.  
 **Why:** Same observability and trust-but-verify habits as Day 2.
  
@@ -4343,12 +4380,16 @@ cat STATUS.md
 ```
 Confirm the TODO/FIXME section exists and the commit landed.
  
-![Background agent](./images/ccode394.png?raw=true "Background agent")
- 
+![Background agent](./images/cc-se200.png?raw=true "Background agent")
+
+If, in the agents status, you see the task needs approval, you can click on the agent line (or use the right arrow) and that will take you to the approval prompt.
+
+Exit the agents view (you can use `Esc`).
+
 ---
 <br><br>
  
-## 6: Schedule the Refresh with /loop
+## 7: Schedule the Refresh with /loop
 **What we're doing:** Making the report self-updating in-session, then stopping it cleanly.  
 **Why:** Tier 1 of your 3-tier scheduling model: session-local cron. (When the Codespace closes, `/loop` dies — a Routine from Lab 13 survives; same prompt text, different runner.)
  
@@ -4359,12 +4400,12 @@ changed, commit it with message "chore: refresh status report"
 ```
 Let it fire at least once, then cancel the loop (Esc or its stop control) and confirm it stopped.
  
-![Loop running](./images/ccode395.png?raw=true "Loop running")
+![Loop running](./images/cc-se201.png?raw=true "Loop running")
  
 ---
 <br><br>
  
-## 7: Bridge to Cowork
+## 8: Bridge to Cowork
 **What we're doing:** Getting the project where Cowork can see it.  
 **Why:** Cowork points at *local* folders; your Codespace is remote — so the project has to land on your local machine.
  
@@ -4385,11 +4426,15 @@ You should see your project, including `STATUS.md` and `scripts/status.sh`.
 ---
 <br><br>
  
-## 8: Build a Live Artifact Over Your Project
+## 9: Build a Live Artifact Over Your Project
 **What we're doing:** Building a connector-fed dashboard on your real project.  
 **Why:** Lab 21's pattern (connector → Live Artifact → embedded Claude), now with stakes.
  
-**Action:** In the Cowork tab, start a task with `~/capstone` as the working folder, then type:
+**Action:** In the Cowork tab, start a task with `~/capstone` as the working folder. Go to `Cowork` tab. Click on `New task` in the top left section. Click on the dropdown under the task to `Choose a different folder` and browse out and select `~/capstone`.
+
+![New task](./images/cc-se202.png?raw=true "New task")
+
+Then type:
 ```
 Create a Live Artifact dashboard called "Capstone Project Status".
 Each time it opens it should read STATUS.md from this folder and
@@ -4400,16 +4445,16 @@ anything that changed since the last open.
  
 > ⏱ **Patience note:** Several minutes — it's reading and rendering your local folder's STATUS.md.
  
-> **Note:** The freshness here comes from **STATUS.md** being regenerated by your `/loop` (step 6) and the scheduled task (step 10) — the dashboard re-reads the file on every open. (In Lab 21 the freshness came from a *connector*; here it comes from a *local file* your automation keeps up to date. Same "live" idea, different source.)
+> **Note:** The freshness here comes from **STATUS.md** being regenerated by your `/loop` (step 7) and the scheduled task (step 11) — the dashboard re-reads the file on every open. (In Lab 21 the freshness came from a *connector*; here it comes from a *local file* your automation keeps up to date. Same "live" idea, different source.)
  
-When it opens, verify it shows your real STATUS.md content and the commits from steps 3–6.
+When it opens, verify it shows your real STATUS.md content and the commits from steps 4–7.
  
 ![Capstone dashboard](./images/ccode396.png?raw=true "Capstone dashboard")
  
 ---
 <br><br>
  
-## 9: Interrogate It
+## 10: Interrogate It
 **What we're doing:** Using the embedded Claude on real project data.  
 **Why:** A dashboard you can question beats a dashboard you can only read.
  
@@ -4422,7 +4467,7 @@ single most useful next step.
 ---
 <br><br>
  
-## 10: Add a Daily Summary Scheduled Task
+## 11: Add a Daily Summary Scheduled Task
 **What we're doing:** Automating the monitoring layer, then testing it now.  
 **Why:** Tier 3 of your scheduling model: a local, UI-managed daily job over local files. Same rule as always: never trust an untested schedule.
  
@@ -4442,7 +4487,7 @@ cat ~/capstone/capstone-daily-summary.md
 ---
 <br><br>
  
-## 11: (Optional) Publish a Shareable Summary
+## 12: (Optional) Publish a Shareable Summary
 **What we're doing:** Creating a stakeholder-facing artifact and seeing the whole system.  
 **Why:** Cowork sessions are local and not shareable — but claude.ai artifacts are.
  
@@ -4461,7 +4506,7 @@ claude.ai artifact (share out) <---------------------+
 ---
 <br><br>
  
-## 12: Course Concept Map and Housekeeping
+## 13: Course Concept Map and Housekeeping
 **What we're doing:** Mapping every concept to where you used it, and tidying up.  
 **Why:** Retention — and you now own agents, schedules, and connectors, so manage them deliberately.
  
@@ -4501,4 +4546,5 @@ Then decide for each: Cowork scheduled tasks (keep or pause), Google Drive conne
 ---
 ## END OF LAB
 ---
+ 
  
