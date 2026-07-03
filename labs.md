@@ -4039,13 +4039,17 @@ If you click on the `View` option, you can watch the task execute.
 **What we're doing:** Checking the digest file.
 **Why:** Proof of a successful scheduled run.
  
-**Action:** In your terminal:
+**Action:** In the Claude Cowork interface, look on the left under the `Scheduled` section and find the latest run of your task. You can click on the link to see the actual run.
+
+![Viewing a run](./images/cc-se182.png?raw=true "Viewing a run")
+
+You can also look at the generated file in your terminal if you want:
 ```bash
 cat ~/cowork-lab/daily-digest.md
 ```
 You should see today's date, the file inventory, and action items pulled from your notes.
  
-![Digest output](./images/cc-se180.png?raw=true "Digest output")
+![Digest output](./images/cc-se183.png?raw=true "Digest output")
  
 ---
 <br><br>
@@ -4089,9 +4093,12 @@ Cowork scheduled  your computer (app)    computer awake +       local-file jobs 
  
 **Action:** Remember:
 ```
-Cowork scheduled tasks ONLY run while your computer is awake and
-the Claude Desktop app is open. Laptop closed = task skipped.
-If a job must run unconditionally, that's a Routine (cloud tier).
+Cowork scheduled tasks ONLY run while your computer is awake and the
+Claude Desktop app is open. If it's asleep or closed at run time, the
+task is SKIPPED -- then runs automatically once you wake the machine or
+reopen the app (you get a notification, and skipped runs show in the
+task's history). If a job must run on time no matter what, that's a
+Routine (cloud tier).
 ```
  
 ---
@@ -4101,7 +4108,9 @@ If a job must run unconditionally, that's a Routine (cloud tier).
 **What we're doing:** Pausing the daily task so it doesn't surprise you tonight.
 **Why:** Good agent hygiene — we'll create a purposeful scheduled task in the capstone.
  
-**Action:** In the Scheduled sidebar, pause (or delete) the daily-tidy task. Leave Cowork open.
+**Action:** Click the `Scheduled` item in the list on the top left. Then select your task from the `Scheduled tasks` list. On the detail panel for your task, you can pause the task with the control in the upper left or delete it with the trashcan icon in the upper right.  
+
+![Pause or delete](./images/cc-se184.png?raw=true "Pause or delete")
  
 ---
 <br><br>
