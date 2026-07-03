@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.6 - 07/02/26
+## Revision 7.7 - 07/03/26
 
 <br><br>
 
@@ -3945,52 +3945,64 @@ Create a recurring scheduled task in Cowork, run it on demand, and place it in t
 ---
 <br><br>
  
-## 1: Open a Cowork Task in Your Lab Folder
+## 1: Open Cowork in Your Lab Folder
 **What we're doing:** Starting from the familiar sandbox.
-**Why:** Scheduled tasks need a context — ours is `~/cowork-lab`.
+**Why:** The task we schedule will run against `~/cowork-lab`.
  
-**Action:** In the Cowork tab, start a new task with `~/cowork-lab` as the working folder (as in Lab 17).
- 
----
-<br><br>
- 
-## 2: Invoke /schedule
-**What we're doing:** Opening the scheduled-task creator.
-**Why:** Cowork supports slash commands too — another cross-surface echo.
- 
-**Action:** In the Cowork prompt, type:
-```
-/schedule
-```
-(Alternatively, look for **Scheduled** in the left sidebar — both routes work.)
- 
-![Schedule command](./images/ccode386.png?raw=true "Schedule command")
+**Action:** Open Cowork with `~/cowork-lab` as the working folder (as in Lab 17). Leave the Desktop app open — Cowork scheduled tasks only run while the computer is awake.
+
+![New task](./images/cc-se172.png?raw=true "New task")
  
 ---
 <br><br>
  
-## 3: Define the Task
-**What we're doing:** Describing the recurring work.
-**Why:** Same principle as Lab 17 — describe the outcome; Claude handles the steps each run.
+## 2: Open the Scheduled Panel from the Sidebar
+**What we're doing:** Finding the scheduled-tasks management interface.
+**Why:** Before creating a task, see where they all live — this panel is your console for viewing, running, pausing, and deleting scheduled work.
  
-**Action:** Define the task as:
+**Action:** In the left sidebar, click **Scheduled**. The panel opens and lists your scheduled tasks (empty for now).
+ 
+![Scheduled panel](./images/cc-se175.png?raw=true "Scheduled panel")
+ 
+---
+<br><br>
+ 
+## 3: Start a New Task → Create Manually
+**What we're doing:** Opening the manual task-creation form.
+**Why:** Building a task by hand shows you exactly what a scheduled task is made of — a set of instructions plus a cadence. (You'll see the conversational shortcut for the same thing later.)
+ 
+**Action:** In the Scheduled panel, click **New Task**, then choose **Set up Manually**. A form opens for you to fill in the task by hand.
+ 
+![New Task, Create Manually](./images/cc-se176.png?raw=true "New Task Create Manually")
+ 
+---
+<br><br>
+ 
+## 4: Define the Task and Cadence in the Form
+**What we're doing:** Filling in the instructions and the schedule.
+**Why:** Same principle as Lab 17 — describe the outcome; Claude works out the steps each run. The form just captures that description plus when to run it.
+ 
+**Action:** Fill in the form:
+ 
+- **Name / title:** `daily-cowork-lab-tidy`
+- **Description** `Clean up cowork lab folder`
+- **Instructions** (what Claude runs each time):
 ```
 Every day, tidy my cowork-lab folder: move any new loose files into
 sensible subfolders, then update daily-digest.md with today's date,
 a list of files changed since yesterday, and any new action items
 found in notes files.
 ```
+
+Use the folder selector to ensure this will execute in your `cowork-lab` directory.
+
+![Pick directory](./images/cc-se177.png?raw=true "Pick directory")
+
+- **Frequency:** set the cadence to **Daily** at a time of your choosing (pick something later today so it won't fire mid-lab).
+
+Then click **Save**.
  
----
-<br><br>
- 
-## 4: Set the Cadence
-**What we're doing:** Choosing daily recurrence.
-**Why:** Cowork scheduled tasks support recurring cadences and on-demand runs.
- 
-**Action:** Set the schedule to **daily** at a time of your choosing (pick something later today so it won't fire mid-lab). Save the task.
- 
-![Set cadence](./images/ccode387.png?raw=true "Set cadence")
+![Manual task form](./images/cc-se178.png?raw=true "Manual task form")
  
 ---
 <br><br>
@@ -4001,7 +4013,7 @@ found in notes files.
  
 **Action:** Click **Scheduled** in the left sidebar and confirm your daily-tidy task appears.
  
-![Scheduled list](./images/ccode388.png?raw=true "Scheduled list")
+![Scheduled list](./images/cc-se179.png?raw=true "Scheduled list")
  
 ---
 <br><br>
@@ -4010,9 +4022,15 @@ found in notes files.
 **What we're doing:** Triggering the task now instead of waiting for the schedule.
 **Why:** On-demand runs are how you test scheduled work — never wait until tomorrow to find out a daily job is broken.
  
-**Action:** From the scheduled task's entry, use the run-now control to start it immediately.
+**Action:** From the scheduled task's entry, click the three-dot menu, then use use the run-now control to start it immediately.
  
 > ⏱ **Patience note:** Let it run — a few minutes is normal.
+
+![Run now](./images/cc-se180.png?raw=true "Run now")
+
+If you click on the `View` option, you can watch the task execute.
+
+![Running](./images/cc-se181.png?raw=true "Running")
  
 ---
 <br><br>
@@ -4027,12 +4045,28 @@ cat ~/cowork-lab/daily-digest.md
 ```
 You should see today's date, the file inventory, and action items pulled from your notes.
  
-![Digest output](./images/ccode389.png?raw=true "Digest output")
+![Digest output](./images/cc-se180.png?raw=true "Digest output")
  
 ---
 <br><br>
  
-## 8: The Three-Tier Scheduling Picture
+## 8: The Same Task, Straight from the Chat Area
+**What we're doing:** Learning the conversational shortcut for what you just built by hand.
+**Why:** The manual form makes the parts explicit; in day-to-day use you'll usually just ask for it in plain language and let Claude fill the same form for you.
+ 
+**Action:** No need to redo anything — just know that in any Cowork task's chat, typing `/schedule` followed by a description does exactly what steps 3–4 did. For example:
+```
+/schedule Every day, tidy my cowork-lab folder: move any new loose files
+into sensible subfolders, then update daily-digest.md with today's date, a
+list of files changed since yesterday, and any new action items found in
+notes files.
+```
+Claude drafts the same task — name, instructions, cadence — and asks you to confirm the time before saving it to the very same **Scheduled** panel. Two routes, one place.
+ 
+---
+<br><br>
+ 
+## 9: The Three-Tier Scheduling Picture
 **What we're doing:** Placing Cowork scheduling alongside Day 2's options.
 **Why:** You now have three scheduling tiers — choosing the right one is the skill.
  
@@ -4049,7 +4083,7 @@ Cowork scheduled  your computer (app)    computer awake +       local-file jobs 
 ---
 <br><br>
  
-## 9: The Fine Print
+## 10: The Fine Print
 **What we're doing:** Internalizing Cowork scheduling's key limitation.
 **Why:** It's the most common gotcha.
  
@@ -4063,7 +4097,7 @@ If a job must run unconditionally, that's a Routine (cloud tier).
 ---
 <br><br>
  
-## 10: Pause It (Housekeeping)
+## 11: Pause It (Housekeeping)
 **What we're doing:** Pausing the daily task so it doesn't surprise you tonight.
 **Why:** Good agent hygiene — we'll create a purposeful scheduled task in the capstone.
  
@@ -4467,3 +4501,4 @@ Then decide for each: Cowork scheduled tasks (keep or pause), Google Drive conne
 ---
 ## END OF LAB
 ---
+ 
