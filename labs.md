@@ -4430,17 +4430,15 @@ You should see your project, including `STATUS.md` and `scripts/status.sh`.
 **What we're doing:** Building a connector-fed dashboard on your real project.  
 **Why:** Lab 21's pattern (connector → Live Artifact → embedded Claude), now with stakes.
  
-**Action:** In the Cowork tab, start a task with `~/capstone` as the working folder. Go to `Cowork` tab. Click on `New task` in the top left section. Click on the dropdown under the task to `Choose a different folder` and browse out and select `~/capstone`.
-
-![New task](./images/cc-se202.png?raw=true "New task")
-
-Then type:
+**Action:** In the Cowork tab, start a task with `~/capstone` as the working folder, then type:
 ```
 Create a Live Artifact dashboard called "Capstone Project Status".
 Each time it opens it should read STATUS.md from this folder and
 display: the latest status summary, the recent commits listed in it,
 the test pass/fail result, and any TODO/FIXME flags. Highlight
-anything that changed since the last open.
+anything that changed since the last open. Also include an "Ask
+Claude" box where I can type a question about this data (commits,
+test failures, TODOs) and get an answer shown in the dashboard.
 ```
  
 > ⏱ **Patience note:** Several minutes — it's reading and rendering your local folder's STATUS.md.
@@ -4449,7 +4447,7 @@ anything that changed since the last open.
  
 When it opens, verify it shows your real STATUS.md content and the commits from steps 4–7.
  
-![Capstone dashboard](./images/ccode396.png?raw=true "Capstone dashboard")
+![Capstone dashboard](./images/cc-se204.png?raw=true "Capstone dashboard")
  
 ---
 <br><br>
@@ -4458,14 +4456,19 @@ When it opens, verify it shows your real STATUS.md content and the commits from 
 **What we're doing:** Using the embedded Claude on real project data.  
 **Why:** A dashboard you can question beats a dashboard you can only read.
  
-**Action:** Inside the Live Artifact, ask:
+**Action:** In the dashboard, type into the **Ask Claude** box you requested in step 9 and ask:
 ```
 Summarize the state of this project in 3 bullets and tell me the
 single most useful next step.
 ```
+
+![Ask Claude in dashboard](./images/cc-se205.png?raw=true "Ask Claude in dashboard")
+ 
+> **No Ask-Claude box in your artifact?** The artifact window has no built-in chat of its own. Interrogate it from the **Cowork task** that built it instead — ask the same question there. That Claude has your `~/capstone` folder and `STATUS.md`, and can also edit the dashboard.
  
 ---
 <br><br>
+ 
  
 ## 11: Add a Daily Summary Scheduled Task
 **What we're doing:** Automating the monitoring layer, then testing it now.  
@@ -4482,7 +4485,9 @@ From the **Scheduled** sidebar, run it now and wait, then check:
 cat ~/capstone/capstone-daily-summary.md
 ```
  
-![Capstone schedule](./images/ccode397.png?raw=true "Capstone schedule")
+![Capstone schedule](./images/cc-se206.png?raw=true "Capstone schedule")
+
+![Capstone run](./images/cc-se207.png?raw=true "Capstone run")
  
 ---
 <br><br>
@@ -4501,7 +4506,7 @@ Cowork scheduled task (daily summary) ------+        |
 claude.ai artifact (share out) <---------------------+
 ```
  
-![Shared summary](./images/ccode399.png?raw=true "Shared summary")
+![Shared summary](./images/cc-se208.png?raw=true "Shared summary")
  
 ---
 <br><br>
