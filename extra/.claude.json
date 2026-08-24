@@ -5,7 +5,7 @@
   "hasCompletedOnboarding": true,
   "forceLoginMethod": "claudeai",
   "projects": {
-    "/workspaces/ccode": {
+    "/workspaces/cc-se": {
       "allowedTools": [],
       "mcpContextUris": [],
       "mcpServers": {},

@@ -1,7 +1,7 @@
 # AI-Powered Coding with Claude Code
 ## Learn practical workflows, hands-on coding techniques, and structured interactions
 ## Session Labs — 1.5-Day Edition (3 sessions x 4.5 hours)
-## Revision 7.7 - 07/03/26
+## Revision 7.10 - 08/24/26
 
 <br><br>
 
@@ -19,7 +19,7 @@
 >
 > ![set model](./images/ccode209.png?raw=true "set model")
 >
-> You should see an indicator that the model was set to *claude-sonnet-4-6*.
+> You should see an indicator that the model was set to a *Sonnet* model (e.g., *claude-sonnet-4-6* or later — the exact version shown may be newer).
 >
 > **Note:** As of Claude Code 2.1.153, your `/model` selection is saved as the default for new sessions. To set a model for the current session only, press `s` in the model list.
 >
@@ -40,7 +40,7 @@ Get familiar with Claude Code basic command-line interface. You'll learn how to 
 **What we're doing:** Verifying Claude can respond to simple queries.  
 **Why:** This confirms the connection is working properly.
 
-**Action:** At the Claude prompt, type the prompt below and hit *Enter*. While that is running, hit *Ctrl+o* to have Claude show its thinking process.
+**Action:** At the Claude prompt, type the prompt below and hit *Enter*. While that is running, hit *Ctrl+o* to switch to the **detailed transcript** — every tool call, with timings and the model that served each turn. *Ctrl+o* again returns to the compact view.
 ```
 Hello Claude, can you tell me what you can help with?
 ```
@@ -48,6 +48,8 @@ Hello Claude, can you tell me what you can help with?
 Claude should respond with information about its capabilities preceded by its thinking process.
 
 ![Initial prompt](./images/ccode210.png?raw=true "Initial prompt")
+
+> **Note:** In the hint line under the input area you'll see *"? for shortcuts · ← for agents"*. Pressing the **left arrow** with an empty input opens **Agent View** — a full-screen dashboard for managing multiple background sessions (also reachable via `claude agents`). If you land there by accident, just press `Esc` to return — nothing is lost and no sessions are stopped. We'll work with this managed-agents world hands-on in Day 2 (Lab 14).
 
 
 ---
@@ -80,6 +82,8 @@ Create a simple hello.js file that prints "Hello from Claude Code!"
 
 Claude will create the file and *may* show you the content in the diff above the terminal. You do not need to do anything in the diff area. Just select option 1 in the terminal where Claude is waiting.
 
+> **Mode note:** if the status bar under your prompt reads `⏵⏵ auto mode on`, Claude may create the file without asking — that is expected. Since **August 14, 2026** Claude Code starts in **auto mode** on Pro, Max, and Team plans, where a background classifier approves routine actions instead of prompting you. **The exception is the very first session after a fresh install — a brand-new Codespace counts — which starts in manual;** STARTUP.md Step 5 has you switch it. Lab 2 covers the modes in full.
+
 ![Initial file creation](./images/ccode86.png?raw=true "Initial file creation")
 
 ---
@@ -106,7 +110,7 @@ You should see your new file and its contents.
 **What we're doing:** Having Claude execute the code it created.  
 **Why:** Claude can run commands and show output directly.
 
-**Action:** Back in Claude, type the prompt below. You'll see the run started and then you'll be prompted for permission to proceed. Just select option 1.
+**Action:** Back in Claude, type the prompt below. You'll see the run start. If Claude asks permission to proceed, select option 1 — in auto mode it will simply run.
 ```
 Run the hello.js file we just created
 ```
@@ -190,22 +194,24 @@ After this, there will probably be a suggestion in lighter ("ghost") text to run
 **What we're doing:** Using keyboard shortcuts to create memories and run shell commands inline.  
 **Why:** These shortcuts speed up common operations without leaving Claude Code.
 
-**Action:** First, try the # shortcut to create a memory. Type:
+**Note:** Older versions of Claude Code had a `#` shortcut for creating memories. That shortcut has been discontinued — now you simply ask Claude to remember something in plain language.
+
+**Action:** First, create a memory. Type:
 ```
-# This project uses JavaScript and Python for demos
+Remember that this project uses JavaScript and Python for demos.
 ```
 
-Claude will save this to a MEMORY.md file as a persistent memory.
+Claude will save this as a persistent memory (in its auto-memory files and/or CLAUDE.md). You can see where memories live by typing `/memory` (use *Esc* to exit the view).
 
 
 ![Create memory](./images/ccode213.png?raw=true "Create memory")
 
-Now try the ! shortcut to run a bash command directly to look at the memory file that just got created:
+Now try the ! shortcut to run a bash command directly to look for the memory file. Starting the input with `!` makes the line run as a shell command — the input turns pink to show it. Type:
 ```
 ! cat ~/.claude/projects/-workspaces-cc-se/memory/MEMORY.md
 ```
 
-This runs the shell command and shows output without a separate terminal.
+This runs the shell command and shows output without a separate terminal. (If *Enter* seems to do nothing, look for a subtle suggested-path line near the input — while it's showing, *Enter* is silently ignored; press `Esc` once to clear it, then *Enter*. If the file doesn't exist, Claude stored the memory elsewhere — you can ask it: `Where did you save that memory?`)
 
 ![Shell command](./images/ccode214.png?raw=true "Shell command")
 
@@ -244,7 +250,7 @@ exit
 - Created and executed code with Claude
 - Learned basic navigation and commands
 - Practiced session management
-- Used @ mentions, # memory, and ! bash shortcuts
+- Used @ mentions, persistent memories, and the ! bash shortcut
 - Explored a codebase with natural language questions
 
 <br><br>
@@ -256,26 +262,30 @@ exit
 
 # Lab 2: Working with Claude Code Modes
 ## Lab Purpose
-Master Claude Code's different operating modes including default mode, plan mode, and auto-accept mode. Learn when and how to use each mode effectively for different development scenarios.
+Master Claude Code's operating modes — auto mode (the default since August 14, 2026), manual mode, plan mode, and bypass. Learn when and how to use each mode effectively for different development scenarios.
 
 ---
 <br><br>
 
-## 1: Understand Default Mode 
-**What we're doing:** Starting Claude in its standard interactive mode.  
-**Why:** Default mode gives you full control with permission prompts for each action.
+## 1: See Which Mode You Start In, Then Switch to Manual
+**What we're doing:** Checking the permission mode Claude Code starts in, then moving to manual.  
+**Why:** As of **August 14, 2026**, Claude Code starts in **auto mode** by default on Pro, Max, and Team plans — a background classifier approves routine actions instead of prompting you. Manual mode is still there, but it is now something you choose rather than where you land. (Manual is labeled **manual** in the interface as of v2.1.200; its config value is still `default`.) One exception worth knowing: the **first** session after a fresh install — including a brand-new Codespace — starts in manual, which is why STARTUP.md Step 5 has you check.
 
 **Action:** Start Claude with model Sonnet and medium effort (Note: You can use these command line options if you want for other places you start Claude in the labs.)
 ```bash
-claude --model sonnet --effort medium
+claude --model sonnet --effort medium
 ```
 
-You're now in default mode where Claude asks permission before file changes.
+Look at the status bar just under the prompt box. You will most likely see `⏵⏵ auto mode on`. If you are on an Enterprise plan or a Console API key, you may see `⏸ manual mode on` instead — both are fine, and the rest of this lab works either way.
+
+**Action:** Press `Shift+Tab` **once**. From auto mode the first press always lands on manual. Confirm the status bar now reads `⏸ manual mode on` before moving on.
+
+You're now in manual mode, where Claude asks permission before file changes.
 
 ---
 <br><br>
 
-## 2: Test Default Mode Permissions
+## 2: Test Manual Mode Permissions
 **What we're doing:** Creating a file to see permission prompts in action.  
 **Why:** Understanding permission flow helps you maintain control over changes.
 
@@ -284,7 +294,9 @@ You're now in default mode where Claude asks permission before file changes.
 Create a config.json file with database connection settings for Postgresql
 ```
 
-Notice how Claude asks permission before creating the file as we've seen before. Type `1` to accept.
+Notice how Claude asks permission before creating the file. Type `1` to accept.
+
+> If Claude created the file without asking, you are still in auto mode — press `Shift+Tab` until the status bar reads `⏸ manual mode on` and try the prompt again.
 
 
 ![Creating config.json](./images/ccode216.png?raw=true "Creating config.json")
@@ -311,7 +323,7 @@ Notice how Claude asks permission before creating the file as we've seen before.
 **Action:** Type:
 
 ```
-Create a basic user profile page with fields for name, email, and profile picture upload. 
+Create a basic user profile page with fields for name, email, and profile picture upload. 
 ```
 
 ![Planning](./images/ccode98.png?raw=true "Planning")
@@ -325,7 +337,7 @@ Claude will start creating a detailed plan before starting implementation.
 **What we're doing:**  Responding to questions from Claude
 **Why:** Claude needs our input on some things before proceeding.
 
-**Action:** Read any questions that come up and select number of answer to proceed if single option for answer. (To save time and complexity, it is recommended to use the recommended/simplest option.) If you can select multiple options, use arrow keys and space/Enter to select options. Then move on to next question using right arrow. Answer all questions and then move to *Submit* and press *Enter*. If you want to see more of Claude's *thinking* during this process, press *ctrl+o".
+**Action:** Read any questions that come up and select number of answer to proceed if single option for answer. (To save time and complexity, it is recommended to use the recommended/simplest option.) If you can select multiple options, use arrow keys and space/Enter to select options. Then move on to next question using right arrow. Answer all questions and then move to *Submit* and press *Enter*. If you want to see what Claude is actually doing during this process, press *ctrl+o* for the detailed transcript.
 
 ![Responding to questions](./images/ccode217.png?raw=true "Responding to questions")
 
@@ -344,7 +356,10 @@ Claude will start creating a detailed plan before starting implementation.
 1. Go ahead and select that key sequence (ctrl+g) to bring the plan up in the editor.
 2. (Optional) To see the markdown version of the plan (if you're in VS Code, you can right-click and select *Reopen Editor with ... Text Editor*).
 3. After you're done reviewing it, you can close the file (close the original file if you also opened a preview version).
-4. Then **select option 1** to proceed and auto-accept edits. 
+
+> ⚠️ **Known issue:** While the plan file is open, avoid scrolling or clicking in the Claude Code terminal panel — a current Claude Code bug can cause garbage characters (like `M^[[<35;86;12M`) to spill into the panel from mouse events. They're harmless. If you see them, close/save the plan file, then press `Esc` (or backspace) to clear any stray input; `ctrl+l` redraws the screen if the panel still looks scrambled.
+
+4. Then **select option 1** to proceed. Note the wording of that first option: it now reads **"Yes, and use auto mode"** when auto mode is available (it reads "Yes, auto-accept edits" when it is not). Option 2 is **"Yes, manually approve edits"** if you would rather keep reviewing each change. 
 
 ![Reviewing plan](./images/ccode102.png?raw=true "Reviewing plan")
 
@@ -390,18 +405,22 @@ Your conversation history is now cleared, giving you a clean slate.
 ---
 <br><br>
 
-## 9: Check Out Auto Mode
-**What we're doing:** Looking at the newer *Auto* permission mode.  
-**Why:** Auto mode replaces many manual permission prompts with a background classifier that approves routine, safe actions and stops for risky ones. It sits between supervised editing and bypass permissions, and is what unattended/agentic workflows (Day 2) build on.
+## 9: Return to Auto Mode — the Default
+**What we're doing:** Going back to the *Auto* permission mode you started the lab in.
+**Why:** Auto mode is where Claude Code now starts on Pro, Max, and Team plans, and it is what the unattended/agentic workflows on Day 2 build on. Instead of asking you, a background classifier reviews each risky action and approves or blocks it. Routine work — reading files, editing inside your project, installing declared dependencies — never reaches the classifier at all.
 
-**Action:** If not already on *auto mode*, press `Shift+Tab` repeatedly and watch the mode indicator cycle. Along with the modes we've used, you should see **auto mode**. The official mode set is now: *supervised editing* (default) → *accept edits* → *plan* → *auto* → *bypass permissions*. Stop cycling when you get back to your previous mode — we'll use bypass next.
+**Action:** Press `Shift+Tab` and watch the mode indicator cycle. Starting from manual the cycle runs *manual* → *accept edits* → *plan* → *auto*. (From auto, the very first press always takes you straight back to *manual*.) *Bypass permissions* (YOLO) also joins the cycle when Claude was started with the bypass flag. Stop when the status bar reads `⏵⏵ auto mode on`.
+
+> **What the classifier stops.** Blocked by default: `curl | bash`, force pushes, `git reset --hard`, production deploys, mass deletion, printing live credentials. Allowed by default: local edits in your working directory, installing dependencies from your lockfile, read-only HTTP, and pushing to any branch of the repo you're working in. If it blocks something 3 times in a row (or 20 times in a session), auto mode pauses and Claude Code starts prompting you again. Blocked actions are listed in `/permissions` under **Recently denied**, where `r` retries with a manual approval.
+
+> **A boundary you state in chat is enforced.** Tell Claude "don't push until I review" and the classifier blocks matching actions even when its default rules would allow them. But that boundary lives in the transcript — `/compact` can drop it. For a hard guarantee you need a deny rule or a hook (Lab 6).
 
 ---
 <br><br>
 
-## 10: Try YOLO Mode (Auto-Accept)
-**What we're doing:** Running Claude with automatic permission granting.  
-**Why:** This speeds up development when you trust Claude's actions.
+## 10: Try YOLO Mode (Bypass Permissions)
+**What we're doing:** Running Claude with all permission checks skipped.
+**Why:** Auto mode already removes most prompts, but a classifier still reviews risky actions. Bypass removes even that — nothing is checked at all. It is a step *down* in oversight from auto mode, meant for throwaway sandboxes like this Codespace.
 
 **Action:** Exit Claude (`exit`), then restart with the command below and **use option 2** to accept the risk:
 
@@ -448,10 +467,10 @@ exit
 
 ## Lab Summary
 ✅ You've successfully learned:
-- Default (supervised editing) mode with permission prompts
+- Auto mode — the default since August 14, 2026 — and its background classifier
+- Manual mode (config value `default`) with a permission prompt for every action
 - Plan mode for complex task planning
-- Auto mode's classifier-based permissions
-- Auto-accept and bypass modes for rapid development
+- Accept-edits and bypass modes, and when each is appropriate
 
 
 ---
@@ -462,7 +481,7 @@ exit
 ---
 <br><br>
 
-**NOTE:** From here on, you can use the `claude --dangerously-skip-permissions` mode if you want to avoid having to respond to most prompts. For convenience, if working in the codespace, there is a shortcut alias for this setup:  `claude-yolo`. You must be in a terminal other than the original one that you started with to use this.
+**NOTE:** From here on, auto mode already handles most prompts for you. If you want *zero* interruptions, you can use the `claude --dangerously-skip-permissions` mode. For convenience, if working in the codespace, there is a shortcut alias for this setup:  `claude-yolo`. You must be in a terminal other than the original one that you started with to use this.
 
 <br><br>
 
@@ -578,19 +597,21 @@ Claude will summarize earlier parts while keeping specified information.
 **Why:** Rewind lets you undo mistakes or explore different approaches.
 
 **Action:** 
-a. Ask Claude: `Delete the test file we created`
-b. After deletion, press `Esc` twice or type `/rewind`
-c. Select the point before deletion (the *compact*) to restore **by using the up and down arrow to navigate between the checkpoints** listed and then press `Enter`.
+a. Ask Claude to make a change we'll want to undo: `Remove the email validation from the User class in user.js`
+b. After the edit completes, press `Esc` twice (with an empty prompt) or type `/rewind`
+c. **Select the *Remove the email validation...* entry** (up/down arrows) and press `Enter` — each entry restores to the point *before* that message. Skip the */compact* entries; as covered in the slides, code can't be restored at the compaction boundary.
 
 
 ![rewind](./images/ccode34.png?raw=true "rewind")
 
-d. Respond to the clarification question to restore both the code and the conversation.
+d. From the action menu, choose **Restore code and conversation**.
 
 
 ![rewind](./images/ccode35.png?raw=true "rewind")
 
-e. You should see the file and the conversation restored. You can use backspace or hit `Esc` twice to clear out any commands showing up in Claude.
+e. Open user.js to confirm the email validation is back. Use backspace to clear any restored prompt text from the input before continuing.
+
+> Remember from the slides: only file-tool edits are checkpointed — bash changes (`rm`, `mv`) show *No code changes* and can't be restored. Use git for real version history.
 
 ---
 <br><br>
@@ -675,7 +696,7 @@ echo "What files are in this directory?" | claude -p
 
 The `-p` flag runs Claude in print (headless) mode — it takes input from stdin, processes it, and outputs the result. No interactive session needed. This is how you integrate Claude into shell scripts, CI pipelines, and automated workflows. We'll go much deeper on this in Day 2, where headless mode becomes the foundation for writing *loops* instead of single prompts.
 
-> **Heads-up on usage:** Starting June 15, 2026, headless/SDK and GitHub Actions usage is metered separately from interactive Claude Code on subscription plans (separate weekly token pools). Worth knowing before you start automating!
+> **Heads-up on usage:** A separate metering pool for headless/SDK and GitHub Actions usage was announced for June 15, 2026, **but Anthropic cancelled that change** — headless and interactive usage continue to draw from the same subscription limits. Worth knowing in case you see stale references to it.
 
 ![claude.md](./images/ccode230.png?raw=true "claude.md")
 
@@ -733,7 +754,7 @@ mkdir -p .claude/agents
 ```md
 ---
 name: api-checker
-description: When the user asks to validate a REST endpoint, generate a curl test, run it, and summarize status + key fields.
+description: Use whenever the user asks to validate, check, or test a REST endpoint or API URL. Always run scripts/check.py (instead of fetching directly) to get structured results, and summarize status + key fields.
 ---
 
 ## Rules
@@ -872,12 +893,14 @@ If Claude asks for approval to run scripts, approve it.
 
 What you should see in the output is that the skill was selected and loaded, then, per the skill instructions:
 
-- The supporting script was run
+- The supporting script was run (look for `scripts/check.py` in the output — not a plain `Fetch(...)` call)
 - The status was reported
 - Key fields were listed
 - A recommendation was provided
 
 ![Using the skill](./images/ccode231.png?raw=true "Using the skill")
+
+> **If Claude answered directly instead** (you see `Fetch(https://...)` rather than the skill loading and check.py running): skills are *model-invoked* — Claude matches your request against skill descriptions and decides, so for simple requests it may reach for its built-in fetch instead. This is normal and a useful lesson: description wording matters. To guarantee the skill runs, name it: `Use the api-checker skill to validate https://jsonplaceholder.typicode.com/posts/1` — then compare the output.
 
 
 ---
@@ -999,8 +1022,11 @@ disallowedTools: Write, Edit
 ---
 ## Instructions
 - Review the diff and changed files.
-- Output: 3 risks, 3 tests to add, 3 patch suggestions.
 - Do not modify files.
+- Return your results in EXACTLY this format so they can be relayed verbatim:
+  RISKS: (3 bullets)
+  TESTS TO ADD: (3 bullets)
+  PATCH SUGGESTIONS: (3 bullets)
 ```
 
 > **What changed from Lab 4's agents?** Compare this to the planner agent you created in Lab 4. The planner says "Do not write or modify files" in its instructions — a prompt-level constraint. This reviewer goes further with `disallowedTools: Write, Edit`, which *enforces* the restriction at the tool level. Both approaches have their place: prompt constraints are flexible, tool constraints are guaranteed.
@@ -1068,16 +1094,15 @@ Confirm you see `/ship` listed in the `custom-commands` section.
 
 Hit *Esc" to get out of that output. Then run: 
 
+Next, verify the agents. The old `/agents` wizard has been removed from Claude Code — agents are now managed as plain files (or by asking Claude to create/update them for you). So use the `!` bash shortcut you learned in Lab 1 to list them (the input turns pink when it starts with `!`):
+
 ```
-/agents
+! ls .claude/agents/*
 ```
 
- Switch to the `Library` tab. Confirm the `reviewer`, `planner`, and `test-runner` agents are shown.
+(The trailing `/*` matters. While you type a *partial* path that matches real files, Claude Code shows a suggested path on a plain line near the input — it's subtle, just a line of text like `.claude/agents/`, easy to miss — and **while that suggestion is showing, *Enter* is silently ignored**. A complete path ends the suggestion, so `/*` or a plain trailing slash lets *Enter* work normally; `Esc` also clears the suggestion if you see it.)
 
-![Agents are present](./images/ccode235.png?raw=true "Agents are present")
-
-
-Hit *Esc" to get out of that output. Then run: 
+Confirm `planner.md`, `test-runner.md`, and `reviewer.md` are shown. Then run: 
 
 ```
 /skills
@@ -1123,10 +1148,12 @@ Approve as needed.
 
 **Action:** In Claude, type:
 ```
-Use the reviewer subagent to review the change we just made.
+Use the reviewer subagent to review the change we just made. Show me its RISKS, TESTS TO ADD, and PATCH SUGGESTIONS sections verbatim.
 ```
 
-You'll see output of the main agent interpreting the subagent output. If you want to see the results from the subagent (the 3 risks, 3 tests to add, and 3 patch suggestions we told the reviewer agent to output) you can expand the output with *ctrl+o* and look back up in the output. 
+The reviewer may run as a **backgrounded agent** — you'll see something like *"Backgrounded agent (↓ to manage · ctrl+o to expand)"* and a short wait while it works. When it finishes, the main agent reports the results.
+
+**What you should see:** the RISKS / TESTS TO ADD / PATCH SUGGESTIONS sections from the reviewer. Note that the main agent *interprets* subagent output — without the "verbatim" request in the prompt it will often summarize and re-organize the findings in its own words. To see the subagent's own transcript, press *ctrl+o* and scroll back up (or press ↓ to open the agent manager and peek at it).
 
 ![Start of reviewer output](./images/ccode239.png?raw=true "Start of reviewer output")
 
@@ -1149,7 +1176,7 @@ You can choose to proceed with all or some of the suggested changes by respondin
 /ship
 ```
 
-What you should see is the git info being gathered and the testing running. Then in the summary, you'll see what changed, the test results (1 will be failing), the "Risks" list and the suggested "Follow-ups".
+Claude will run a few shell commands — these appear **collapsed** (e.g., *"Ran 2 shell commands"*; press `ctrl+o` if you want to see the actual git status/diff and test commands). Then you'll get a numbered summary: **1.** what changed, **2.** the test results (a failing test may appear), **3.** the "Risks" list, and **4.** the suggested "Follow-ups".
 
 ![Partial output of ship command](./images/ccode240.png?raw=true "Partial output of ship command")
 
@@ -1325,7 +1352,7 @@ Two things to notice:
 
 ## 5: Start Claude in Bypass Mode
 **What we're doing:** Starting Claude with permissions bypassed — on purpose.
-**Why:** This is the punchline of the lab: hooks fire at the *tool boundary*, outside of the permission system. Even with all permission prompts turned off, the hook still gets a veto.
+**Why:** This is the punchline of the lab: hooks fire at the *tool boundary*, outside of the permission system entirely. Auto mode's classifier is a model making a judgment call; a hook is your code, and it gets a veto even when every permission check is switched off.
 
 **Action:** In a terminal other than your original one, start Claude with the option or alias (if working in the codespace):
 ```
@@ -1441,6 +1468,7 @@ Recall Lab 5: the planner agent had a *prompt constraint* ("Do not write or modi
 
 - **Prompt constraint** — instructions in CLAUDE.md or an agent file. Flexible, but it's a request, not a guarantee.
 - **Tool constraint** — `disallowedTools` removes the tool entirely, for one agent.
+- **Classifier** — in auto mode a second *model* judges each risky call. It reads the boundaries you state in chat, but it is probabilistic, and a boundary can be lost when `/compact` drops the message that stated it.
 - **Hook** — your own code at the tool boundary, for *every* tool call in the session, with any logic you can script. Exit 2 is a hard no, even in bypass mode.
 
 > **Going further:** Hooks can do much more than block: a hook can exit 0 and print JSON to make richer decisions (`permissionDecision: allow / deny / ask`), rewrite a tool's input before it runs, or inject context for Claude. There are also handler types beyond shell commands (`prompt`, `agent`, `http`, `mcp_tool`) and many more events — `SessionStart` for loading context when a session begins is a popular one. To temporarily switch everything off, set `"disableAllHooks": true` in settings. See the [hooks reference](https://code.claude.com/docs/en/hooks) for the full schema.
@@ -1462,7 +1490,7 @@ exit
 - Used exit code 2 + stderr to veto a tool call and explain why
 - Created a PostToolUse hook that logs every bash command
 - Verified configured hooks with the /hooks menu
-- Proved hooks fire even in bypass-permissions mode
+- Proved hooks fire even in bypass-permissions mode — and outside auto mode's classifier
 - Placed hooks in the constraint hierarchy: prompt → disallowedTools → hooks
 
 <br><br>
@@ -1717,7 +1745,7 @@ The everything server should be gone (and the entry removed from `.mcp.json`).
 
 **Day 2 theme: yesterday you drove Claude interactively, one prompt at a time. Today Claude works while you don't watch — headless pipelines, condition-driven loops, SDK programs, CI jobs, scheduled tasks, and managed agents running in the background and in the cloud.**
 
-> **Heads-up on usage:** Starting June 15, 2026, Agent SDK and `claude -p` (headless) usage on subscription plans draws from a new monthly Agent SDK credit, separate from your interactive usage limits. GitHub Actions usage falls under this too. Several labs today use these surfaces — that's expected and fine for a workshop, but worth knowing for your own automation later.
+> **Heads-up on usage:** You may see references to a June 15, 2026 change that would have metered Agent SDK / headless / GitHub Actions usage separately from interactive limits. **Anthropic cancelled that change** — these surfaces draw from your normal subscription usage. Several labs today use them; that's expected and fine for a workshop.
 
 <br><br>
 
@@ -1795,14 +1823,12 @@ You should see the skill load and the `check.py` script run, just like yesterday
 **What we're doing:** Listing the subagents you built in Labs 4-5.  
 **Why:** Today we'll meet a different kind of agent — *background* and *cloud* agents. Knowing your subagents are here sets up the contrast.
 
-**Action:** Type:
+**Action:** The `/agents` wizard has been removed from Claude Code — agents live as files now. List them with the `!` bash shortcut:
 ```
-/agents
+! ls .claude/agents/*
 ```
 
-Confirm `planner`, `test-runner`, and `reviewer` are listed. Hit *Esc* to exit the list.
-
-![agents present](./images/ccode322.png?raw=true "agents present")
+Confirm `planner.md`, `test-runner.md`, and `reviewer.md` are listed.
 
 ---
 <br><br>
@@ -1828,7 +1854,7 @@ exit
 - Inspected the automatic context loadout with /context
 - Confirmed CLAUDE.md project memory persists
 - Re-triggered the api-checker skill
-- Verified your subagents with /agents
+- Verified your subagent files (the /agents wizard has been removed)
 - Framed the Day 2 shift: from prompts to loops
 
 <br><br>
@@ -1986,6 +2012,8 @@ You should see a heading and a one-sentence summary for each .js file.
 **What we're doing:** Pre-approving actions so a headless run can write files without hanging.  
 **Why:** `-p` mode has no human to click "Yes." Anything not pre-approved either aborts the run or gets denied — so automation must declare its permissions up front.
 
+> **The August 2026 auto-mode default does not rescue you here.** Interactive sessions now start in auto mode on Pro/Max/Team, but `claude -p` and the Agent SDK still start in `default` — which is exactly why pre-approving permissions remains mandatory for anything unattended.
+
 **Action:** Run:
 ```bash
 claude -p "Create a file named pipeline.txt containing the single word OK" --permission-mode acceptEdits
@@ -2015,7 +2043,7 @@ Then verify with `cat pipeline.txt`. The `acceptEdits` mode auto-approves file w
 - Chaining headless calls in a shell pipeline
 - Writing a bash loop that runs Claude per file
 - Pre-approving permissions for unattended writes
-- The June 15 metering change and `--bare` mode
+- The `--bare` flag for reproducible runs (and the cancelled June 15 metering plan)
 
 <br><br>
 ---
@@ -2061,7 +2089,7 @@ You should see **`10 passed, 4 failed`** — the four failures are the missing-i
 
 ## 2: Start Claude in YOLO Mode
 **What we're doing:** Starting with permissions bypassed.  
-**Why:** `/goal` removes per-*turn* prompts; bypass (or auto) mode removes per-*tool* prompts. Together the loop runs hands-free.
+**Why:** `/goal` removes per-*turn* prompts; auto or bypass mode removes per-*tool* prompts. Together the loop runs hands-free. You are likely already in auto mode — bypass goes further and skips the classifier too, which is what we want for an uninterrupted loop in this sandbox.
 
 **Action:** In a **second** terminal (not the one you just ran the tests in), run:
 ```bash
@@ -2101,7 +2129,7 @@ Note the three parts of a good condition: a measurable end state (`exits 0`), a 
 **Action:** Hit `Enter`. Setting the goal starts a turn immediately — no extra prompt needed. Watch for:
 - the `◎ /goal active` indicator
 - Claude running the tests, reading the tracebacks, editing the route handlers, and re-running on its own
-- (press *ctrl+o* to watch the thinking)
+- (press *ctrl+o* for the detailed transcript — tool calls, timings, per-turn model)
 
 Claude works through the four failures in a single turn and stops when `app/test_app.py` exits 0.
 
@@ -2337,6 +2365,8 @@ Remember the `[tool]` lines the read-only agent printed? Each one is a decision 
 
 ![skeleton view](./images/cc-se70.png?raw=true "skeleton view")
 
+> **Note:** SDK sessions start in `default` mode no matter what your interactive CLI default is — the auto-mode default does not extend to programs you write. Permissions in code are not optional here.
+
 > **Why a hook, and not `can_use_tool`?** `ClaudeAgentOptions` also accepts a `can_use_tool` callback, and it's tempting to treat that as the gatekeeper. But the CLI only calls `can_use_tool` for tools that resolve to **"ask"** — it is skipped for anything already permitted by `allowed_tools`, `permission_mode`, or your Claude settings. So a destructive command in an environment that already trusts `Bash` would sail right past it. A **PreToolUse hook fires on every call, no exceptions** — which is exactly what an unattended safety gate needs.
 
 The skeleton also provides a `prompt_stream()` generator: streaming the prompt is what lets the hook run interactively as the agent works.
@@ -2381,10 +2411,11 @@ You should see every `.js` file listed with a one-line description.
 **What we're doing:** Making the gatekeeper say no.  
 **Why:** Allow-paths are easy. The deny-path is what makes unattended safe.
 
-**Action:** Edit the `TASK` string in `sdk/auto_agent.py` to:
+**Action:** In `sdk/auto_agent.py`, replace the **whole** `TASK = ( … )` block — all three lines, through the closing `)` — with this single line:
 ```python
 TASK = "Use a Bash rm command to delete agent_report.md. Then say DONE."
 ```
+(Replacing only the first line leaves the old string fragments behind and Python stops with an `IndentationError`.)
 
 **Save your changes.** Run it again (`python3 sdk/auto_agent.py`). The PreToolUse hook sees the `Bash` call **before** it runs and returns `deny`, so the `rm` never executes. Watch for the deny line:
 ```
@@ -2508,7 +2539,7 @@ jobs:
           prompt: "Summarize yesterday's commits and open issues as a markdown report"
           claude_args: |
             --max-turns 5
-            --model claude-sonnet-4-6
+            --model sonnet
 ```
 
 **Save the file**
@@ -2529,7 +2560,7 @@ jobs:
 | `--max-turns 5` | `max_turns` in the SDK (Lab 11) |
 | `--allowedTools "Read,Edit,Bash"` | `--allowedTools` / `allowed_tools` (Labs 9, 11) |
 | `--append-system-prompt "..."` | custom instructions per workflow |
-| `--model claude-sonnet-4-6` | `/model` from Day 1 |
+| `--model sonnet` | `/model` from Day 1 |
 
 Also note: `prompt:` accepts skill invocations (e.g. `/code-review:code-review ...`) and the action respects your repo's CLAUDE.md — your Day 1 assets work in CI too.
 
@@ -2854,7 +2885,7 @@ Run Claude sessions that don't need you watching: dispatch a **background agent*
 ```bash
 claude --bg --dangerously-skip-permissions --name "js-summary" "In one sentence, what does hello.js do? Do not edit any files."
 ```
-The `--dangerously-skip-permissions` flag runs it **hands-off** — the same bypass mode as `claude-yolo` — so it won't stop for approvals. Note the output: a short session ID plus the management commands (`claude agents`, `claude attach <id>`, `claude logs <id>`, `claude stop <id>`).
+The `--dangerously-skip-permissions` flag runs it **hands-off** — the same bypass mode as `claude-yolo` — so it won't stop for approvals. (Worth knowing: in auto mode the classifier *blocks Claude* from launching a bypass agent loop on your behalf. You can start one yourself; Claude can't quietly decide to.) Note the output: a short session ID plus the management commands (`claude agents`, `claude attach <id>`, `claude logs <id>`, `claude stop <id>`).
  
 > **Why read-only for the demo?** A background agent that *edits* files does its work in an isolated git **worktree** (`.claude/worktrees/…`), not your main directory — so its output isn't where you'd expect and you have to go retrieve it. That's important real-world behavior (see the **"Agent Worktrees"** slide), but it makes for a confusing *first* demo, so here the payoff is simply the agent's **answer**, which you'll read from the dashboard.
  
@@ -3416,6 +3447,8 @@ Consider: in Lab 9 you piped a prompt into `claude -p`. This artifact does conce
 Point Cowork at a local folder of messy files, hand it a multi-step organize-and-report task, review the plan, and verify the real file changes on disk — learning the autonomous-task pattern and the safety rails that let you delegate confidently. (Lab 18 picks up the same folder to explore skills.) Estimated time: 8-10 minutes.
  
 **Environment: Claude Desktop app (Cowork)** — requires the desktop app installed on your own machine and a paid Claude plan (done in the Day-3 pre-class setup). If you don't have it, follow along with the instructor demo.
+
+> **Cowork's permission modes are its own.** The August 14, 2026 change that made auto mode Claude Code's default applies to the Code surface — the CLI, the VS Code extension, the Desktop **Code** tab. The **Cowork** tab has a separate set of modes, enabled separately, and is unaffected. Don't expect the mode selector you used in Lab 2 to appear here.
  
 ---
 <br><br>
@@ -4359,12 +4392,16 @@ If you're on a shared/instructor Codespace without push rights, a local commit i
  
 **Action:** Exit Claude (`exit`), then dispatch:
 ```bash
-claude --bg "Improve scripts/status.sh: add a section to STATUS.md
+claude --bg --dangerously-skip-permissions "Improve scripts/status.sh: add a section to STATUS.md
 flagging any TODO or FIXME comments found in the codebase, then
 re-run the script, verify STATUS.md updated, and commit the change."
 ```
 
-Note that you may need to approve more operations.
+> **Why the flag.** This task edits files, runs a script *and* commits — and a detached session has
+> nobody to click "approve". Without pre-approved permissions it parks in `claude agents` showing
+> *"Needs input"* and never finishes. Lab 14 used the same flag for the same reason. (Outside a
+> throwaway Codespace, prefer the narrower pairing: `--permission-mode acceptEdits` covers **file
+> edits**, and `--allowedTools` covers **commands** — an unattended run usually needs both.)
 
 ---
 <br><br>
@@ -4551,5 +4588,10 @@ Then decide for each: Cowork scheduled tasks (keep or pause), Google Drive conne
 ---
 ## END OF LAB
 ---
- 
- 
+
+<p align="center">
+<b>For educational use only by the attendees of our workshops.</b>
+</p>
+<p align="center">
+<b>(c) 2026 Tech Skills Transformations and Brent C. Laster. All rights reserved.</b>
+</p>
